@@ -22,4 +22,8 @@ export class UserComponent implements OnInit {
     //sprawdź czy PW jest ok, żeby zalogować :)
   }
 
+  handleLogin(input_login, input_password){
+    this._usersService.handleLogin(input_login, input_password);
+  }
+
 }
