@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -22,11 +23,15 @@ namespace NativeApp
 	/// </summary>
 	public partial class Login : Window
 	{
+		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
+		
+		
 
 		public Login()
 		{
 			InitializeComponent();
-
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -68,6 +73,7 @@ namespace NativeApp
 		{
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
+
 		}
 
 		private void logoutBtn_Click(object sender, RoutedEventArgs e)
@@ -78,6 +84,18 @@ namespace NativeApp
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Hidden;
 		}
+
+        private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+            String title = listOfFiles.SelectedItems[0].ToString();
+            string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+            filesListGrid.Visibility = Visibility.Hidden;
+            newFileGrid.Visibility = Visibility.Visible;
+            TitleBox.Text = title.Substring(0, title.Length - 4);
+            contentBox.Text = text;
+
+        }
 
         async void Get2()
         {
@@ -116,8 +134,10 @@ namespace NativeApp
                 path = path + ".txt";
                 File.Create(path);
                 //File.WriteAllText(path, i.file_content);
-                
+
             }
         }
+
     }
-}
+	}
+

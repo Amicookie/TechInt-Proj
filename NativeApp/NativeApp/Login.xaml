@@ -44,9 +44,17 @@
         </Grid>
 
         <!--List of files grid-->
-        <Grid Name="filesListGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+        <Grid Name="filesListGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="620" Visibility="Hidden">
             <Label Content="List of shared files:" HorizontalAlignment="Left" Margin="43,40,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <DataGrid Name="listOfFiles" HorizontalAlignment="Left" Height="439" Margin="43,80,0,0" VerticalAlignment="Top" Width="711" Background="Transparent" BorderThickness="0"/>
+            <DataGrid Name="listOfFiles" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="439" Margin="43,80,0,0" VerticalAlignment="Top" Width="711" 
+                      Background="Transparent" BorderThickness="0" ColumnHeaderHeight="40" BorderBrush="White" CanUserResizeColumns="False" MouseDoubleClick="Row_MouseDoubleClick"
+                      RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False">
+                <DataGrid.Columns >
+                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding}" Header="File name" />
+                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding CreationTime}" Header="Creation Time" />
+                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding LastWriteTime}" Header="Last Write Time"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
         <!--New file grid-->
         <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
