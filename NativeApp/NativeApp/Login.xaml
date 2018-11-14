@@ -1,0 +1,61 @@
+﻿<Window x:Class="NativeApp.Login"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NativeApp"
+        mc:Ignorable="d"
+        Title="Text Editor" Height="636.612" Width="984.479">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="11*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        <!--Menu Grid-->
+        <Grid Name="MenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176" Background="DeepSkyBlue" Visibility="Visible">
+            <Button Content="Home" HorizontalAlignment="Left" Margin="0,265,0,0" VerticalAlignment="Top" Width="176" RenderTransformOrigin="-0.153,0.595" Height="40" Background="Transparent"
+                    BorderThickness="0" FontFamily="Century Gothic" FontSize="20" FontWeight="Bold" Foreground="White" Click="Button_Click_1"/>
+            <Button Content="Login" FontFamily="Century Gothic" FontSize="20" FontWeight="Bold" Foreground="White"
+                    HorizontalAlignment="Left" Margin="0,305,0,0" VerticalAlignment="Top" Width="176" Height="40" Background="Transparent" BorderThickness="0" Click="Button_Click"/>
+            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
+        </Grid>
+        <!--Login grid-->
+        <Grid Name="LoginGrid"  Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+            <Button Name="loginBtn" Content="Login" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
+        HorizontalAlignment="Left" Height="35" Margin="361,371,0,0" VerticalAlignment="Top" Width="191" Grid.Column="1" Click="loginBtn_Click"/>
+            <PasswordBox Name ="passBox" HorizontalAlignment="Left" Margin="324,282,0,0" VerticalAlignment="Top" Width="260" Height="27" Grid.Column="1"/>
+            <TextBox Name="loginBox"  HorizontalAlignment="Left" Height="29" Margin="324,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="260" TextChanged="TextBox_TextChanged" Grid.Column="1"/>
+            <Label Content="Password" HorizontalAlignment="Left" Margin="216,283,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
+            <Label Content="Login" HorizontalAlignment="Left" Margin="216,220,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
+        </Grid>
+        <!--Main escreen grid-->
+        <Grid Name="mainGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Visible">
+            <TextBlock HorizontalAlignment="Left" Margin="233,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="82" Width="403"><Run FontSize="20" FontFamily="Century Gothic" Text="Welcome to TEXT EDITOR!"/><LineBreak/><Run FontSize="20" FontFamily="Century Gothic" Text="To continiue, please log in."/></TextBlock>
+        </Grid>
+        <!--Menu Logged in grid-->
+        <Grid Name="loginMenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176"  Background="DeepSkyBlue" Visibility="Hidden">
+            <Button Name="filesBtn" Content="Files" HorizontalAlignment="Left" Margin="0,303,-2,0" VerticalAlignment="Top" Width="178" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+                    BorderThickness="0" Click="filesBtn_Click" FontWeight="Bold" Foreground="White"/>
+            <Button Name="newFileBtn" Content="New file" HorizontalAlignment="Left" Margin="0,343,0,0" VerticalAlignment="Top" Width="176" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+                    BorderThickness="0" Click="newFileBtn_Click" FontWeight="Bold" Foreground="White"/>
+            <Button Name ="logoutBtn" Content="Logout" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+                    BorderThickness="0" Click="logoutBtn_Click" FontWeight="Bold" Foreground="White"/>
+            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
+        </Grid>
+
+        <!--List of files grid-->
+        <Grid Name="filesListGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+            <Label Content="List of shared files:" HorizontalAlignment="Left" Margin="43,40,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <DataGrid Name="listOfFiles" HorizontalAlignment="Left" Height="439" Margin="43,80,0,0" VerticalAlignment="Top" Width="711" Background="Transparent" BorderThickness="0"/>
+        </Grid>
+        <!--New file grid-->
+        <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+            <Label Content="Title" HorizontalAlignment="Left" Margin="44,39,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="655"/>
+            <TextBox Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="44,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716"/>
+            <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="635,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
+                    FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" />
+
+        </Grid>
+    </Grid>
+</Window>

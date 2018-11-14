@@ -24,5 +24,13 @@ namespace NativeApp
         {
             InitializeComponent();
         }
-    }
+
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			
+			Login newLogin = new Login();
+			newLogin.Show();
+			this.Close();
+		}
+	}
 }
