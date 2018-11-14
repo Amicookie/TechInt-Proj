@@ -43,6 +43,13 @@ namespace NativeApp.Models
                 return false;
             }
         }
+
+        private string _helloWorld;
+        public string HelloWorld
+        {
+            get { return _helloWorld; }
+            set { OnPropertyChanged(ref _helloWorld, value); }
+        }
     }
 }
 
