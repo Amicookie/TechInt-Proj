@@ -16,6 +16,7 @@ $ pip install flask
 $ pip install flask-cors
 $ pip install flask-restful
 $ pip install flask-jsonpify
+$ pip install flask-hashing
 ```
 
 ## Running the server 
