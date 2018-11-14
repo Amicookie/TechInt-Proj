@@ -91,7 +91,8 @@ class FileList(Resource):
         from database.db_methods import create_file
         from database.db_generator import get_all_files
         #print(request.get_json(silent=True))
-        create_file(request.json['file_name'], request.json['file_content'], session['user_id'])
+        #create_file(request.json['file_name'], request.json['file_content'], session['user_id'])
+        create_file(request.json['file_name'], request.json['file_content'], request.json['user_id'])
         #create_file(request.get_json()['file_name'], request.get_json()['file_content'], request.get_json()['user_id'])
         #print(request.json)
         #print(request.get_json(silent=True))
@@ -111,6 +112,7 @@ class OneFile(Resource):
         from database.db_methods import put_file, get_file
         put_file(file_id, request.json['file_name'], request.json['file_content'],
                  request.json['user_id'])
+        print(jsonify(get_file(request.json['file_id'])))
         return jsonify(get_file(request.json['file_id']))
 
 
