@@ -29,9 +29,10 @@ namespace NativeApp
 
 		public Login()
 		{
+
 			InitializeComponent();
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-			
+
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -45,12 +46,15 @@ namespace NativeApp
 			mainGrid.Visibility = Visibility.Hidden;
 			LoginGrid.Visibility = Visibility.Visible;
             Get2();
-        }
+			welcomeGrid.Visibility = Visibility.Hidden;
+
+		}
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
 			LoginGrid.Visibility = Visibility.Hidden;
 			mainGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Hidden;
 		}
 
 		private void loginBtn_Click(object sender, RoutedEventArgs e)
@@ -58,23 +62,30 @@ namespace NativeApp
 			MenuGrid.Visibility = Visibility.Hidden;
 			loginMenuGrid.Visibility = Visibility.Visible;
 			LoginGrid.Visibility = Visibility.Hidden;
-			filesListGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Visible;
+
 		}
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
 			filesListGrid.Visibility = Visibility.Visible;
 			newFileGrid.Visibility = Visibility.Hidden;
+			welcomeGrid.Visibility = Visibility.Hidden;
 
-
+			listOfFiles.ItemsSource = null;
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 		}
 
 		private void newFileBtn_Click(object sender, RoutedEventArgs e)
 		{
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Hidden;
 
+			TitleBox.Clear();
+			contentBox.Clear();
 		}
+
 
 		private void logoutBtn_Click(object sender, RoutedEventArgs e)
 		{
@@ -83,6 +94,7 @@ namespace NativeApp
 			mainGrid.Visibility = Visibility.Visible;
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Hidden;
+			welcomeGrid.Visibility = Visibility.Hidden;
 		}
 
         private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -132,12 +144,53 @@ namespace NativeApp
                 path = path.Replace(" ", string.Empty);
                 path = path.Substring(0, path.Length - 1);
                 path = path + ".txt";
-                File.Create(path);
-                //File.WriteAllText(path, i.file_content);
+				//File.Create(path);
+				//File.WriteAllText(path, i.file_content);
 
-            }
+				using (StreamWriter str = File.CreateText(path))
+				{
+					str.WriteLine(i.file_content);
+					str.Flush();
+
+				}
+
+			}
         }
 
-    }
+		private void saveBtn_Click(object sender, RoutedEventArgs e)
+		{
+			String title = TitleBox.Text;
+			String content = contentBox.Text;
+
+			string filename = String.Format("{0}.txt", title);
+			string allPath = System.IO.Path.Combine(path, filename);
+
+			//Console.WriteLine(allPath);
+
+			if (!File.Exists(allPath))
+			{
+				using (StreamWriter str = File.CreateText(allPath))
+				{
+					str.WriteLine(content);
+					str.Flush();
+
+					MessageBox.Show("File has been saved");
+				}
+			}
+			else if (File.Exists(allPath))
+			{
+				using (var str = new StreamWriter(allPath))
+				{
+					str.WriteLine(content);
+					str.Flush();
+
+					MessageBox.Show("File has been overwritten");
+				}
+			}
+
+			TitleBox.Clear();
+			contentBox.Clear();
+		}
+	}
 	}
 

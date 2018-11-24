@@ -50,20 +50,25 @@
                       Background="Transparent" BorderThickness="0" ColumnHeaderHeight="40" BorderBrush="White" CanUserResizeColumns="False" MouseDoubleClick="Row_MouseDoubleClick"
                       RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False">
                 <DataGrid.Columns >
-                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding}" Header="File name" />
-                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding CreationTime}" Header="Creation Time" />
-                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding LastWriteTime}" Header="Last Write Time"/>
+                    <DataGridTextColumn IsReadOnly="true" Binding="{Binding}" Header="File name" />
+                    <DataGridTextColumn IsReadOnly="true" Binding="{Binding CreationTime}" Header="Creation Time" />
+                    <DataGridTextColumn IsReadOnly="true" Binding="{Binding LastWriteTime}" Header="Last Write Time"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
         <!--New file grid-->
         <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
             <Label Content="Title" HorizontalAlignment="Left" Margin="44,39,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="655"/>
-            <TextBox Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="44,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716"/>
+            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="655" FontSize="12"/>
+            <TextBox Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="44,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716" FontSize="12"/>
             <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="635,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
-                    FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" />
+                    FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="saveBtn_Click" />
 
+        </Grid>
+<!--welome login grid-->
+        <Grid Name="welcomeGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+            <Label Content="Zalogowany jako:" HorizontalAlignment="Left" Margin="226,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <!--<Label Name="userLabel" Content="{Binding}" HorizontalAlignment="Left" Margin="413,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" />-->
         </Grid>
     </Grid>
 </Window>
