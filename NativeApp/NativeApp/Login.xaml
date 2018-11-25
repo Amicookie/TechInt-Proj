@@ -23,6 +23,8 @@
         <Grid Name="LoginGrid"  Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
             <Button Name="loginBtn" Content="Login" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
         HorizontalAlignment="Left" Height="35" Margin="361,371,0,0" VerticalAlignment="Top" Width="191" Grid.Column="1" Click="loginBtn_Click"/>
+            <Button Name="workOffBtn" Content="Work offline" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
+        HorizontalAlignment="Left" Height="35" Margin="361,371,0,0" VerticalAlignment="Top" Width="191" Grid.Column="1" Click="workOffBtn_Click"/>
             <PasswordBox Name ="passBox" HorizontalAlignment="Left" Margin="324,282,0,0" VerticalAlignment="Top" Width="260" Height="27" Grid.Column="1"/>
             <TextBox Name="loginBox"  HorizontalAlignment="Left" Height="29" Margin="324,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="260" TextChanged="TextBox_TextChanged" Grid.Column="1"/>
             <Label Content="Password" HorizontalAlignment="Left" Margin="216,283,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
@@ -67,7 +69,7 @@
         </Grid>
 <!--welome login grid-->
         <Grid Name="welcomeGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
-            <Label Content="Zalogowany jako:" HorizontalAlignment="Left" Margin="226,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <Label Name ="welcomeLabel" HorizontalAlignment="Left" Margin="226,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
             <!--<Label Name="userLabel" Content="{Binding}" HorizontalAlignment="Left" Margin="413,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" />-->
         </Grid>
     </Grid>

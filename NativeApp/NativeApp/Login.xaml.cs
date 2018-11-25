@@ -25,19 +25,19 @@ namespace NativeApp
 	public partial class Login : Window
 	{
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-		
-		public Login()
+        AppStatus appStatus = new AppStatus();
+        public Login()
 		{
-			InitializeComponent();
-            AppStatus appStatus = new AppStatus();
-            if (Directory.Exists(path))
-            {
-                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-            }
-            else
-            {
-                Directory.CreateDirectory(path);
-            }
+                InitializeComponent();
+
+                if (Directory.Exists(path))
+                {
+                    listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+                }
+                else
+                {
+                    Directory.CreateDirectory(path);
+                }
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -49,11 +49,22 @@ namespace NativeApp
 		{
 
 			mainGrid.Visibility = Visibility.Hidden;
+            if(appStatus.isServerOnline == true && appStatus.isOnline == true)
+            {
+                loginBtn.Visibility = Visibility.Visible;
+                workOffBtn.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                loginBtn.Visibility = Visibility.Hidden;
+                passBox.IsEnabled = false;
+                loginBox.IsEnabled = false;
+                workOffBtn.Visibility = Visibility.Visible;
+            }
 			LoginGrid.Visibility = Visibility.Visible;
             Documents documents = new Documents();
             documents.Get2();
 			welcomeGrid.Visibility = Visibility.Hidden;
-
 		}
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -74,18 +85,33 @@ namespace NativeApp
                 user.Get2();
                 if (user.user_exists == true)
                 {
+                    appStatus.isUserLogged = true;
                     MenuGrid.Visibility = Visibility.Hidden;
                     loginMenuGrid.Visibility = Visibility.Visible;
                     LoginGrid.Visibility = Visibility.Hidden;
                     welcomeGrid.Visibility = Visibility.Visible;
+                    welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
                 }
                 else
                 {
+                    appStatus.isUserLogged = false;
                     Console.WriteLine("Wrong Credentials");
                 }
             }
 
 		}
+
+        private void workOffBtn_Click(object sender, RoutedEventArgs e)
+        {
+            appStatus.isUserLogged = false;
+            filesListGrid.Visibility = Visibility.Visible;
+            LoginGrid.Visibility = Visibility.Hidden;
+            newFileGrid.Visibility = Visibility.Hidden;
+            welcomeGrid.Visibility = Visibility.Hidden;
+
+            listOfFiles.ItemsSource = null;
+            listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+        }
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
@@ -147,6 +173,11 @@ namespace NativeApp
 
 					MessageBox.Show("File has been saved");
 				}
+                if (appStatus.isServerOnline == true && appStatus.isOnline == true)
+                {
+                    Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
+                    document.PostDocument(document);
+                }
 			}
 			else if (File.Exists(allPath))
 			{

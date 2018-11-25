@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace NativeApp
 {
@@ -30,6 +32,34 @@ namespace NativeApp
         {
             this.file_content = documentContent;
             this.file_update_date = DateTime.Now;
+        }
+
+        public void PostDocument(Document document)
+        {
+            Get2(document);
+        }
+
+        public async void Get2(Document document)
+        {
+            var r = await IsAuthenticated(document);
+        }
+
+        public async Task<bool> IsAuthenticated(Document document)
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                var response = client.PostAsJsonAsync("files", document).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonContent = await response.Content.ReadAsStringAsync();
+                    Console.Write("Success");
+                    return true;
+                }
+                else
+                    Console.Write("Error");
+                return false;
+            }
         }
     }
 
