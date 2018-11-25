@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NativeApp.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -25,14 +26,18 @@ namespace NativeApp
 	{
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		
-		
-
 		public Login()
 		{
 
 			InitializeComponent();
-			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-
+            if (Directory.Exists(path))
+            {
+                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+            }
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -45,7 +50,8 @@ namespace NativeApp
 
 			mainGrid.Visibility = Visibility.Hidden;
 			LoginGrid.Visibility = Visibility.Visible;
-            Get2();
+            Documents documents = new Documents();
+            documents.Get2();
 			welcomeGrid.Visibility = Visibility.Hidden;
 
 		}
@@ -109,54 +115,6 @@ namespace NativeApp
 
         }
 
-        async void Get2()
-        {
-            var r = await DownloadPage2("http://127.0.0.1:5000/files");
-        }
-
-        async Task<string> DownloadPage2(string url)
-        {
-            List<Document> model = new List<Document>();
-            using (var client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                using (var r = await client.GetAsync(new Uri(url)))
-                {
-                    var file = await r.Content.ReadAsStringAsync();
-                    model = await r.Content.ReadAsAsync<List<Document>>();
-                }
-                CreateFiles(model);
-                return model.ToString();
-            }
-        }
-
-        private static void CreateFiles(List<Document> listka)
-        {
-            string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-            foreach (var i in listka)
-            {
-                var path = System.IO.Path.Combine(directoryPath, i.file_name);
-                path = path.Replace(" ", string.Empty);
-                path = path.Substring(0, path.Length - 1);
-                path = path + ".txt";
-				//File.Create(path);
-				//File.WriteAllText(path, i.file_content);
-
-				using (StreamWriter str = File.CreateText(path))
-				{
-					str.WriteLine(i.file_content);
-					str.Flush();
-
-				}
-
-			}
-        }
-
 		private void saveBtn_Click(object sender, RoutedEventArgs e)
 		{
 			String title = TitleBox.Text;
@@ -164,8 +122,6 @@ namespace NativeApp
 
 			string filename = String.Format("{0}.txt", title);
 			string allPath = System.IO.Path.Combine(path, filename);
-
-			//Console.WriteLine(allPath);
 
 			if (!File.Exists(allPath))
 			{
