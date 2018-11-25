@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace NativeApp.Models
 {
-
     public class Documents
     {
         public static string mainUrl = "http://127.0.0.1:5000";
-        public static string documentUrl = mainUrl + @"/Files";
+        public static string documentUrl = mainUrl + @"/files";
         private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-        private static List<Document> documentsAA;
+        private static List<Document> currentDocuments;
 
         public bool isUpdated { get; set; }
 
@@ -26,7 +25,7 @@ namespace NativeApp.Models
 
         public async void Get2()
         {
-            var r = await DownloadPage2("http://127.0.0.1:5000/files");
+            var r = await DownloadPage2(documentUrl);
         }
 
         async Task<string> DownloadPage2(string url)
@@ -41,6 +40,7 @@ namespace NativeApp.Models
                     var file = await r.Content.ReadAsStringAsync();
                     model = await r.Content.ReadAsAsync<List<Document>>();
                 }
+                currentDocuments = model;
                 CreateFiles(model);
                 return model.ToString();
             }

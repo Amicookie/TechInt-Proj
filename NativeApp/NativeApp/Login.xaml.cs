@@ -28,8 +28,8 @@ namespace NativeApp
 		
 		public Login()
 		{
-
 			InitializeComponent();
+            AppStatus appStatus = new AppStatus();
             if (Directory.Exists(path))
             {
                 listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
@@ -65,10 +65,25 @@ namespace NativeApp
 
 		private void loginBtn_Click(object sender, RoutedEventArgs e)
 		{
-			MenuGrid.Visibility = Visibility.Hidden;
-			loginMenuGrid.Visibility = Visibility.Visible;
-			LoginGrid.Visibility = Visibility.Hidden;
-			welcomeGrid.Visibility = Visibility.Visible;
+            User user;
+            String login = loginBox.Text;
+            String password = passBox.Password.ToString();
+            if (login.Count() > 0 && password.Count() > 0)
+            {
+                user = new User(login,password);
+                user.Get2();
+                if (user.user_exists == true)
+                {
+                    MenuGrid.Visibility = Visibility.Hidden;
+                    loginMenuGrid.Visibility = Visibility.Visible;
+                    LoginGrid.Visibility = Visibility.Hidden;
+                    welcomeGrid.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    Console.WriteLine("Wrong Credentials");
+                }
+            }
 
 		}
 

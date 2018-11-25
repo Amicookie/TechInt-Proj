@@ -67,6 +67,7 @@
     <Compile Include="Models\AppStatus.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Documents.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Login.xaml">
       <SubType>Designer</SubType>
