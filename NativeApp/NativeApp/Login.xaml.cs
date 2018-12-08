@@ -62,8 +62,6 @@ namespace NativeApp
                 workOffBtn.Visibility = Visibility.Visible;
             }
 			LoginGrid.Visibility = Visibility.Visible;
-            Documents documents = new Documents();
-            documents.Get2();
 			welcomeGrid.Visibility = Visibility.Hidden;
 		}
 
@@ -111,9 +109,12 @@ namespace NativeApp
 
             listOfFiles.ItemsSource = null;
             listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
+            loginMenuGrid.Visibility = Visibility.Visible;
+
         }
 
-		private void filesBtn_Click(object sender, RoutedEventArgs e)
+        private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
 			filesListGrid.Visibility = Visibility.Visible;
 			newFileGrid.Visibility = Visibility.Hidden;
@@ -121,6 +122,9 @@ namespace NativeApp
 
 			listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+            Documents documents = new Documents();
+            documents.Get2(true);
+
 		}
 
 		private void newFileBtn_Click(object sender, RoutedEventArgs e)
@@ -176,7 +180,15 @@ namespace NativeApp
                 if (appStatus.isServerOnline == true && appStatus.isOnline == true)
                 {
                     Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
-                    document.PostDocument(document);
+                    if (document.checkIfNoDuplicated())
+                    {
+                        document.PostDocument(document);
+
+                    }
+                    else
+                    {
+                        document.file_name = document.file_name + "1";
+                    }
                 }
 			}
 			else if (File.Exists(allPath))

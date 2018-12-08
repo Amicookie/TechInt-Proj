@@ -11,10 +11,19 @@ namespace NativeApp.Models
 {
     public class Documents
     {
+        public enum stateOfDocument
+        {
+            notChanged = 0,
+            changedLocal = 1,
+            changedGlobal = 2,
+            exsistOnlyLocal = 3,
+            exsistOnlyGlobal = 4
+        }
         public static string mainUrl = "http://127.0.0.1:5000";
         public static string documentUrl = mainUrl + @"/files";
         private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-        private static List<Document> currentDocuments;
+        public static List<Document> currentDocuments;
+        Dictionary<Document, stateOfDocument> documentsState = new Dictionary<Document, stateOfDocument>();
 
         public bool isUpdated { get; set; }
 
@@ -23,12 +32,12 @@ namespace NativeApp.Models
             isUpdated = true;
         }
 
-        public async void Get2()
+        public async void Get2(bool ifCreate)
         {
-            var r = await DownloadPage2(documentUrl);
+            var r = await DownloadPage2(documentUrl, ifCreate);
         }
 
-        async Task<string> DownloadPage2(string url)
+        async Task<string> DownloadPage2(string url, bool ifCreate)
         {
             List<Document> model = new List<Document>();
             using (var client = new HttpClient())
@@ -41,7 +50,11 @@ namespace NativeApp.Models
                     model = await r.Content.ReadAsAsync<List<Document>>();
                 }
                 currentDocuments = model;
-                CreateFiles(model);
+                if (ifCreate)
+                {
+                    CreateFiles(model);
+                }
+
                 return model.ToString();
             }
         }
@@ -57,7 +70,6 @@ namespace NativeApp.Models
             {
                 var path = System.IO.Path.Combine(directoryPath, i.file_name);
                 path = path.Replace(" ", string.Empty);
-                path = path.Substring(0, path.Length - 1);
                 path = path + ".txt";
 
                 using (StreamWriter str = File.CreateText(path))
@@ -66,6 +78,46 @@ namespace NativeApp.Models
                     str.Flush();
                 }
 
+                File.SetCreationTime(path, i.file_creation_date);
+                File.SetLastWriteTime(path,i.file_update_date);
+
+            }
+        }
+
+        //toDo
+        public void CompareDocuments()
+        {
+            documentsState.Clear();
+            Get2(false);
+            var globalDocuments = currentDocuments;
+            var localDocuments = Directory.GetFiles(path);
+            foreach (var docG in globalDocuments)
+            {
+                foreach (var docL in localDocuments)
+                {
+                    if (docG.file_name == docL)
+                    {
+                        var state = CompareLastAccess(docG.file_update_date, docL);
+                        documentsState.Add(docG, state);
+                    }
+                }
+            }
+        }
+
+        public stateOfDocument CompareLastAccess(DateTime dateTime, string path)
+        {
+            DateTime localFileDateTime = File.GetLastWriteTime(path);
+            if (localFileDateTime > dateTime)
+            {
+                return stateOfDocument.changedLocal;
+            }
+            else if (localFileDateTime < dateTime)
+            {
+                return stateOfDocument.changedLocal;
+            }
+            else
+            {
+                return stateOfDocument.notChanged;
             }
         }
     }

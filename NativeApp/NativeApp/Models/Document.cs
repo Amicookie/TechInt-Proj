@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using NativeApp.Models;
 
 namespace NativeApp
 {
@@ -61,6 +62,31 @@ namespace NativeApp
                 return false;
             }
         }
+
+        public bool checkIfNoDuplicated()
+        {
+            Documents documents = new Documents();
+            documents.Get2(false);
+            var list = Documents.currentDocuments;
+            int falseCount = 0;
+            foreach (var doc in list)
+            {
+                if (file_name == doc.file_name)
+                {
+                    falseCount++;
+                }
+            }
+
+            if (falseCount > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
     }
 
 
