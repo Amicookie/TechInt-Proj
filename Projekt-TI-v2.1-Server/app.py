@@ -8,9 +8,6 @@ from flask_hashing import Hashing
 from threading import Lock, Thread, Event
 from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect, send
 
-# import json
-# from playhouse.shortcuts import model_to_dict, dict_to_model
-
 async_mode = None
 
 app = Flask(__name__)
@@ -58,11 +55,6 @@ def test_message(message):
     #socketio.emit('message', message)
     print('Message: ' + message)
     send(message)
-
-# @socketio.on('message')
-# def chat_message(message):
-#     print('Message:' + message)
-#     send(message, broadcast=True)
 
 
 @socketio.on('fileSaved', namespace='/api')
@@ -173,41 +165,6 @@ def hello_world():
     return 'Hello World!'
 
 
-# @app.route('/files')
-# def get_files(Resource):
-#     from database.db_generator import get_all_files
-#     return jsonify(get_all_files())
-#
-#
-# @app.route('/users')
-# def get_users(Resource):
-#     from database.db_generator import get_all_users
-#     return jsonify(get_all_users())
-
-# @app.route('/index', methods=['POST'])
-# def handle_login():
-#     from database.db_methods import get_user_2
-#     if request.method == 'POST':
-#         login_form = request.json['user_login']
-#         exists = get_user_2(login_form, "null")
-#         print(exists)
-#         if not exists:
-#             flash('Account with such login does not exist.', 'error')
-#             return {"user_exists": 0, "logged_in": 0}
-#         else:
-#             password_form = request.json['user_password']
-#             hashed_input = hashing.hash_value(password_form, salt='secretsalt')
-#             check_user = get_user_2(login_form, hashed_input)
-#             if check_user and check_user.user_login == login_form \
-#                     and check_user.user_password == hashed_input:
-#                 session['login'] = login_form
-#                 session['user_id'] = check_user.user_id
-#                 return {"user_exists": 1, "logged_in": 1}
-#             else:
-#                 flash('Password is not correct. Please try again.', 'error')
-#                 return {"user_exists": 1, "logged_in": 0}
-
-
 class FileList(Resource):
     def get(self):
         from database.db_generator import get_all_files
@@ -245,21 +202,14 @@ class OneFile(Resource):
 class Users(Resource):
     def get(self):
         from database.db_generator import get_all_users
+        print(get_all_users())
         return jsonify(get_all_users())
 
     def post(self):
-        from database.db_generator import get_all_users
         from database.db_methods import does_user_exist, log_in_user
-        # print(request.json['user_login'])
-        # user_login = (request.json['user_login'])
-        # print(user_login)
-        # print(does_user_exist(user_login))
-        #
-        # #print(does_user_exist((request.json['user_login'])))
-        # return jsonify(get_all_users())
+
         login_form = request.json['user_login']
         print(request.json['user_login'])
-       # exists = get_user_2(login_form, "null")
         exists = does_user_exist(login_form)
         print(exists)
         if not exists:

@@ -57,9 +57,8 @@ def get_all_files():
 def get_all_users():
     users = []
     for user in User.select():
-        # print(user.user_id, user.user_login)
-        users.append(model_to_dict(user))
-    # print()
+        users.append(user.to_json())
+
     return users
 
 # get_all_files()
