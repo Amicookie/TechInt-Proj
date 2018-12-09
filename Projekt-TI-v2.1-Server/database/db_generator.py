@@ -26,6 +26,14 @@ def insert_data():
          'file_content': 'It\'s MIIIIIIIIIIIDNIGHT, losing control now, '
                          'IT\'S ALLLLLLLLLLRIGHT, Music is so loud! IT\'S MIDNIGHT! PA PA PARA PA PA',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
+         'file_last_editor_id': 1},
+        {'file_name': 'Kreatywny plik',
+         'file_content': 'Jestem bardzo kreatywnym plikiem, czcijcie mnie! Bo jestem zmieniony! I już nie',
+         'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
+         'file_last_editor_id': 1},
+        {'file_name': 'Inspirujący plik',
+         'file_content': 'Jestem bardzo inspirującym plikiem i kocham być inspirujący! Quote: Ja inspiruję -Plik.',
+         'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1}
     ]
 
