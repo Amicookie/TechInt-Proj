@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace NativeApp
 {
@@ -24,7 +25,9 @@ namespace NativeApp
 	/// </summary>
 	public partial class Login : Window
 	{
-		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
+        private User user;
+
+        String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		AppStatus appStatus = new AppStatus();
 		public Login()
 		{
@@ -74,7 +77,6 @@ namespace NativeApp
 
 		private void loginBtn_Click(object sender, RoutedEventArgs e)
 		{
-			User user;
 			String login = loginBox.Text;
 			String password = passBox.Password.ToString();
 			if (login.Count() > 0 && password.Count() > 0)
@@ -96,7 +98,6 @@ namespace NativeApp
 					Console.WriteLine("Wrong Credentials");
 				}
 			}
-
 		}
 
 		private void workOffBtn_Click(object sender, RoutedEventArgs e)
@@ -128,8 +129,6 @@ namespace NativeApp
 			{
 				documents.CompareDocuments();
 			}
-
-
 		}
 
 		private void newFileBtn_Click(object sender, RoutedEventArgs e)
@@ -175,37 +174,46 @@ namespace NativeApp
 
 			if (!File.Exists(allPath))
 			{
-				using (StreamWriter str = File.CreateText(allPath))
-				{
-					str.WriteLine(content);
-					str.Flush();
-
-					MessageBox.Show("File has been saved");
-				}
 				if (appStatus.isServerOnline == true && appStatus.isOnline == true)
 				{
 					Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
 					if (document.checkIfNoDuplicated())
 					{
 						document.PostDocument(document);
-
 					}
 					else
 					{
 						document.file_name = document.file_name + "1";
 					}
 				}
-			}
+			    using (StreamWriter str = File.CreateText(allPath))
+			    {
+			        str.WriteLine(content);
+			        str.Flush();
+			        MessageBox.Show("File has been saved");
+			    }
+            }
 			else if (File.Exists(allPath))
 			{
-				using (var str = new StreamWriter(allPath))
-				{
-					str.WriteLine(content);
-					str.Flush();
 
-					MessageBox.Show("File has been overwritten");
-				}
-			}
+			    if (appStatus.isServerOnline == true && appStatus.isOnline == true)
+			    {
+			        Document exsistingDoc = Documents.currentDocuments
+			                          .Where(a => a.file_name == Path.GetFileNameWithoutExtension(allPath))
+			                          .FirstOrDefault();
+			        exsistingDoc.file_content = content;
+                    //temporary hardcode ;c
+			        exsistingDoc.user_id = 1;
+                    exsistingDoc.CallUpdateDoc();
+			    }
+			    using (var str = new StreamWriter(allPath))
+			    {
+			        str.WriteLine(content);
+			        str.Flush();
+
+			        MessageBox.Show("File has been overwritten");
+			    }
+            }
 
 			TitleBox.Clear();
 			contentBox.Clear();
@@ -216,8 +224,6 @@ namespace NativeApp
 			Sockets newSocket = new Sockets();
 			newSocket.socketIoManager();
 			socketStatusLabel.Content = Sockets.labelText;
-
-
 		}
 	}
 

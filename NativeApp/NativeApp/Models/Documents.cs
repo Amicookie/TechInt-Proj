@@ -58,7 +58,6 @@ namespace NativeApp.Models
 				return model.ToString();
 			}
 		}
-
 		private static void CreateFiles(List<Document> listka)
 		{
 			string directoryPath = path;
@@ -82,8 +81,6 @@ namespace NativeApp.Models
 				File.SetLastWriteTime(path, i.file_update_date);
 			}
 		}
-
-
 		//toDo
 		public void CompareDocuments()
 		{

@@ -29,11 +29,6 @@ namespace NativeApp
             this.user_id = user_id;
         }
 
-        public void UpdateDocument(string documentContent)
-        {
-            this.file_content = documentContent;
-            this.file_update_date = DateTime.Now;
-        }
 
         public void PostDocument(Document document)
         {
@@ -62,6 +57,30 @@ namespace NativeApp
                 return false;
             }
         }
+
+
+        public async void CallUpdateDoc()
+        {
+            var r = await PutFile();
+        }
+        public async Task<bool> PutFile()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                var response = client.PutAsJsonAsync($@"files/{this.file_id}", this).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonContent = await response.Content.ReadAsStringAsync();
+                    Console.Write("Success");
+                    return true;
+                }
+                else
+                    Console.Write("Error");
+                return false;
+            }
+        }
+
 
         public bool checkIfNoDuplicated()
         {
