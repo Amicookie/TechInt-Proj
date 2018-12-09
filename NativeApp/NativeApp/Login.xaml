@@ -29,6 +29,7 @@
             <TextBox Name="loginBox"  HorizontalAlignment="Left" Height="29" Margin="324,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="260" TextChanged="TextBox_TextChanged" Grid.Column="1"/>
             <Label Content="Password" HorizontalAlignment="Left" Margin="216,283,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
             <Label Content="Login" HorizontalAlignment="Left" Margin="216,220,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
+            <Label Name ="wrongCredentials" Content="Wrong user name or password" HorizontalAlignment="Left" Margin="280,323,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" Foreground="Red" Visibility="Hidden"/>
         </Grid>
         <!--Main escreen grid-->
         <Grid Name="mainGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Visible">
@@ -67,9 +68,12 @@
                     FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="saveBtn_Click" />
 
         </Grid>
-<!--welome login grid-->
+        <!--welome login grid-->
         <Grid Name="welcomeGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
             <Label Name ="welcomeLabel" HorizontalAlignment="Left" Margin="226,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <Label Name ="socketStatusLabel" HorizontalAlignment="Left" Margin="226,373,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <Button Name="SocketIO" Content="SocketIO Connect" HorizontalAlignment="Left" Margin="556,523,0,0" VerticalAlignment="Top" Width="204" Height="38"
+                    FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="SocketIO_Click" />
             <!--<Label Name="userLabel" Content="{Binding}" HorizontalAlignment="Left" Margin="413,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" />-->
         </Grid>
     </Grid>

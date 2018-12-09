@@ -25,19 +25,19 @@ namespace NativeApp
 	public partial class Login : Window
 	{
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-        AppStatus appStatus = new AppStatus();
-        public Login()
+		AppStatus appStatus = new AppStatus();
+		public Login()
 		{
-                InitializeComponent();
+			InitializeComponent();
 
-                if (Directory.Exists(path))
-                {
-                    listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-                }
-                else
-                {
-                    Directory.CreateDirectory(path);
-                }
+			if (Directory.Exists(path))
+			{
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			}
+			else
+			{
+				Directory.CreateDirectory(path);
+			}
 		}
 
 		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -49,18 +49,18 @@ namespace NativeApp
 		{
 
 			mainGrid.Visibility = Visibility.Hidden;
-            if(appStatus.isServerOnline == true && appStatus.isOnline == true)
-            {
-                loginBtn.Visibility = Visibility.Visible;
-                workOffBtn.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                loginBtn.Visibility = Visibility.Hidden;
-                passBox.IsEnabled = false;
-                loginBox.IsEnabled = false;
-                workOffBtn.Visibility = Visibility.Visible;
-            }
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true)
+			{
+				loginBtn.Visibility = Visibility.Visible;
+				workOffBtn.Visibility = Visibility.Hidden;
+			}
+			else
+			{
+				loginBtn.Visibility = Visibility.Hidden;
+				passBox.IsEnabled = false;
+				loginBox.IsEnabled = false;
+				workOffBtn.Visibility = Visibility.Visible;
+			}
 			LoginGrid.Visibility = Visibility.Visible;
 			welcomeGrid.Visibility = Visibility.Hidden;
 		}
@@ -74,47 +74,47 @@ namespace NativeApp
 
 		private void loginBtn_Click(object sender, RoutedEventArgs e)
 		{
-            User user;
-            String login = loginBox.Text;
-            String password = passBox.Password.ToString();
-            if (login.Count() > 0 && password.Count() > 0)
-            {
-                user = new User(login,password);
-                user.Get2();
-                if (user.user_exists == true)
-                {
-                    appStatus.isUserLogged = true;
-                    MenuGrid.Visibility = Visibility.Hidden;
-                    loginMenuGrid.Visibility = Visibility.Visible;
-                    LoginGrid.Visibility = Visibility.Hidden;
-                    welcomeGrid.Visibility = Visibility.Visible;
-                    welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
-                }
-                else
-                {
-                    appStatus.isUserLogged = false;
-                    Console.WriteLine("Wrong Credentials");
-                }
-            }
+			User user;
+			String login = loginBox.Text;
+			String password = passBox.Password.ToString();
+			if (login.Count() > 0 && password.Count() > 0)
+			{
+				user = new User(login, password);
+				user.Get2();
+				if (user.user_exists == true && user.logged_in)
+				{
+					appStatus.isUserLogged = true;
+					MenuGrid.Visibility = Visibility.Hidden;
+					loginMenuGrid.Visibility = Visibility.Visible;
+					LoginGrid.Visibility = Visibility.Hidden;
+					welcomeGrid.Visibility = Visibility.Visible;
+					welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
+				}
+				else
+				{
+					appStatus.isUserLogged = false;
+					Console.WriteLine("Wrong Credentials");
+				}
+			}
 
 		}
 
-        private void workOffBtn_Click(object sender, RoutedEventArgs e)
-        {
-            appStatus.isUserLogged = false;
-            filesListGrid.Visibility = Visibility.Visible;
-            LoginGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Hidden;
-            welcomeGrid.Visibility = Visibility.Hidden;
+		private void workOffBtn_Click(object sender, RoutedEventArgs e)
+		{
+			appStatus.isUserLogged = false;
+			filesListGrid.Visibility = Visibility.Visible;
+			LoginGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Hidden;
+			welcomeGrid.Visibility = Visibility.Hidden;
 
-            listOfFiles.ItemsSource = null;
-            listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			listOfFiles.ItemsSource = null;
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-            loginMenuGrid.Visibility = Visibility.Visible;
+			loginMenuGrid.Visibility = Visibility.Visible;
 
-        }
+		}
 
-        private void filesBtn_Click(object sender, RoutedEventArgs e)
+		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
 			filesListGrid.Visibility = Visibility.Visible;
 			newFileGrid.Visibility = Visibility.Hidden;
@@ -122,8 +122,13 @@ namespace NativeApp
 
 			listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-            Documents documents = new Documents();
-            documents.Get2(true);
+			Documents documents = new Documents();
+			documents.Get2(true);
+			if (Documents.currentDocuments != null)
+			{
+				documents.CompareDocuments();
+			}
+
 
 		}
 
@@ -148,17 +153,17 @@ namespace NativeApp
 			welcomeGrid.Visibility = Visibility.Hidden;
 		}
 
-        private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
+		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
 
-            String title = listOfFiles.SelectedItems[0].ToString();
-            string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
-            filesListGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Visible;
-            TitleBox.Text = title.Substring(0, title.Length - 4);
-            contentBox.Text = text;
+			String title = listOfFiles.SelectedItems[0].ToString();
+			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+			filesListGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Visible;
+			TitleBox.Text = title.Substring(0, title.Length - 4);
+			contentBox.Text = text;
 
-        }
+		}
 
 		private void saveBtn_Click(object sender, RoutedEventArgs e)
 		{
@@ -177,19 +182,19 @@ namespace NativeApp
 
 					MessageBox.Show("File has been saved");
 				}
-                if (appStatus.isServerOnline == true && appStatus.isOnline == true)
-                {
-                    Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
-                    if (document.checkIfNoDuplicated())
-                    {
-                        document.PostDocument(document);
+				if (appStatus.isServerOnline == true && appStatus.isOnline == true)
+				{
+					Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
+					if (document.checkIfNoDuplicated())
+					{
+						document.PostDocument(document);
 
-                    }
-                    else
-                    {
-                        document.file_name = document.file_name + "1";
-                    }
-                }
+					}
+					else
+					{
+						document.file_name = document.file_name + "1";
+					}
+				}
 			}
 			else if (File.Exists(allPath))
 			{
@@ -205,6 +210,17 @@ namespace NativeApp
 			TitleBox.Clear();
 			contentBox.Clear();
 		}
+
+		private void SocketIO_Click(object sender, RoutedEventArgs e)
+		{
+			Sockets newSocket = new Sockets();
+			newSocket.socketIoManager();
+			socketStatusLabel.Content = Sockets.labelText;
+
+
+		}
 	}
-	}
+
+
+}
 
