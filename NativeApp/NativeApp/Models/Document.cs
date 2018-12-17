@@ -88,22 +88,27 @@ namespace NativeApp
             documents.Get2(false);
             var list = Documents.currentDocuments;
             int falseCount = 0;
-            foreach (var doc in list)
+            if (list.Count > 0)
             {
-                if (file_name == doc.file_name)
+                foreach (var doc in list)
                 {
-                    falseCount++;
+                    if (file_name == doc.file_name)
+                    {
+                        falseCount++;
+                    }
+                }
+
+                if (falseCount > 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
                 }
             }
 
-            if (falseCount > 0)
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
+            return true;
         }
 
     }

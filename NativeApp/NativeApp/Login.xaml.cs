@@ -75,32 +75,38 @@ namespace NativeApp
 			welcomeGrid.Visibility = Visibility.Hidden;
 		}
 
-		private void loginBtn_Click(object sender, RoutedEventArgs e)
-		{
-			String login = loginBox.Text;
-			String password = passBox.Password.ToString();
-			if (login.Count() > 0 && password.Count() > 0)
-			{
-				user = new User(login, password);
-				user.Get2();
-				if (user.user_exists == true && user.logged_in)
-				{
-					appStatus.isUserLogged = true;
-					MenuGrid.Visibility = Visibility.Hidden;
-					loginMenuGrid.Visibility = Visibility.Visible;
-					LoginGrid.Visibility = Visibility.Hidden;
-					welcomeGrid.Visibility = Visibility.Visible;
-					welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
-				}
-				else
-				{
-					appStatus.isUserLogged = false;
-					Console.WriteLine("Wrong Credentials");
-				}
-			}
-		}
+	    private void loginBtn_Click(object sender, RoutedEventArgs e)
+	    {
+	        String login = loginBox.Text;
+	        String password = passBox.Password.ToString();
+	        if (login.Count() > 0 && password.Count() > 0)
+	        {
+	            user = new User(login, password);
+	            user.Get2();
+	            if (user.user_exists == true && user.logged_in)
+	            {
+	                appStatus.isUserLogged = true;
+	                MenuGrid.Visibility = Visibility.Hidden;
+	                loginMenuGrid.Visibility = Visibility.Visible;
+	                LoginGrid.Visibility = Visibility.Hidden;
+	                welcomeGrid.Visibility = Visibility.Visible;
+	                welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
+	                Documents documents = new Documents();
+	                documents.Get2(true);
+	                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+	            }
+	            else
+	            {
+	                appStatus.isUserLogged = false;
+	                MessageBox.Show("Wrong Credentials");
+	            }
 
-		private void workOffBtn_Click(object sender, RoutedEventArgs e)
+	            loginBox.Clear();
+	            passBox.Clear();
+	        }
+	    }
+
+	    private void workOffBtn_Click(object sender, RoutedEventArgs e)
 		{
 			appStatus.isUserLogged = false;
 			filesListGrid.Visibility = Visibility.Visible;
@@ -117,21 +123,23 @@ namespace NativeApp
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
-			filesListGrid.Visibility = Visibility.Visible;
-			newFileGrid.Visibility = Visibility.Hidden;
-			welcomeGrid.Visibility = Visibility.Hidden;
 
-			listOfFiles.ItemsSource = null;
-			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 			Documents documents = new Documents();
 			documents.Get2(true);
 			if (Documents.currentDocuments != null)
 			{
-				documents.CompareDocuments();
-			}
-		}
+				//Documents.CompareDocuments();
+			    listOfFiles.ItemsSource = null;
+			    listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			    filesListGrid.Visibility = Visibility.Visible;
+			    newFileGrid.Visibility = Visibility.Hidden;
+			    welcomeGrid.Visibility = Visibility.Hidden;
+            }
 
-		private void newFileBtn_Click(object sender, RoutedEventArgs e)
+
+        }
+
+        private void newFileBtn_Click(object sender, RoutedEventArgs e)
 		{
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
@@ -154,21 +162,19 @@ namespace NativeApp
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-
 			String title = listOfFiles.SelectedItems[0].ToString();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
 			TitleBox.Text = title.Substring(0, title.Length - 4);
 			contentBox.Text = text;
-
 		}
 
 		private void saveBtn_Click(object sender, RoutedEventArgs e)
 		{
 			String title = TitleBox.Text;
 			String content = contentBox.Text;
-
+		    string filenameNoExtension = title;
 			string filename = String.Format("{0}.txt", title);
 			string allPath = System.IO.Path.Combine(path, filename);
 
@@ -176,26 +182,28 @@ namespace NativeApp
 			{
 				if (appStatus.isServerOnline == true && appStatus.isOnline == true)
 				{
-					Document document = new Document(filename, content, DateTime.Now, DateTime.Now, 1, 0);
+					Document document = new Document(filenameNoExtension, content, DateTime.Now, DateTime.Now, 1, 0);
 					if (document.checkIfNoDuplicated())
 					{
 						document.PostDocument(document);
 					}
 					else
 					{
-						document.file_name = document.file_name + "1";
+					    MessageBox.Show("File name exsist!");
 					}
 				}
-			    using (StreamWriter str = File.CreateText(allPath))
+			    else 
 			    {
-			        str.WriteLine(content);
-			        str.Flush();
-			        MessageBox.Show("File has been saved");
+                    using (StreamWriter str = File.CreateText(allPath))
+			        {
+			            str.WriteLine(content);
+			            str.Flush();
+			            MessageBox.Show("File has been saved");
+			        }
 			    }
-            }
+			}
 			else if (File.Exists(allPath))
 			{
-
 			    if (appStatus.isServerOnline == true && appStatus.isOnline == true)
 			    {
 			        Document exsistingDoc = Documents.currentDocuments
@@ -206,16 +214,23 @@ namespace NativeApp
 			        exsistingDoc.user_id = 1;
                     exsistingDoc.CallUpdateDoc();
 			    }
-			    using (var str = new StreamWriter(allPath))
+			    else
 			    {
-			        str.WriteLine(content);
-			        str.Flush();
+			        using (var str = new StreamWriter(allPath))
+			        {
+			            str.WriteLine(content);
+			            str.Flush();
 
-			        MessageBox.Show("File has been overwritten");
-			    }
+			            MessageBox.Show("File has been overwritten");
+			        }
+                }
+
             }
-
-			TitleBox.Clear();
+            Documents documents = new Documents();
+            documents.Get2(true);
+		    listOfFiles.ItemsSource = null;
+		    listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+            TitleBox.Clear();
 			contentBox.Clear();
 		}
 

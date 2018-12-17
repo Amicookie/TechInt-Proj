@@ -23,7 +23,7 @@ namespace NativeApp.Models
 		public static string documentUrl = mainUrl + @"/files";
 		private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		public static List<Document> currentDocuments;
-		Dictionary<Document, stateOfDocument> documentsState = new Dictionary<Document, stateOfDocument>();
+		static Dictionary<Document, stateOfDocument> documentsState = new Dictionary<Document, stateOfDocument>();
 
 		public bool isUpdated { get; set; }
 
@@ -65,6 +65,8 @@ namespace NativeApp.Models
 			{
 				Directory.CreateDirectory(directoryPath);
 			}
+
+		    CompareDocuments();
 			foreach (var i in listka)
 			{
 				var path = System.IO.Path.Combine(directoryPath, i.file_name);
@@ -82,22 +84,25 @@ namespace NativeApp.Models
 			}
 		}
 		//toDo
-		public void CompareDocuments()
+		public static void CompareDocuments()
 		{
 			documentsState.Clear();
-			Get2(false);
 			var globalDocuments = currentDocuments;
 			var localDocuments = Directory.GetFiles(path).ToList();
-			List<String> listOfLocalPath = new List<string>();
+		    var localDocumentsName = new List<String>();
+		    foreach (var file in localDocuments)
+		    {
+		        localDocumentsName.Add(Path.GetFileNameWithoutExtension(file));
+		    }
 			var commonFiles = new List<Document>();
-			List<String> commonFilesNameToList = commonFiles.Select(a => a.file_name).ToList();
 			foreach (var docG in globalDocuments)
 			{
-				foreach (var docL in localDocuments)
+				foreach (var docL in localDocumentsName)
 				{
-					if (docG.file_name == Path.GetFileNameWithoutExtension(docL))
+					if (docG.file_name == docL)
 					{
 						commonFiles.Add(docG);
+					    documentsState.Add(docG, stateOfDocument.notChanged);
 						break;
 					}
 				}
@@ -107,8 +112,14 @@ namespace NativeApp.Models
 			{
 				documentsState.Add(gDocument, stateOfDocument.exsistOnlyGlobal);
 			}
-			var localOnly = localDocuments.Except(commonFilesNameToList);
-		}
+		    List<String> commonFilesNameToList = commonFiles.Select(a => a.file_name).ToList();
+		    var listOfLocalPath = localDocumentsName.Except(commonFilesNameToList);
+		    foreach (var path in listOfLocalPath)
+		    {
+		        Document document = new Document(path, File.ReadAllText(path), DateTime.Now, DateTime.Now, 1,1);
+		        documentsState.Add(document, stateOfDocument.exsistOnlyLocal);
+            }
+        }
 
 		public stateOfDocument CompareLastAccess(DateTime dateTime, string path)
 		{

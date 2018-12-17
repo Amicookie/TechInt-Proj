@@ -15,23 +15,23 @@ def insert_data():
     User.insert_many(users).execute()
 
     files = [
-        {'file_name': 'How To Be A Heartbreaker?', 'file_content': 'This is how to be a heartbreaaaaaaaaaaaaker! XD',
+        {'file_name': 'File1', 'file_content': 'This is how to be a heartbreaaaaaaaaaaaaker! XD',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1},
-        {'file_name': 'Hate everybody!',
+        {'file_name': 'File2',
          'file_content': 'Description of this text is unbelievably bad. And the content is bad, too.',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1},
-        {'file_name': 'Allnighter',
+        {'file_name': 'File3',
          'file_content': 'It\'s MIIIIIIIIIIIDNIGHT, losing control now, '
                          'IT\'S ALLLLLLLLLLRIGHT, Music is so loud! IT\'S MIDNIGHT! PA PA PARA PA PA',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1},
-        {'file_name': 'Kreatywny plik',
+        {'file_name': 'File4',
          'file_content': 'Jestem bardzo kreatywnym plikiem, czcijcie mnie! Bo jestem zmieniony! I już nie',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1},
-        {'file_name': 'Inspirujący plik',
+        {'file_name': 'File5',
          'file_content': 'Jestem bardzo inspirującym plikiem i kocham być inspirujący! Quote: Ja inspiruję -Plik.',
          'file_creation_date': _get_date(), 'file_update_date': _get_date(), 'file_creator_id': 1,
          'file_last_editor_id': 1}
