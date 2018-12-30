@@ -18,10 +18,10 @@ namespace NativeApp.Models
         public AppStatus()
         {
             isOnline = CheckForInternetConnection();
-            CheckForServerStatusAsync();
+            isServerOnline = CheckForServerConnection();
         }
 
-        private static bool CheckForInternetConnection()
+        public static bool CheckForInternetConnection()
         {
             try
             {
@@ -36,24 +36,15 @@ namespace NativeApp.Models
                 return false;
             }
         }
-        public async void CheckForServerStatusAsync()
-        {
-                var r = await PingServer(Documents.mainUrl);
 
-        }
-        private async Task<bool> PingServer(string url)
+        public static bool CheckForServerConnection()
         {
             try
             {
-                using (var client = new HttpClient())
+                using (var client = new WebClient())
+                using (client.OpenRead("http://127.0.0.1:5000"))
                 {
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    using (var r = await client.GetAsync(url))
-                    {
-                        isServerOnline = r.IsSuccessStatusCode;
-                        return r.IsSuccessStatusCode;
-                    }
+                    return true;
                 }
             }
             catch
@@ -61,9 +52,9 @@ namespace NativeApp.Models
                 return false;
             }
         }
+       
 
-
-    }
+        }
 
 
 }

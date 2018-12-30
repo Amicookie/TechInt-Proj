@@ -43,6 +43,8 @@
                     BorderThickness="0" Click="newFileBtn_Click" FontWeight="Bold" Foreground="White"/>
             <Button Name ="logoutBtn" Content="Logout" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="logoutBtn_Click" FontWeight="Bold" Foreground="White"/>
+            <Button Name ="loginBttn" Content="Login" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+                    BorderThickness="0" Click="Button_Click" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
             <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
         </Grid>
 

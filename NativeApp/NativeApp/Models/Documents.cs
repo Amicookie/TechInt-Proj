@@ -21,7 +21,7 @@ namespace NativeApp.Models
 		}
 		public static string mainUrl = "http://127.0.0.1:5000";
 		public static string documentUrl = mainUrl + @"/files";
-		private static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
+		public static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		public static List<Document> currentDocuments;
 		static Dictionary<Document, stateOfDocument> documentsState = new Dictionary<Document, stateOfDocument>();
 
@@ -34,7 +34,14 @@ namespace NativeApp.Models
 
 		public async void Get2(bool ifCreate)
 		{
-			var r = await DownloadPage2(documentUrl, ifCreate);
+            try
+            {
+                var r = await DownloadPage2(documentUrl, ifCreate);
+		    }
+		    catch (Exception e)
+		    {
+
+		    }
 		}
 
 		async Task<string> DownloadPage2(string url, bool ifCreate)
