@@ -25,13 +25,6 @@ namespace NativeApp.Models
 		public static List<Document> currentDocuments;
 		static Dictionary<Document, stateOfDocument> documentsState = new Dictionary<Document, stateOfDocument>();
 
-		public bool isUpdated { get; set; }
-
-		public Documents()
-		{
-			isUpdated = true;
-		}
-
 		public async void Get2(bool ifCreate)
 		{
             try
@@ -59,13 +52,13 @@ namespace NativeApp.Models
 				currentDocuments = model;
 				if (ifCreate)
 				{
-					CreateFiles(model);
+					CreateFiles();
 				}
 
 				return model.ToString();
 			}
 		}
-		private static void CreateFiles(List<Document> listka)
+		private static void CreateFiles()
 		{
 			string directoryPath = path;
 			if (!Directory.Exists(directoryPath))
@@ -74,22 +67,42 @@ namespace NativeApp.Models
 			}
 
 		    CompareDocuments();
-			foreach (var i in listka)
+			foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.exsistOnlyGlobal))
 			{
-				var path = System.IO.Path.Combine(directoryPath, i.file_name);
+				var path = System.IO.Path.Combine(directoryPath, i.Key.file_name);
 				path = path.Replace(" ", string.Empty);
 				path = path + ".txt";
 
 				using (StreamWriter str = File.CreateText(path))
 				{
-					str.WriteLine(i.file_content);
+					str.WriteLine(i.Key.file_content);
 					str.Flush();
 				}
 
-				File.SetCreationTime(path, i.file_creation_date);
-				File.SetLastWriteTime(path, i.file_update_date);
+				File.SetCreationTime(path, i.Key.file_creation_date);
+				File.SetLastWriteTime(path, i.Key.file_update_date);
 			}
-		}
+		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.exsistOnlyLocal))
+		    {
+		        i.Key.PostDocument(i.Key);
+		    }
+		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedGlobal))
+		    {
+		        var pathh = Path.Combine(path, i.Key.file_name + ".txt");
+		        File.Delete(pathh);
+		        using (StreamWriter str = File.CreateText(pathh))
+		        {
+		            str.WriteLine(i.Key.file_content);
+		            str.Flush();
+		        }
+                File.SetCreationTime(pathh, i.Key.file_creation_date);
+		        File.SetLastWriteTime(pathh, i.Key.file_update_date);
+            }
+		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedLocal))
+		    {
+		        i.Key.CallUpdateDoc();
+		    }
+        }
 		//toDo
 		public static void CompareDocuments()
 		{
@@ -109,11 +122,16 @@ namespace NativeApp.Models
 					if (docG.file_name == docL)
 					{
 						commonFiles.Add(docG);
-					    documentsState.Add(docG, stateOfDocument.notChanged);
 						break;
 					}
 				}
 			}
+
+		    foreach (var fil in commonFiles)
+		    {
+		        var x = CompareLastAccess(fil.file_update_date, fil.file_name);
+                documentsState.Add(fil,x);
+		    }
 			var globalOnly = globalDocuments.Except(commonFiles);
 			foreach (var gDocument in globalOnly)
 			{
@@ -121,16 +139,20 @@ namespace NativeApp.Models
 			}
 		    List<String> commonFilesNameToList = commonFiles.Select(a => a.file_name).ToList();
 		    var listOfLocalPath = localDocumentsName.Except(commonFilesNameToList);
-		    foreach (var path in listOfLocalPath)
+		    foreach (var pathh in listOfLocalPath)
 		    {
-		        Document document = new Document(path, File.ReadAllText(path), DateTime.Now, DateTime.Now, 1,1);
+		        var pathFile = Path.Combine(path,pathh + ".txt");
+
+                var content = File.ReadAllText(pathFile);
+                Document document = new Document(pathh, content, DateTime.Now, DateTime.Now, 1,1);
 		        documentsState.Add(document, stateOfDocument.exsistOnlyLocal);
             }
         }
 
-		public stateOfDocument CompareLastAccess(DateTime dateTime, string path)
+		public static stateOfDocument CompareLastAccess(DateTime dateTime, string name)
 		{
-			DateTime localFileDateTime = File.GetLastWriteTime(path);
+		    var pathu = Path.Combine(path, name);
+			DateTime localFileDateTime = File.GetLastWriteTime(pathu);
 			if (localFileDateTime > dateTime)
 			{
 				return stateOfDocument.changedLocal;

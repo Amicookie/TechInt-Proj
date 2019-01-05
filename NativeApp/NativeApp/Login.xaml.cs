@@ -284,6 +284,7 @@ namespace NativeApp
                     else
                     {
                         exsistingDoc.CallUpdateDoc();
+                        MessageBox.Show("File has been updated!");
                     }
                 }
                 else if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == false)
