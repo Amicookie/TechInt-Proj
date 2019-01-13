@@ -30,6 +30,9 @@ namespace NativeApp
         String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
         AppStatus appStatus = new AppStatus();
 
+		Sockets newSocket = new Sockets();
+
+
         public Login()
         {
             InitializeComponent();
@@ -53,6 +56,7 @@ namespace NativeApp
         {
             appStatus.isServerOnline = AppStatus.CheckForServerConnection();
             appStatus.isOnline = AppStatus.CheckForInternetConnection();
+
             mainGrid.Visibility = Visibility.Hidden;
             filesListGrid.Visibility = Visibility.Hidden;
             newFileGrid.Visibility = Visibility.Hidden;
@@ -103,12 +107,16 @@ namespace NativeApp
                     LoginGrid.Visibility = Visibility.Hidden;
                     welcomeGrid.Visibility = Visibility.Visible;
                     welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
+
                     Documents documents = new Documents();
                     documents.Get2(true);
                     listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
                     loginBttn.Visibility = Visibility.Hidden;
                     logoutBtn.Visibility = Visibility.Visible;
-                }
+
+					newSocket.socketIoManager();
+				}
                 else
                 {
                     appStatus.isUserLogged = false;
@@ -148,6 +156,7 @@ namespace NativeApp
             {
                 listOfFiles.ItemsSource = null;
                 listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
                 filesListGrid.Visibility = Visibility.Visible;
                 newFileGrid.Visibility = Visibility.Hidden;
                 welcomeGrid.Visibility = Visibility.Hidden;
@@ -159,6 +168,7 @@ namespace NativeApp
             {
                 listOfFiles.ItemsSource = null;
                 listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
                 filesListGrid.Visibility = Visibility.Visible;
                 newFileGrid.Visibility = Visibility.Hidden;
                 welcomeGrid.Visibility = Visibility.Hidden;
@@ -194,18 +204,66 @@ namespace NativeApp
         {
             String title = listOfFiles.SelectedItems[0].ToString();
             string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+
             filesListGrid.Visibility = Visibility.Hidden;
             newFileGrid.Visibility = Visibility.Visible;
+
             TitleBox.Text = title.Substring(0, title.Length - 4);
             contentBox.Text = text;
+
+			//-----------------------Emit--------------------------------
+			//newSocket.socketIoEmit(title.Substring(0, title.Length - 4), 1);
+
+
+			//-----------------------------------------------------------
         }
 
-        private void saveBtn_Click(object sender, RoutedEventArgs e)
+
+		private void backBtn_Click(object sender, RoutedEventArgs e)
+		{
+			Documents documents = new Documents();
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				documents.Get2(true);
+
+				//----------------------Emit----------------------------------
+				//string unlockName = TitleBox.Text.Substring(0, TitleBox.Text.Length - 4);
+				//newSocket.socketIoEmit(unlockName, 0);
+				
+				//------------------------------------------------------------
+			}
+			else
+			{
+				listOfFiles.ItemsSource = null;
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
+				filesListGrid.Visibility = Visibility.Visible;
+				newFileGrid.Visibility = Visibility.Hidden;
+				welcomeGrid.Visibility = Visibility.Hidden;
+				LoginGrid.Visibility = Visibility.Hidden;
+
+			}
+
+			if (Documents.currentDocuments != null)
+			{
+				listOfFiles.ItemsSource = null;
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
+				filesListGrid.Visibility = Visibility.Visible;
+				newFileGrid.Visibility = Visibility.Hidden;
+				welcomeGrid.Visibility = Visibility.Hidden;
+				LoginGrid.Visibility = Visibility.Hidden;
+
+			}
+		}
+
+		private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
             appStatus.isServerOnline = AppStatus.CheckForServerConnection();
             appStatus.isOnline = AppStatus.CheckForInternetConnection();
             Documents documents = new Documents();
             documents.Get2(true);
+
             String title = TitleBox.Text;
             String content = contentBox.Text;
             string filenameNoExtension = title;
@@ -220,7 +278,9 @@ namespace NativeApp
                     if (document.checkIfNoDuplicated())
                     {
                         document.PostDocument(document);
-                    }
+						MessageBox.Show("File has been saved");
+
+					}
                     else
                     {
                         MessageBox.Show("File name exsist!");
@@ -327,24 +387,32 @@ namespace NativeApp
             {
                 documents = new Documents();
                 documents.Get2(true);
-            }
-            catch (Exception es)
+
+				//----------------------Emit----------------------------------
+				//string unlockName = TitleBox.Text.Substring(0, TitleBox.Text.Length - 4);
+				//newSocket.socketIoEmit(unlockName, 0);
+
+				//------------------------------------------------------------
+			}
+			catch (Exception es)
             {
                 Console.WriteLine(es);
             }
 
             listOfFiles.ItemsSource = null;
             listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-        }
+    }
 
 
 private void SocketIO_Click(object sender, RoutedEventArgs e)
         {
-            Sockets newSocket = new Sockets();
-            newSocket.socketIoManager();
+            //Sockets newSocket = new Sockets();
+            //newSocket.socketIoManager();
             socketStatusLabel.Content = Sockets.labelText;
+			
         }
-    }
+
+	}
 
 
 }

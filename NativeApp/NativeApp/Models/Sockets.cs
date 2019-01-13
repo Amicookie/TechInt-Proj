@@ -12,6 +12,12 @@ namespace NativeApp.Models
 	class Sockets
 	{
 		public static string labelText;
+		public static string fileNameLocked;
+		public static string fileNameUnlocked;
+		public static string fileNameSaved;
+
+		public static string nameToChange = null;
+		public static int action = 3; //3 - do nothing
 
 		public void socketIoManager()
 		{
@@ -19,35 +25,66 @@ namespace NativeApp.Models
 
 			socket.On(Socket.EVENT_CONNECT, () =>
 			 {
-				//socket.Emit("hi");
 				Console.WriteLine("Dziala Eevent");
 			 }
 			);
 
-			//socket.On("hi", (data) =>
-			//{
-			//	Console.WriteLine("Dziala socket hi");
-			//	Console.WriteLine(data);
-			//	socket.Disconnect();
-			//});
+			socket.Send("hi");
+			socket.Emit("fileSaved", "hello"); //"fileSaved - typ komunikatu, "hello" - wartosc file
 
-			socket.Send("message");
-			socket.Send("Wysylam wiadomosc hello there");
-
-			socket.On("message", (data) =>
+			socket.On("message", (data) => //message - def na servie, data - "hi"
 			{
-				//socket.Emit("Here is my message");
-				Console.WriteLine("Dziala socket message");
-				//var value = JsonConvert.DeserializeObject<string>((string)data);
+				Console.WriteLine("SocketIO: Odebrano message");
+				//var value = JsonConvert.DeserializeObject<string>();
 				//Console.WriteLine(value);
-				Console.WriteLine(data);
 
 				labelText = data.ToString();
-				socket.Disconnect();
+				//socket.Disconnect();
 
 			});
 
+			socket.On("fileLocked", (data) =>
+			{
+				fileNameLocked = data.ToString();
+				Console.WriteLine("SocketIO: zablokowano plik {0}", fileNameLocked);
+
+			});
+
+			socket.On("fileUnlocked", (data) =>
+			{
+				fileNameUnlocked = data.ToString();
+				Console.WriteLine("SocketIO: zablokowano plik {0}", fileNameUnlocked);
+			});
+
+			socket.On("fileSaved", (data) =>
+			{
+				fileNameSaved = data.ToString();
+				Console.WriteLine("SocketIO: Zapisano plik {0}", fileNameSaved);
+			});
+
+			
+			//if(nameToChange != null)
+			//{
+			//	if(action == 1) //dla 1 jest zablokowany
+			//	{
+			//		socket.Emit("fileLocked", nameToChange);
+			//		nameToChange = null;
+			//		action = 3;
+			//	} else if (action == 0) // 0 - jest odblokowany
+			//	{
+			//		socket.Emit("fileUnlocked", nameToChange);
+			//		nameToChange = null;
+			//		action = 3;
+			//	}
+			//}
+
 		}
+
+		//public void socketIoEmit(string name, int locked)
+		//{
+		//	nameToChange = name;
+		//	action = locked;
+		//}
 
 
 	}
