@@ -1,0 +1,73 @@
+<div class="container-fluid p-0">
+    <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="createFile">
+      <div class="my-auto">
+          <h2 class="mb-5">Create new file</h2>
+          <div class="resume-content mr-auto">
+              <form action="" class="form-container">
+                  <!--<h1>Edit</h1>-->
+                  File name: <br>
+                  <textarea placeholder="File Name" class="fileName" name="fileName" [(ngModel)]="file_new_name_input" required></textarea>
+                  <br>
+                  Content:<br>
+                  <textarea placeholder="File Content..." class="fileContent" name="fileContent" [(ngModel)]="file_new_content_input" required></textarea>
+                  <button class="btn" (click)="createFile(file_new_name_input, file_new_content_input)">SAVE</button>
+                  <button type="button" class="btn back">BACK</button>
+                </form>
+          </div>
+      </div>
+      </section>
+</div>
+
+<div class="container-fluid p-0">
+    <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="createFile">
+      <div class="my-auto">
+          <h2 class="mb-5">VIEW FILE: "description"</h2>
+          <div class="resume-content mr-auto">
+              <form action="" class="form-container">
+                  <!--<h1>Edit</h1>-->
+                  <h4>Edit <label class="switch"><input type="checkbox"><span class="slider"></span>
+                    </label></h4>
+                  File name: <br>
+                  <textarea placeholder="File Name" class="fileName" name="filename" required></textarea>
+                  <br>
+                  Content:<br>
+                  <textarea placeholder="File Content..." class="fileContent" name="filecontent" required></textarea>
+                  <button type="submit" class="btn">SAVE</button>
+                  <button type="button" class="btn back">BACK</button>
+                </form>
+          </div>
+      </div>
+      </section>
+</div>
+
+<div class="container-fluid p-0">
+        <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="createFile">
+          <div class="my-auto">
+              <h2 class="mb-5">List of files</h2>
+              <div class="resume-content mr-auto">
+                  <div class="form-container">
+                      <!--<h1>Edit</h1>-->
+                    
+                    <div class="divTable blueTable">
+                        <div class="divTableBody">
+                            <div class="divTableRow">
+                                <div class="divTableCell"><b>File name</b></div>
+                                <div class="divTableCell"><b>Created by</b></div>
+                                <div class="divTableCell"><b>Last update</b></div>
+                                <div class="divTableCell"><b>Updated by</b></div>
+                                <div class="divTableCell"><b>View</b></div>
+                            </div>
+                            <div *ngFor="let file of files" class="divTableRow">
+                                <div class="divTableCell">{{file.file_name}}</div>
+                                <div class="divTableCell">{{file.file_creator_id}}</div>
+                                <div class="divTableCell">{{file.file_update_date}}</div>
+                                <div class="divTableCell">{{file.file_last_editor_id}}</div>
+                                <div class="divTableCell"><a (click)="navigateToFile(file.file_id)"><img src="../../../assets/icons/view.svg" onmouseover="this.src='../../../assets/icons/view-blue.svg'" onmouseout="this.src='../../../assets/icons/view.svg'" width="25px" height="25px"></a></div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+          </section>
+    </div>

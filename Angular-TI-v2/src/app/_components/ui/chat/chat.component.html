@@ -1,0 +1,53 @@
+<button class="open-button" (click)="openForm()">Chat</button>
+<div class="chat-popup" id="myForm">
+    <form action="" class="form-container">
+      
+      <div class="chat-container">
+          <div class="container">
+              <p>Hello. How are you today?</p>
+              <span class="time-right">11:00</span>
+            </div>
+            
+            <div class="container darker">
+              <p>Hey! I'm fine. Thanks for asking!</p>
+              <span class="time-right">11:01</span>
+            </div>
+            
+            <div class="container">
+              <p>Sweet! So, what do you wanna do today?</p>
+              <span class="time-right">11:02</span>
+            </div>
+            
+            <div class="container darker">
+              <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
+              <span class="time-right">11:05</span>
+            </div>
+            <div class="container">
+                <p>Hello. How are you today?</p>
+                <span class="time-right">11:00</span>
+              </div>
+              
+              <div class="container darker">
+                <p>Hey! I'm fine. Thanks for asking!</p>
+                <span class="time-right">11:01</span>
+              </div>
+              
+              <div class="container">
+                <p>Sweet! So, what do you wanna do today?</p>
+                <span class="time-right">11:02</span>
+              </div>
+              
+              <div class="container darker">
+                <p>Nah, I dunno. Play soccer.. or learn more coding perhaps?</p>
+                <span class="time-right">11:05</span>
+              </div>
+          </div>
+          <h1>Chat</h1>
+      <select>
+        <option>Person 1</option> <!-- WYPEŁNIANIE ZALOGOWANYMI -->
+      </select>
+      <textarea placeholder="Type message.." name="msg" required></textarea>
+      <button type="submit" class="btn">Send</button>
+      <button type="button" class="btn cancel" (click)="closeForm()">Close</button>
+    </form>
+</div>
