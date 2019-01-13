@@ -14,6 +14,7 @@ import { LoginComponent } from './_components/login/login.component';
 import { WebsocketService } from './_services/websocket.service';
 import { ChatService } from './_services/chat.service';
 
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ChatService } from './_services/chat.service';
     HttpClientModule,
     HttpClientJsonpModule,
     AppRoutingModule,
-    UiModule
+    UiModule,
+    FormsModule
   ],
   providers: [
     ChatService,

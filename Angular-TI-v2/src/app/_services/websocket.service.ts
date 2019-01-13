@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Observable, Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../environments/environment';
 import { IFile } from '../_models/file';
 import { IUser } from '../_models/user';
 import { showToast } from '../toaster-helper';
