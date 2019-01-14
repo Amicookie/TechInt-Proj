@@ -1,3 +1,19 @@
-<p>
-  user works!
-</p>
+<section class="resume-section p-3 p-lg-5 d-flex d-column" id="login">
+    <div class="my-auto">
+        <h2 class="mb-0">Text <span class="text-primary">Editor</span></h2>
+        <div></div>
+        <div class="resume-item d-flex flex-column flex-md-row mb-5">
+            <div class="resume-content mr-auto">
+                <div class="form-container">
+                    Login: <br>
+                    <input type="text" placeholder="Login" class="inputCredentials" name="login" [(ngModel)]="login_input" required>
+                    <br>
+                    Password:<br>
+                    <input type="password" placeholder="Password" class="inputCredentials" name="filecontent" [(ngModel)]="password_input" required>
+                    <button (click)="handleLogin(login_input, password_input)" type="button" class="btn">LOGIN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr class="m-0">

@@ -17,6 +17,8 @@ export class FileComponent implements OnInit, OnDestroy {
   file_content = "";
   current_file_id = 0;
 
+  _navigateToFile = false;
+
   BreakException = {};
   interval: any;
   
@@ -50,29 +52,11 @@ export class FileComponent implements OnInit, OnDestroy {
   }
 
   createFile(file_name, file_content){
-    //console.log(this._filesService.createFile(file_name, file_content, 1));
-    // if(){
-    //   this.files.push(this._filesService.getFile(this.files.length-1).subscribe());
-    // }
-    this._filesService.createFile(file_name, file_content, 1)
-    //this.refreshData();
+    this._filesService.createFile(file_name, file_content, localStorage.getItem('user_id'))
   }
 
   editFile(file_id, file_name, file_content){
-    this._filesService.editFile(file_id, file_name, file_content, 1)
+    this._filesService.editFile(file_id, file_name, file_content, localStorage.getItem('user_id'))
   }
-
-
-
-  // myFunction() {
-  //   // Get the snackbar DIV
-  //   var x = document.getElementById("snackbar");
-  
-  //   // Add the "show" class to DIV
-  //   x.className = "show";
-  
-  //   // After 3 seconds, remove the show class from DIV
-  //   setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-  // }
 
 }

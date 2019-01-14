@@ -1,16 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from 'src/app/_services/user.service';
+import { DataSharingService } from 'src/app/_services/data-sharing.service';
+import { first } from 'rxjs/operators';
+import { showToast } from 'src/app/toaster-helper';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.css']
+  styleUrls: ['./user.component.css',
+              '../../app.component.css',
+            '../file/file.component.css']
 })
 export class UserComponent implements OnInit {
 
   public users = [];
   public errorMsg;
-  constructor(private _usersService: UserService) { }
+  
+  isUserLoggedIn: boolean;
+
+  constructor(private _usersService: UserService, private dataSharingService: DataSharingService) { 
+    this.dataSharingService.isUserLoggedIn.subscribe(
+      value => {
+        this.isUserLoggedIn = value;
+      }
+    )
+  }
 
   ngOnInit() {
     this._usersService.getUsers()
@@ -18,11 +32,23 @@ export class UserComponent implements OnInit {
                    error => this.errorMsg = error);
   }
 
-  checkPassword() {
-    //sprawdź czy PW jest ok, żeby zalogować :)
-  }
-
   handleLogin(input_login, input_password){
-    this._usersService.handleLogin(input_login, input_password);
+    this._usersService.login(input_login, input_password).pipe(first()).subscribe(
+      data => {},
+      error => {
+        showToast("An error: "+ error.name +" occurred while logging in, please try again!");
+      },
+      () => {
+        if(localStorage.getItem('currentUser')==input_login){
+          this.users.forEach(element => {
+            if (element.user_id == localStorage.getItem('user_id')) {
+              this._usersService.currentUserSubject = element;
+            }
+          });
+          this.dataSharingService.isUserLoggedIn.next(true);
+        }
+      }
+    );
+    
   }
 }

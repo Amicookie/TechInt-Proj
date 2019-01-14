@@ -40,28 +40,21 @@ export class FileService {
     let headers = new HttpHeaders().set("Content-Type", "application/json;charset=utf-8");
     return this.http.put(this._url+"/"+file_id, encoded_data, {headers})
                     .subscribe(
-                      data => {console.log("PUT request is successful! ", encoded_data);
-                      },
-                      // updatedFile => {
-                      //   if (updatedFile) {
-                      //     self.websocketservice.emitEventOnFileUpdated(updatedFile); // emit event
-                      //   } else {
-                      //     // on error
-                      //     self.toastr.error('Update error!', 'An error occurred when updating your file, please try again!');
-                      //   }
-                      // },
-                    error => {console.log("Error", error);
-                    complete => {
-                      console.log("complete", complete);
-                      if (complete) {
-                        self.websocketservice.emitEventOnFileUpdated(file_name, user_id);
-                      } else {
-                        //on error
-                        showToast("An error occurred while updating your file, please try again!")
+                      data => {
+                        console.log("PUT request is successful! ", encoded_data);
                         
-                        //self.toastr.error({title: 'Update error!', msg:''});
+                      },
+                      error => {
+                        console.log("Error", error.message);
+                        showToast("An error occurred while updating your file, please try again!");
+                      },
+
+                      //COMPLETE
+                      () => {
+                        self.websocketservice.emitEventOnFileUpdated(file_name, user_id);
+                        showToast("File updated!");
                       }
-                    }});
+                    );
   }
 
   createFile(file_name, file_content, user_id){//: Observable<Object> {
@@ -69,22 +62,25 @@ export class FileService {
     let encoded_data = JSON.stringify({file_name, file_content, user_id});
     console.log(encoded_data)
     let headers = new HttpHeaders().set("Content-Type", "application/json;charset=utf-8");
-    // return this.http.post(encoded_data, this._url+"/files/create", {headers}).map(
-    //   (res: Response) => res.json() || {}
-    // );
+    
     return this.http.post(this._url, encoded_data, {headers})
-                    .subscribe(data => {console.log("POST request is successful! ", encoded_data);},
-                    error=> {console.log("Error", error);
-                    complete => {
-                      console.log("complete", complete);
-                      if (complete) {
-                        self.websocketservice.emitEventOnFileSaved(file_name);
-                      } else {
-                        //on error
+                    .subscribe(
+                      data => {
+                      console.log("POST request is successful! ", encoded_data);
+                    },
+                      error => {
+                      console.log("Error", error);
+                      showToast("An error: "+ error.name +" occurred while adding your file, please try again!");
+                    },
 
-                        showToast("An error occurred while saving your file, please try again!")
-                      }
-                    }});
+                    // COMPLETED
+                      () => {
+                        self.websocketservice.emitEventOnFileSaved(localStorage.getItem('currentUser'), file_name);
+
+                        showToast("File: "+file_name+" saved!");
+                        // add new file to file component and refresh
+                    }
+                    );
   }
 
   errorHandler(error: HttpErrorResponse){

@@ -21,7 +21,8 @@ export class ChatService {
       }))
    }
 
-   sendMsg(msg){
-     this.messages.next(msg);
+   sendMessage(username, message) {
+     this.messages.next({username, message});
+    //this.wsService.emitEventOnChatMessageSent(username, message);
    }
 }

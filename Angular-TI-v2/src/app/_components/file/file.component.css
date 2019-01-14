@@ -16,6 +16,21 @@
   min-height: 50px;
 }
 
+.form-container input.inputCredentials {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  resize: none;
+}
+
+/* When the input gets focus, do something */
+.form-container input:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
 .form-container textarea.fileContent {
     width: 100%;
     padding: 15px;
