@@ -15,6 +15,7 @@ import { WebsocketService } from './_services/websocket.service';
 import { ChatService } from './_services/chat.service';
 
 import { FormsModule } from '@angular/forms';
+import { DataSharingService } from './_services/data-sharing.service';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { FormsModule } from '@angular/forms';
   ],
   providers: [
     ChatService,
-    WebsocketService
+    WebsocketService,
+    DataSharingService
   ],
   bootstrap: [AppComponent]
 })
