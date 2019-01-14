@@ -1,4 +1,5 @@
 ﻿using NativeApp.Models;
+using Quobject.SocketIoClientDotNet.Client;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,217 +22,231 @@ using Path = System.IO.Path;
 
 namespace NativeApp
 {
-    /// <summary>
-    /// Logika interakcji dla klasy Login.xaml
-    /// </summary>
-    public partial class Login : Window
-    {
-        private User user;
+	/// <summary>
+	/// Logika interakcji dla klasy Login.xaml
+	/// </summary>
+	public partial class Login : Window
+	{
+		private User user;
+		public Socket socket = IO.Socket("http://192.168.43.218:5000/ ");
 
-        String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
-        AppStatus appStatus = new AppStatus();
+
+		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
+		AppStatus appStatus = new AppStatus();
 
 		Sockets newSocket = new Sockets();
 
 
-        public Login()
-        {
-            InitializeComponent();
+		public Login()
+		{
+			InitializeComponent();
 
-            if (Directory.Exists(path))
-            {
-                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-            }
-            else
-            {
-                Directory.CreateDirectory(path);
-            }
-        }
+			if (Directory.Exists(path))
+			{
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			}
+			else
+			{
+				Directory.CreateDirectory(path);
+			}
+		}
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
+		private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
 
-        }
+		}
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            appStatus.isServerOnline = AppStatus.CheckForServerConnection();
-            appStatus.isOnline = AppStatus.CheckForInternetConnection();
+		private void Button_Click(object sender, RoutedEventArgs e)
+		{
+			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
+			appStatus.isOnline = AppStatus.CheckForInternetConnection();
 
-            mainGrid.Visibility = Visibility.Hidden;
-            filesListGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Hidden;
+			mainGrid.Visibility = Visibility.Hidden;
+			filesListGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Hidden;
 
-            if (appStatus.isServerOnline == true && appStatus.isOnline == true)
-            {
-                loginBtn.Visibility = Visibility.Visible;
-                passBox.IsEnabled = true;
-                loginBox.IsEnabled = true;
-                workOffBtn.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                loginBtn.Visibility = Visibility.Hidden;
-                passBox.IsEnabled = false;
-                loginBox.IsEnabled = false;
-                workOffBtn.Visibility = Visibility.Visible;
-            }
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true)
+			{
+				loginBtn.Visibility = Visibility.Visible;
+				passBox.IsEnabled = true;
+				loginBox.IsEnabled = true;
+				workOffBtn.Visibility = Visibility.Hidden;
+			}
+			else
+			{
+				loginBtn.Visibility = Visibility.Hidden;
+				passBox.IsEnabled = false;
+				loginBox.IsEnabled = false;
+				workOffBtn.Visibility = Visibility.Visible;
+			}
 
-            LoginGrid.Visibility = Visibility.Visible;
-            welcomeGrid.Visibility = Visibility.Hidden;
-        }
+			LoginGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Hidden;
+		}
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            LoginGrid.Visibility = Visibility.Hidden;
-            mainGrid.Visibility = Visibility.Visible;
-            welcomeGrid.Visibility = Visibility.Hidden;
-        }
+		private void Button_Click_1(object sender, RoutedEventArgs e)
+		{
+			LoginGrid.Visibility = Visibility.Hidden;
+			mainGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Hidden;
+		}
 
-        private void loginBtn_Click(object sender, RoutedEventArgs e)
-        {
-            appStatus.isServerOnline = AppStatus.CheckForServerConnection();
-            appStatus.isOnline = AppStatus.CheckForInternetConnection();
-            filesListGrid.Visibility = Visibility.Hidden;
+		private void loginBtn_Click(object sender, RoutedEventArgs e)
+		{
+			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
+			appStatus.isOnline = AppStatus.CheckForInternetConnection();
+			filesListGrid.Visibility = Visibility.Hidden;
 
-            String login = loginBox.Text;
-            String password = passBox.Password.ToString();
-            if (login.Count() > 0 && password.Count() > 0)
-            {
-                user = new User(login, password);
-                user.Get2();
-                if (user.user_exists == true && user.logged_in)
-                {
-                    appStatus.isUserLogged = true;
-                    MenuGrid.Visibility = Visibility.Hidden;
-                    loginMenuGrid.Visibility = Visibility.Visible;
-                    LoginGrid.Visibility = Visibility.Hidden;
-                    welcomeGrid.Visibility = Visibility.Visible;
-                    welcomeLabel.Content = $"Zalogowany jako {user.user_login}";
+			String login = loginBox.Text;
+			String password = passBox.Password.ToString();
+			if (login.Count() > 0 && password.Count() > 0)
+			{
+				user = new User(login, password);
+				user.Get2();
+				if (user.user_exists == true && user.logged_in)
+				{
+					appStatus.isUserLogged = true;
+					MenuGrid.Visibility = Visibility.Hidden;
+					loginMenuGrid.Visibility = Visibility.Visible;
+					LoginGrid.Visibility = Visibility.Hidden;
+					welcomeGrid.Visibility = Visibility.Visible;
+					welcomeLabel.Content = $"Logged in as \n{user.user_login}";
 
-                    Documents documents = new Documents();
-                    documents.Get2(true);
-                    listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+					Documents documents = new Documents();
+					documents.Get2(true);
+					listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-                    loginBttn.Visibility = Visibility.Hidden;
-                    logoutBtn.Visibility = Visibility.Visible;
+					loginBttn.Visibility = Visibility.Hidden;
+					logoutBtn.Visibility = Visibility.Visible;
 
-					newSocket.socketIoManager();
 				}
-                else
-                {
-                    appStatus.isUserLogged = false;
-                    MessageBox.Show("Wrong Credentials");
-                }
+				else
+				{
+					appStatus.isUserLogged = false;
+					MessageBox.Show("Wrong Credentials");
+				}
 
-                loginBox.Clear();
-                passBox.Clear();
-            }
-        }
+				loginBox.Clear();
+				passBox.Clear();
+			}
+		}
 
-        private void workOffBtn_Click(object sender, RoutedEventArgs e)
-        {
-            appStatus.isUserLogged = false;
-            filesListGrid.Visibility = Visibility.Visible;
-            LoginGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Hidden;
-            welcomeGrid.Visibility = Visibility.Hidden;
-            logoutBtn.Visibility = Visibility.Hidden;
-            loginBttn.Visibility = Visibility.Visible;
+		private void workOffBtn_Click(object sender, RoutedEventArgs e)
+		{
+			appStatus.isUserLogged = false;
+			filesListGrid.Visibility = Visibility.Visible;
+			LoginGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Hidden;
+			welcomeGrid.Visibility = Visibility.Hidden;
+			logoutBtn.Visibility = Visibility.Hidden;
+			loginBttn.Visibility = Visibility.Visible;
 
-            listOfFiles.ItemsSource = null;
-            listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			listOfFiles.ItemsSource = null;
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-            loginMenuGrid.Visibility = Visibility.Visible;
+			loginMenuGrid.Visibility = Visibility.Visible;
 
-        }
+		}
 
-        private void filesBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Documents documents = new Documents();
-            if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
-            {
-                documents.Get2(true);
-            }
-            else
-            {
-                listOfFiles.ItemsSource = null;
-                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-
-                filesListGrid.Visibility = Visibility.Visible;
-                newFileGrid.Visibility = Visibility.Hidden;
-                welcomeGrid.Visibility = Visibility.Hidden;
-                LoginGrid.Visibility = Visibility.Hidden;
-
-            }
-
-            if (Documents.currentDocuments != null)
-            {
-                listOfFiles.ItemsSource = null;
-                listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-
-                filesListGrid.Visibility = Visibility.Visible;
-                newFileGrid.Visibility = Visibility.Hidden;
-                welcomeGrid.Visibility = Visibility.Hidden;
-                LoginGrid.Visibility = Visibility.Hidden;
-
-            }
-
-
-        }
-
-        private void newFileBtn_Click(object sender, RoutedEventArgs e)
-        {
-            filesListGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Visible;
-            welcomeGrid.Visibility = Visibility.Hidden;
-
-            TitleBox.Clear();
-            contentBox.Clear();
-        }
-
-
-        private void logoutBtn_Click(object sender, RoutedEventArgs e)
-        {
-            MenuGrid.Visibility = Visibility.Visible;
-            loginMenuGrid.Visibility = Visibility.Hidden;
-            mainGrid.Visibility = Visibility.Visible;
-            filesListGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Hidden;
-            welcomeGrid.Visibility = Visibility.Hidden;
-        }
-
-        private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            String title = listOfFiles.SelectedItems[0].ToString();
-            string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
-
-            filesListGrid.Visibility = Visibility.Hidden;
-            newFileGrid.Visibility = Visibility.Visible;
-
-            TitleBox.Text = title.Substring(0, title.Length - 4);
-            contentBox.Text = text;
-
-			//-----------------------Emit--------------------------------
-			//newSocket.socketIoEmit(title.Substring(0, title.Length - 4), 1);
-
-
-			//-----------------------------------------------------------
-        }
-
-
-		private void backBtn_Click(object sender, RoutedEventArgs e)
+		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
 			Documents documents = new Documents();
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
+				newSocket.socketIoManager(socket);
+			}
+			else
+			{
+				listOfFiles.ItemsSource = null;
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-				//----------------------Emit----------------------------------
-				//string unlockName = TitleBox.Text.Substring(0, TitleBox.Text.Length - 4);
-				//newSocket.socketIoEmit(unlockName, 0);
-				
-				//------------------------------------------------------------
+				filesListGrid.Visibility = Visibility.Visible;
+				newFileGrid.Visibility = Visibility.Hidden;
+				welcomeGrid.Visibility = Visibility.Hidden;
+				LoginGrid.Visibility = Visibility.Hidden;
+
+			}
+
+			if (Documents.currentDocuments != null)
+			{
+				listOfFiles.ItemsSource = null;
+				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
+				filesListGrid.Visibility = Visibility.Visible;
+				newFileGrid.Visibility = Visibility.Hidden;
+				welcomeGrid.Visibility = Visibility.Hidden;
+				LoginGrid.Visibility = Visibility.Hidden;
+
+			}
+
+
+		}
+
+		private void newFileBtn_Click(object sender, RoutedEventArgs e)
+		{
+			filesListGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Visible;
+			welcomeGrid.Visibility = Visibility.Hidden;
+
+			TitleBox.Clear();
+			contentBox.Clear();
+
+			editCheckBox.IsChecked = true;
+			TitleBox.IsReadOnly = false;
+			contentBox.IsReadOnly = false;
+			saveBtn.IsEnabled = true;
+		}
+
+
+		private void logoutBtn_Click(object sender, RoutedEventArgs e)
+		{
+			MenuGrid.Visibility = Visibility.Visible;
+			loginMenuGrid.Visibility = Visibility.Hidden;
+			mainGrid.Visibility = Visibility.Visible;
+			filesListGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Hidden;
+			welcomeGrid.Visibility = Visibility.Hidden;
+		}
+
+		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			String title = listOfFiles.SelectedItems[0].ToString();
+			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+
+			filesListGrid.Visibility = Visibility.Hidden;
+			newFileGrid.Visibility = Visibility.Visible;
+
+			TitleBox.Text = title.Substring(0, title.Length - 4);
+			contentBox.Text = text;
+
+			if(editCheckBox.IsChecked == true)
+			{
+				TitleBox.IsReadOnly = false;
+				contentBox.IsReadOnly = false;
+				saveBtn.IsEnabled = true;
+			}
+			else if(editCheckBox.IsChecked == false)
+			{
+				TitleBox.IsReadOnly = true;
+				contentBox.IsReadOnly = true;
+				saveBtn.IsEnabled = false;
+			}
+
+
+		}
+
+
+		private void backBtn_Click(object sender, RoutedEventArgs e)
+		{
+
+
+
+			Documents documents = new Documents();
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				documents.Get2(true);
+
 			}
 			else
 			{
@@ -258,162 +274,173 @@ namespace NativeApp
 		}
 
 		private void saveBtn_Click(object sender, RoutedEventArgs e)
-        {
-            appStatus.isServerOnline = AppStatus.CheckForServerConnection();
-            appStatus.isOnline = AppStatus.CheckForInternetConnection();
-            Documents documents = new Documents();
-            documents.Get2(true);
+		{
+			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
+			appStatus.isOnline = AppStatus.CheckForInternetConnection();
+			Documents documents = new Documents();
+			documents.Get2(true);
 
-            String title = TitleBox.Text;
-            String content = contentBox.Text;
-            string filenameNoExtension = title;
-            string filename = String.Format("{0}.txt", title);
-            string allPath = System.IO.Path.Combine(path, filename);
+			String title = TitleBox.Text;
+			String content = contentBox.Text;
+			string filenameNoExtension = title;
+			string filename = String.Format("{0}.txt", title);
+			string allPath = System.IO.Path.Combine(path, filename);
 
-            if (!File.Exists(allPath))
-            {
-                if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
-                {
-                    Document document = new Document(filenameNoExtension, content, DateTime.Now, DateTime.Now, 1, 0);
-                    if (document.checkIfNoDuplicated())
-                    {
-                        document.PostDocument(document);
+			if (!File.Exists(allPath))
+			{
+				if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
+				{
+					Document document = new Document(filenameNoExtension, content, DateTime.Now, DateTime.Now, 1, 0);
+					if (document.checkIfNoDuplicated())
+					{
+						document.PostDocument(document);
 						MessageBox.Show("File has been saved");
 
 					}
-                    else
-                    {
-                        MessageBox.Show("File name exsist!");
-                    }
-                }
-                else if (appStatus.isServerOnline == true && appStatus.isOnline == true &&
-                         appStatus.isUserLogged == false)
-                {
-                    using (StreamWriter str = File.CreateText(allPath))
-                    {
-                        str.WriteLine(content);
-                        str.Flush();
-                        MessageBox.Show("Login to sync document!");
-                        Button_Click(sender, e);
-                    }
-                }
-                else if ((appStatus.isServerOnline == false || appStatus.isOnline == false) &&
-                         appStatus.isUserLogged == true)
-                {
-                    appStatus.isUserLogged = false;
-                    using (StreamWriter str = File.CreateText(allPath))
-                    {
-                        str.WriteLine(content);
-                        str.Flush();
-                        MessageBox.Show("You`ve lost connection! Document will be saved locally");
-                        //Button_Click(sender, e);
-                    }
-                }
-                else
-                {
-                    using (StreamWriter str = File.CreateText(allPath))
-                    {
-                        str.WriteLine(content);
-                        str.Flush();
-                        MessageBox.Show("File has been saved");
-                    }
-                }
-            }
-            else if (File.Exists(allPath))
-            {
-                if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
-                {
-                    Document exsistingDoc = Documents.currentDocuments
-                        .Where(a => a.file_name == Path.GetFileNameWithoutExtension(allPath))
-                        .FirstOrDefault();
-                    exsistingDoc.file_content = content;
-                    //temporary hardcode ;c
-                    exsistingDoc.user_id = 1;
-                    var localWriteTime =
-                        File.GetLastWriteTime(Path.Combine(Documents.path, exsistingDoc.file_name + ".txt"));
-                    if (localWriteTime < exsistingDoc.file_update_date)
-                    {
-                        using (StreamWriter str =
-                            File.CreateText(Path.Combine(Documents.path, exsistingDoc.file_name + "_local.txt")))
-                        {
-                            str.WriteLine(content);
-                            str.Flush();
-                            MessageBox.Show($"{exsistingDoc.file_name}_local file has been created locally");
-                        }
-                    }
-                    else
-                    {
-                        exsistingDoc.CallUpdateDoc();
-                        MessageBox.Show("File has been updated!");
-                    }
-                }
-                else if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == false)
-                {
-                    using (var str = new StreamWriter(allPath))
-                    {
-                        str.WriteLine(content);
-                        str.Flush();
-                        MessageBox.Show("Login to sync document!");
-                        Button_Click(sender, e);
+					else
+					{
+						MessageBox.Show("File name exsist!");
+					}
+				}
+				else if (appStatus.isServerOnline == true && appStatus.isOnline == true &&
+						 appStatus.isUserLogged == false)
+				{
+					using (StreamWriter str = File.CreateText(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
+						MessageBox.Show("Login to sync document!");
+						Button_Click(sender, e);
+					}
+				}
+				else if ((appStatus.isServerOnline == false || appStatus.isOnline == false) &&
+						 appStatus.isUserLogged == true)
+				{
+					appStatus.isUserLogged = false;
+					using (StreamWriter str = File.CreateText(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
+						MessageBox.Show("You`ve lost connection! Document will be saved locally");
+						//Button_Click(sender, e);
+					}
+				}
+				else
+				{
+					using (StreamWriter str = File.CreateText(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
+						MessageBox.Show("File has been saved");
+					}
+				}
+			}
+			else if (File.Exists(allPath))
+			{
+				if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
+				{
+					Document exsistingDoc = Documents.currentDocuments
+						.Where(a => a.file_name == Path.GetFileNameWithoutExtension(allPath))
+						.FirstOrDefault();
+					exsistingDoc.file_content = content;
+					//temporary hardcode ;c
+					exsistingDoc.user_id = 1;
+					var localWriteTime =
+						File.GetLastWriteTime(Path.Combine(Documents.path, exsistingDoc.file_name + ".txt"));
+					if (localWriteTime < exsistingDoc.file_update_date)
+					{
+						using (StreamWriter str =
+							File.CreateText(Path.Combine(Documents.path, exsistingDoc.file_name + "_local.txt")))
+						{
+							str.WriteLine(content);
+							str.Flush();
+							MessageBox.Show($"{exsistingDoc.file_name}_local file has been created locally");
+						}
+					}
+					else
+					{
+						exsistingDoc.CallUpdateDoc();
+						MessageBox.Show("File has been updated!");
+					}
+				}
+				else if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == false)
+				{
+					using (var str = new StreamWriter(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
+						MessageBox.Show("Login to sync document!");
+						Button_Click(sender, e);
 
-                    }
-                }
-                else if ((appStatus.isServerOnline == false || appStatus.isOnline == false) &&
-                         appStatus.isUserLogged == true)
-                {
-                    appStatus.isUserLogged = false;
-                    using (var str = new StreamWriter(allPath))
-                    {
-                        str.WriteLine(content);
-                        str.Flush();
-                        MessageBox.Show("You`ve lost connection! Document will be saved locally");
-                        Button_Click(sender, e);
+					}
+				}
+				else if ((appStatus.isServerOnline == false || appStatus.isOnline == false) &&
+						 appStatus.isUserLogged == true)
+				{
+					appStatus.isUserLogged = false;
+					using (var str = new StreamWriter(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
+						MessageBox.Show("You`ve lost connection! Document will be saved locally");
+						Button_Click(sender, e);
 
-                    }
-                }
-            else
-            {
-                using (var str = new StreamWriter(allPath))
-                {
-                    str.WriteLine(content);
-                    str.Flush();
+					}
+				}
+				else
+				{
+					using (var str = new StreamWriter(allPath))
+					{
+						str.WriteLine(content);
+						str.Flush();
 
-                    MessageBox.Show("File has been overwritten");
-                }
-            }
-        }
+						MessageBox.Show("File has been overwritten");
+					}
+				}
+			}
 
-            try
-            {
-                documents = new Documents();
-                documents.Get2(true);
+			try
+			{
+				documents = new Documents();
+				documents.Get2(true);
 
-				//----------------------Emit----------------------------------
-				//string unlockName = TitleBox.Text.Substring(0, TitleBox.Text.Length - 4);
-				//newSocket.socketIoEmit(unlockName, 0);
-
-				//------------------------------------------------------------
 			}
 			catch (Exception es)
-            {
-                Console.WriteLine(es);
-            }
+			{
+				Console.WriteLine(es);
+			}
 
-            listOfFiles.ItemsSource = null;
-            listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
-    }
+			listOfFiles.ItemsSource = null;
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+		}
+
+		private void editCheckBox_Checked(object sender, RoutedEventArgs e)
+		{
+			TitleBox.IsReadOnly = false;
+			contentBox.IsReadOnly = false;
+			saveBtn.IsEnabled = true;
+
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				newSocket.socketIoEmit(TitleBox.Text, 1, socket);
+			}
+		}
+
+		private void editCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		{
+			TitleBox.IsReadOnly = true;
+			contentBox.IsReadOnly = true;
+			saveBtn.IsEnabled = false;
+
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				newSocket.socketIoEmit(TitleBox.Text, 0, socket);
+			}
+		}
 
 
-private void SocketIO_Click(object sender, RoutedEventArgs e)
-        {
-            //Sockets newSocket = new Sockets();
-            //newSocket.socketIoManager();
-            socketStatusLabel.Content = Sockets.labelText;
-			
-        }
+
 
 	}
-
-
 }
 

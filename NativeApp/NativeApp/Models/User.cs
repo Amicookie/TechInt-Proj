@@ -32,7 +32,7 @@ namespace NativeApp.Models
             using (var client = new HttpClient())
             {
                 User p = new User(user_login,user_password);
-                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                client.BaseAddress = new Uri("http://192.168.43.218:5000/");
                 var response = client.PostAsJsonAsync("users", p).Result;
                 if (response.IsSuccessStatusCode)
                 {

@@ -13,8 +13,8 @@ namespace NativeApp
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-
-			string lockedFile = "File5.txt"; //Sockets.fileNameLocked + ".txt";
+			Sockets newSocket = new Sockets();
+			string lockedFile = newSocket.fileNameLocked + ".txt";
 
 			if(value.Equals(lockedFile))
 			{

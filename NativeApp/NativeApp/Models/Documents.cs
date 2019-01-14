@@ -19,7 +19,7 @@ namespace NativeApp.Models
 			exsistOnlyLocal = 3,
 			exsistOnlyGlobal = 4
 		}
-		public static string mainUrl = "http://127.0.0.1:5000";
+		public static string mainUrl = "http://192.168.43.218:5000";
 		public static string documentUrl = mainUrl + @"/files";
 		public static string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		public static List<Document> currentDocuments;

@@ -44,7 +44,7 @@ namespace NativeApp
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                client.BaseAddress = new Uri("http://192.168.43.218:5000/");
                 var response = client.PostAsJsonAsync("files", document).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,7 +67,7 @@ namespace NativeApp
         {
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                client.BaseAddress = new Uri("http://192.168.43.218:5000/");
                 var response = client.PutAsJsonAsync($@"files/{this.file_id}", this).Result;
                 if (response.IsSuccessStatusCode)
                 {

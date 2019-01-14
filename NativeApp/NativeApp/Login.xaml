@@ -31,7 +31,7 @@
             <Label Content="Login" HorizontalAlignment="Left" Margin="216,220,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
             <Label Name ="wrongCredentials" Content="Wrong user name or password" HorizontalAlignment="Left" Margin="280,323,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" Foreground="Red" Visibility="Hidden"/>
         </Grid>
-        <!--Main escreen grid-->
+        <!--Main screen grid-->
         <Grid Name="mainGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Visible">
             <TextBlock HorizontalAlignment="Left" Margin="233,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="82" Width="403"><Run FontSize="20" FontFamily="Century Gothic" Text="Welcome to TEXT EDITOR!"/><LineBreak/><Run FontSize="20" FontFamily="Century Gothic" Text="To continiue, please log in."/></TextBlock>
         </Grid>
@@ -46,6 +46,7 @@
             <Button Name ="loginBttn" Content="Login" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="Button_Click" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
             <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
+            <Label Name ="welcomeLabel" HorizontalAlignment="Center" Margin="5,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="15" Height="59" Width="161" Foreground="White" HorizontalContentAlignment="Center" FontStyle="Italic"/>
         </Grid>
 
         <!--List of files grid-->
@@ -65,34 +66,32 @@
                 <DataGrid.RowStyle>
 
                     <Style TargetType="DataGridRow">
-                          <Style.Triggers> 
-                           <DataTrigger Binding="{Binding Name, Converter={StaticResource CheckTheFile}}" Value="true"> 
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Name, Converter={StaticResource CheckTheFile}}" Value="true">
                                 <Setter Property="Foreground" Value="Red"/>
-                            </DataTrigger> 
-                         </Style.Triggers> 
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
-            
+
             </DataGrid>
         </Grid>
         <!--New file grid-->
-        <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+        <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="hidden">
             <Label Content="Title" HorizontalAlignment="Left" Margin="44,39,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="655" FontSize="12"/>
+            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="581" FontSize="12"/>
             <TextBox Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="44,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716" FontSize="12"/>
             <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="635,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
                     FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="saveBtn_Click" />
             <Button Name="backBtn" Content="Back" HorizontalAlignment="Left" Margin="44,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
                     FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="backBtn_Click" />
+            <CheckBox Name="editCheckBox" Content="Editable" HorizontalAlignment="Left" Margin="699,48,0,0" VerticalAlignment="Top" Height="25" Checked="editCheckBox_Checked" Unchecked="editCheckBox_Unchecked"/>
 
         </Grid>
         <!--welome login grid-->
         <Grid Name="welcomeGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
-            <Label Name ="welcomeLabel" HorizontalAlignment="Left" Margin="226,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <Label Name ="socketStatusLabel" HorizontalAlignment="Left" Margin="226,373,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <Button Name="SocketIO" Content="SocketIO Connect" HorizontalAlignment="Left" Margin="556,523,0,0" VerticalAlignment="Top" Width="204" Height="38"
-                    FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="SocketIO_Click" />
-            <!--<Label Name="userLabel" Content="{Binding}" HorizontalAlignment="Left" Margin="413,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" />-->
+            <TextBlock HorizontalAlignment="Left" Margin="233,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="82" Width="403"><Run FontSize="20" FontFamily="Century Gothic" Text="Welcome to TEXT EDITOR!"/><LineBreak/><Run FontSize="20" FontFamily="Century Gothic" Text="Have fun using our app :P"/></TextBlock>
+
         </Grid>
     </Grid>
 </Window>
