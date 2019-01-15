@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { IFile } from '../_models/file';
 import { IUser } from '../_models/user';
@@ -12,7 +12,7 @@ import { Socket } from 'ng6-socket-io';
 })
 
 class ChatService {
- 
+
   constructor(private socket: Socket) { }
 
   sendMessage(username: string, message: string){
@@ -36,6 +36,9 @@ class ChatService {
 export class WebsocketService {
 
   private socket; // socket connects to socket.io server
+  //public _file_locked = false;
+
+  public _file_locked: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor() {
     //this.socket = io.connect(environment.ws_url);
@@ -62,11 +65,26 @@ export class WebsocketService {
         observer.next(data);
       })
 
-      // this.socket.on('fileSaved', (data)=> {
-      //   console.log("Received a msg from server");
-      //   showToast('A File \"'+ data.file_name + '\" has just been shared by ' + data.username + '!');
-      //   observer.next(data);
-      // })
+      this.socket.on('fileSaved', (data)=> {
+        showToast('A File \"'+ data.file_name + '\" has just been shared by ' + data.username + '!');
+      })
+
+      this.socket.on('fileUpdated', (data)=>{
+        showToast('File \"'+ data.file_name +'\" updated by '+ data.username+'!');
+      })
+
+      this.socket.on('fileLocked', (data)=>{
+        showToast('File \"'+ data.file_name +'\" locked by '+ data.username+'!');
+        // disable checkbox!!!
+       this._file_locked.next(true);
+
+      })
+
+      this.socket.on('fileUnlocked', (data)=>{
+        showToast('File \"'+ data.file_name +'\" unlocked!');
+        // enable checkbox!!!
+        this._file_locked.next(false);
+      })
 
       return() => {
         this.socket.disconnect();
@@ -93,12 +111,17 @@ export class WebsocketService {
     this.socket.emit('fileSaved', JSON.stringify({username, file_name}));
   }
 
-  emitEventOnFileLocked(fileLocked){
-    this.socket.emit('fileLocked', JSON.stringify(fileLocked));
+  emitEventOnFileLocked(username, file_name){
+    this.socket.emit('fileLocked', JSON.stringify({username, file_name}));
   }
 
-  emitEventOnFileUpdated(file_name, user_login){
-    this.socket.emit('fileUpdated', JSON.stringify({file_name, user_login}));
+  
+  emitEventOnFileUnlocked(username, file_name){
+    this.socket.emit('fileUnlocked', JSON.stringify({username, file_name}));
+  }
+
+  emitEventOnFileUpdated(file_name, username){
+    this.socket.emit('fileUpdated', JSON.stringify({file_name, username}));
   }
 
   // consume File Saved ---- create new file

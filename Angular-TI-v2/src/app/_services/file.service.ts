@@ -5,6 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { WebsocketService } from '../_services/websocket.service';
 import { showToast } from '../toaster-helper';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class FileService {
 
   serverData: JSON;
 
-  public _url: string = "http://127.0.0.1:5000/files";
+  public _url: string = environment.ws_url+"files";
+
   public data$: BehaviorSubject<any> = new BehaviorSubject({});
 
   constructor(private http: HttpClient, 
@@ -51,8 +53,8 @@ export class FileService {
 
                       //COMPLETE
                       () => {
-                        self.websocketservice.emitEventOnFileUpdated(file_name, user_id);
-                        showToast("File updated!");
+                        self.websocketservice.emitEventOnFileUpdated(file_name, localStorage.getItem('currentUser'));
+                        //showToast("File updated!");
                       }
                     );
   }
@@ -77,7 +79,7 @@ export class FileService {
                       () => {
                         self.websocketservice.emitEventOnFileSaved(localStorage.getItem('currentUser'), file_name);
 
-                        showToast("File: "+file_name+" saved!");
+                        //showToast("File: "+file_name+" saved!");
                         // add new file to file component and refresh
                     }
                     );
