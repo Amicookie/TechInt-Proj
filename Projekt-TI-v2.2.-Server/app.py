@@ -47,7 +47,7 @@ def handle_file_saved(file_saved):
 def handle_file_locked(file_locked_data):
     print('File Locked!', file_locked_data)
     file_locked_data_dict = literal_eval(file_locked_data)
-    socketio.emit('fileLocked', {'username': file_locked_data_dict.get('username'), 'file_name': file_locked_data_dict.get('file_name')})
+    socketio.emit('fileLocked', {'user_id': file_locked_data_dict.get('user_id'), 'username': file_locked_data_dict.get('username'), 'file_name': file_locked_data_dict.get('file_name'), 'file_id': file_locked_data_dict.get('file_id')})
 
 
 @socketio.on('fileUnlocked')

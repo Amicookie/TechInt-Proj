@@ -22,6 +22,7 @@ export class FileComponent implements OnInit, OnDestroy {
   _navigateToFile = false;
   editable = false;
   _file_locked: boolean;
+  _locked_file_id: number;
   //_disabled = this.webSocketService._disabled;
 
   BreakException = {};
@@ -33,6 +34,11 @@ export class FileComponent implements OnInit, OnDestroy {
         this._file_locked = value;
       }
     );
+    this.webSocketService._locked_file_id.subscribe(
+      value => {
+        this._locked_file_id = value;
+      }
+    )
   }
   ngOnInit() {
     this._filesService.getFiles()
@@ -46,7 +52,7 @@ export class FileComponent implements OnInit, OnDestroy {
 
   editable_switch(){
     if (this.editable == true){
-     this.webSocketService.emitEventOnFileLocked(localStorage.getItem('currentUser'), this.file_name);
+     this.webSocketService.emitEventOnFileLocked(localStorage.getItem('user_id'), localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
     } else {
       this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name);
      }
@@ -70,6 +76,7 @@ export class FileComponent implements OnInit, OnDestroy {
   }
 
   backToList(){
+    if(this.editable) this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name);
     this.current_file_id = 0;
     this.file_name = "";
     this.file_content = "";

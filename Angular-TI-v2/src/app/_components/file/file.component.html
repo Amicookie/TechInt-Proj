@@ -7,7 +7,7 @@
             <div class="resume-content mr-auto">
                 <div class="form-container">
                     <!--<h1>Edit</h1>-->
-                    <div *ngIf="!_file_locked"><h4>Edit <label class="switch"><input [checked]="editable" (change)="editable = !editable; editable_switch();" type="checkbox" id="editable_checkbox"><span class="slider"></span></label></h4></div>
+                    <div *ngIf="!_file_locked || _locked_file_id !== current_file_id"><h4>Edit <label class="switch"><input [checked]="editable" (change)="editable = !editable; editable_switch();" type="checkbox" id="editable_checkbox"><span class="slider"></span></label></h4></div>
                     File name: <br>
                     <textarea  [readonly]="!editable" placeholder="File Name" class="fileName" name="filename" [(ngModel)]="file_name" required>{{file_name}}</textarea>
                     <br>

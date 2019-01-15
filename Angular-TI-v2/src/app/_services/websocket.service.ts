@@ -39,6 +39,7 @@ export class WebsocketService {
   //public _file_locked = false;
 
   public _file_locked: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public _locked_file_id: BehaviorSubject<number> = new BehaviorSubject<number>(null);;
 
   constructor() {
     //this.socket = io.connect(environment.ws_url);
@@ -67,22 +68,29 @@ export class WebsocketService {
 
       this.socket.on('fileSaved', (data)=> {
         showToast('A File \"'+ data.file_name + '\" has just been shared by ' + data.username + '!');
+        // dodawanie plików do listy
       })
 
       this.socket.on('fileUpdated', (data)=>{
         showToast('File \"'+ data.file_name +'\" updated by '+ data.username+'!');
+        // edytowanie listy plików
       })
 
       this.socket.on('fileLocked', (data)=>{
         showToast('File \"'+ data.file_name +'\" locked by '+ data.username+'!');
         // disable checkbox!!!
-       this._file_locked.next(true);
-
+        if(localStorage.getItem('user_id') == data.user_id) {
+          this._file_locked.next(false);
+        } else {
+          this._locked_file_id.next(data.file_id);
+          this._file_locked.next(true);
+        }
       })
 
       this.socket.on('fileUnlocked', (data)=>{
         showToast('File \"'+ data.file_name +'\" unlocked!');
         // enable checkbox!!!
+        this._locked_file_id.next(null);
         this._file_locked.next(false);
       })
 
@@ -111,8 +119,8 @@ export class WebsocketService {
     this.socket.emit('fileSaved', JSON.stringify({username, file_name}));
   }
 
-  emitEventOnFileLocked(username, file_name){
-    this.socket.emit('fileLocked', JSON.stringify({username, file_name}));
+  emitEventOnFileLocked(user_id, username, file_name, file_id){
+    this.socket.emit('fileLocked', JSON.stringify({user_id, username, file_name, file_id}));
   }
 
   
