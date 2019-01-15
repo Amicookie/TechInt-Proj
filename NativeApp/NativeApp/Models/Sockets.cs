@@ -27,7 +27,7 @@ namespace NativeApp.Models
 			nameToChange = name;
 			action = locked;
 
-		socket.On(Socket.EVENT_CONNECT, () =>
+			socket.On(Socket.EVENT_CONNECT, () =>
 			{
 				Console.WriteLine("Is Connected ");
 				isConnected = true;
@@ -80,27 +80,31 @@ namespace NativeApp.Models
 			}
 			);
 
-				socket.On("fileLocked", (data) =>
-				{
-					fileNameLocked = data.ToString();
-					Console.WriteLine("SocketIO: zablokowano plik {0}", fileNameLocked);
+			socket.On("fileLocked", (data) =>
+			{
+				fileNameLocked = data.ToString();
+				Console.WriteLine("SocketIO: zablokowano plik {0}", fileNameLocked);
+			});
 
-				});
+			socket.On("fileUnlocked", (data) =>
+			{
+				fileNameUnlocked = data.ToString();
+				Console.WriteLine("SocketIO: odblokowano plik {0}", fileNameUnlocked);
+			});
 
-				socket.On("fileUnlocked", (data) =>
-				{
-					fileNameUnlocked = data.ToString();
-					Console.WriteLine("SocketIO: odblokowano plik {0}", fileNameUnlocked);
-				});
+			socket.On("fileSaved", (data) =>
+			{
+				fileNameSaved = data.ToString();
+				Console.WriteLine("SocketIO: Zapisano plik {0}", fileNameSaved);
+			});
+		}
 
-				socket.On("fileSaved", (data) =>
-				{
-					fileNameSaved = data.ToString();
-					Console.WriteLine("SocketIO: Zapisano plik {0}", fileNameSaved);
-				});
-			}
+		public void socketChat(Socket socket)
+		{
 
-
+		}
 
 	}
+
+
 }

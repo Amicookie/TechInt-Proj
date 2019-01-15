@@ -1,71 +1,246 @@
-﻿<Window x:Class="NativeApp.Login"
+﻿<Window xmlns:Borders="clr-namespace:ToggleSwitch.Borders;assembly=ToggleSwitch" 
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NativeApp" 
+        xmlns:PropertyEditing="clr-namespace:System.Activities.Presentation.PropertyEditing;assembly=System.Activities.Presentation" xmlns:ToggleSwitch="clr-namespace:ToggleSwitch;assembly=ToggleSwitch" xmlns:Utils="clr-namespace:ToggleSwitch.Utils;assembly=ToggleSwitch" x:Class="NativeApp.Login" 
         mc:Ignorable="d"
-        Title="Text Editor" Height="636.612" Width="984.479">
+        Title="Text Editor" Height="636.612" Width="1350">
+    <Window.Resources>
+        <Style x:Key="HorizontalToggleSwitchStyle1" TargetType="{x:Type ToggleSwitch:HorizontalToggleSwitch}">
+            <Setter Property="Width" Value="88"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="BorderBrush" Value="#77979797"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0,4"/>
+            <Setter Property="UncheckedForeground" Value="White"/>
+            <Setter Property="CheckedForeground" Value="White"/>
+            <Setter Property="ThumbSize" Value="40"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="Arial"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContentControl}">
+                        <Viewbox HorizontalAlignment="Stretch" Margin="{TemplateBinding Padding}" StretchDirection="DownOnly" VerticalAlignment="Stretch">
+                            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Viewbox>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleSwitch:HorizontalToggleSwitch}">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Visibility)" Storyboard.TargetName="DisabledOverlay">
+                                                <DiscreteObjectKeyFrame KeyTime="0">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Visibility>Visible</Visibility>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.1" GeneratedEasingFunction="{x:Null}" Storyboard="{x:Null}" To="Unchecked"/>
+                                        <VisualTransition From="{x:Null}" GeneratedDuration="0:0:0.1" GeneratedEasingFunction="{x:Null}" Storyboard="{x:Null}" To="Checked"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Checked"/>
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="DraggingChecked"/>
+                                    <VisualState x:Name="DraggingUnchecked"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Unfocused"/>
+                                    <VisualState x:Name="Focused"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Borders:ClippingBorder x:Name="SwitchRoot" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="4" Margin="0,24,0,-24">
+                                <Canvas MinWidth="{TemplateBinding ThumbSize}" MinHeight="{TemplateBinding FontSize}">
+                                    <Utils:ActualSizePropertyProxy x:Name="ActualSizeProxy" Element="{Binding Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" IsHitTestVisible="False" Visibility="Collapsed"/>
+                                    <Grid x:Name="SwitchTrack" Cursor="Hand" Height="{Binding ActualHeightValue, ElementName=ActualSizeProxy, Mode=OneWay}" Margin="0,-1,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Background="{TemplateBinding CheckedBackground}" Margin="-1,0,0,0" Padding="1,0,0,0">
+                                                <ContentControl x:Name="SwitchChecked" Content="{TemplateBinding CheckedContent}" Foreground="{TemplateBinding CheckedForeground}" Focusable="False" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsTabStop="False" Margin="{TemplateBinding Padding}" Padding="0,0,22,0" Template="{TemplateBinding ContentTemplate}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                            </Border>
+                                            <Border Background="{TemplateBinding UncheckedBackground}" Margin="-1,0,0,0">
+                                                <ContentControl x:Name="SwitchUnchecked" Content="{TemplateBinding UncheckedContent}" Foreground="{TemplateBinding UncheckedForeground}" Focusable="False" FontSize="{TemplateBinding FontSize}" FontFamily="{TemplateBinding FontFamily}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" IsTabStop="False" Margin="{TemplateBinding Padding}" Template="{TemplateBinding ContentTemplate}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Borders:InnerGlowBorder BorderThickness="0" Background="#00000000" CornerRadius="4" Height="{Binding ActualHeightValue, ElementName=ActualSizeProxy, Mode=OneWay}" InnerGlowOpacity="0.25" InnerGlowColor="Black" InnerGlowSize="2,4,2,0" Margin="-1,-1,0,0" Width="{Binding ActualWidthValue, ElementName=ActualSizeProxy, Mode=OneWay}"/>
+                                    <Thumb x:Name="SwitchThumb" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding ThumbBrush}" Cursor="Hand" HorizontalAlignment="Left" Height="{Binding ActualHeightValue, ElementName=ActualSizeProxy, Mode=OneWay}" IsTabStop="False" Margin="0,-1,0,0" Template="{TemplateBinding ThumbTemplate}" Width="{TemplateBinding ThumbSize}"/>
+                                </Canvas>
+                            </Borders:ClippingBorder>
+                            <Border x:Name="DisabledOverlay" Background="#AAEEEEEE" CornerRadius="4" IsHitTestVisible="False" Visibility="Collapsed"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ThumbTemplate">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Grid Background="Transparent">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="0.05" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="BackgroundAnimation"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="0.25" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="BackgroundAnimation"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="0.55" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="DisabledVisualElement"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="0.05" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="FocusVisualElement"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unfocused"/>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Unchecked"/>
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="-1" Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" Storyboard.TargetName="path"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Borders:OuterGlowBorder BorderThickness="0" Background="Transparent" CornerRadius="4" OuterGlowColor="Black" OuterGlowSize="4" OuterGlowOpacity="0.15" ShadowCornerRadius="8">
+                                <Grid>
+                                    <Borders:ClippingBorder x:Name="Background" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="White" CornerRadius="4">
+                                        <Border BorderBrush="#FFEBEBEB" BorderThickness="1" Background="{TemplateBinding Background}" CornerRadius="3">
+                                            <Path x:Name="path" Data="M3.6,2.6L10,2.6 10,6.6 3.6,6.6z M10,0L15.5,4.6 10,9.4z" Fill="#AA767676" Margin="7,5" RenderTransformOrigin="0.5,0.5" Stretch="Fill" StrokeThickness="0">
+                                                <Path.RenderTransform>
+                                                    <ScaleTransform/>
+                                                </Path.RenderTransform>
+                                            </Path>
+                                        </Border>
+                                    </Borders:ClippingBorder>
+                                    <Borders:ClippingBorder x:Name="BackgroundAnimation" BorderBrush="Black" BorderThickness="{TemplateBinding BorderThickness}" Background="Black" CornerRadius="4" Opacity="0"/>
+                                    <Rectangle x:Name="FocusVisualElement" IsHitTestVisible="True" Margin="1" Opacity="0" RadiusY="4" RadiusX="4" StrokeThickness="1"/>
+                                    <Rectangle x:Name="DisabledVisualElement" Fill="White" IsHitTestVisible="False" Opacity="0" RadiusY="4" RadiusX="4"/>
+                                </Grid>
+                            </Borders:OuterGlowBorder>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CheckedBackground">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FF5EAD09" Offset="1"/>
+                        <GradientStop Color="#FF478108"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="UncheckedBackground">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFC80000" Offset="1"/>
+                        <GradientStop Color="#FFB00000"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ThumbBrush">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFE2E2E2" Offset="1"/>
+                        <GradientStop Color="#FFFDFCFD"/>
+                        <GradientStop Color="#FFF8F8F8" Offset="0.5"/>
+                        <GradientStop Color="#FFE8E8E8" Offset="0.5"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="11*"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
         <!--Menu Grid-->
-        <Grid Name="MenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176" Background="DeepSkyBlue" Visibility="Visible">
+        <Grid x:Name="MenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176" Background="DeepSkyBlue" Visibility="Visible">
             <Button Content="Home" HorizontalAlignment="Left" Margin="0,265,0,0" VerticalAlignment="Top" Width="176" RenderTransformOrigin="-0.153,0.595" Height="40" Background="Transparent"
                     BorderThickness="0" FontFamily="Century Gothic" FontSize="20" FontWeight="Bold" Foreground="White" Click="Button_Click_1"/>
             <Button Content="Login" FontFamily="Century Gothic" FontSize="20" FontWeight="Bold" Foreground="White"
                     HorizontalAlignment="Left" Margin="0,305,0,0" VerticalAlignment="Top" Width="176" Height="40" Background="Transparent" BorderThickness="0" Click="Button_Click"/>
-            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
+            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/note.png" />
+
         </Grid>
         <!--Login grid-->
-        <Grid Name="LoginGrid"  Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
-            <Button Name="loginBtn" Content="Login" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
+        <Grid x:Name="LoginGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="760" Visibility="Hidden" Grid.ColumnSpan="2" Margin="181,0,0,0">
+            <Button x:Name="loginBtn" Content="Login" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
         HorizontalAlignment="Left" Height="35" Margin="361,371,0,0" VerticalAlignment="Top" Width="191" Grid.Column="1" Click="loginBtn_Click"/>
-            <Button Name="workOffBtn" Content="Work offline" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
+            <Button x:Name="workOffBtn" Content="Work offline" Background="ForestGreen" BorderThickness="0" FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20"
         HorizontalAlignment="Left" Height="35" Margin="361,371,0,0" VerticalAlignment="Top" Width="191" Grid.Column="1" Click="workOffBtn_Click"/>
-            <PasswordBox Name ="passBox" HorizontalAlignment="Left" Margin="324,282,0,0" VerticalAlignment="Top" Width="260" Height="27" Grid.Column="1"/>
-            <TextBox Name="loginBox"  HorizontalAlignment="Left" Height="29" Margin="324,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="260" TextChanged="TextBox_TextChanged" Grid.Column="1"/>
+            <PasswordBox x:Name ="passBox" HorizontalAlignment="Left" Margin="324,282,0,0" VerticalAlignment="Top" Width="260" Height="27" Grid.Column="1"/>
+            <TextBox x:Name="loginBox"  HorizontalAlignment="Left" Height="29" Margin="324,217,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="260" TextChanged="TextBox_TextChanged" Grid.Column="1"/>
             <Label Content="Password" HorizontalAlignment="Left" Margin="216,283,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
             <Label Content="Login" HorizontalAlignment="Left" Margin="216,220,0,0" VerticalAlignment="Top" Grid.Column="1" FontFamily="Century Gothic" FontSize="20" />
-            <Label Name ="wrongCredentials" Content="Wrong user name or password" HorizontalAlignment="Left" Margin="280,323,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" Foreground="Red" Visibility="Hidden"/>
+            <Label x:Name ="wrongCredentials" Content="Wrong user name or password" HorizontalAlignment="Left" Margin="280,323,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20" Foreground="AliceBlue" Visibility="Hidden"/>
         </Grid>
         <!--Main screen grid-->
-        <Grid Name="mainGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Visible">
+        <Grid x:Name="mainGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="760" Visibility="Visible" Grid.ColumnSpan="2" Margin="181,0,0,0">
             <TextBlock HorizontalAlignment="Left" Margin="233,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="82" Width="403"><Run FontSize="20" FontFamily="Century Gothic" Text="Welcome to TEXT EDITOR!"/><LineBreak/><Run FontSize="20" FontFamily="Century Gothic" Text="To continiue, please log in."/></TextBlock>
         </Grid>
         <!--Menu Logged in grid-->
-        <Grid Name="loginMenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176"  Background="DeepSkyBlue" Visibility="Hidden">
-            <Button Name="filesBtn" Content="Files" HorizontalAlignment="Left" Margin="0,303,-2,0" VerticalAlignment="Top" Width="178" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+        <Grid x:Name="loginMenuGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="176"  Background="DeepSkyBlue" Visibility="Hidden">
+            <Button x:Name="filesBtn" Content="Files" HorizontalAlignment="Left" Margin="0,303,-2,0" VerticalAlignment="Top" Width="178" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="filesBtn_Click" FontWeight="Bold" Foreground="White"/>
-            <Button Name="newFileBtn" Content="New file" HorizontalAlignment="Left" Margin="0,343,0,0" VerticalAlignment="Top" Width="176" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+            <Button x:Name="newFileBtn" Content="New file" HorizontalAlignment="Left" Margin="0,343,0,0" VerticalAlignment="Top" Width="176" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="newFileBtn_Click" FontWeight="Bold" Foreground="White"/>
-            <Button Name ="logoutBtn" Content="Logout" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+            <Button x:Name ="logoutBtn" Content="Logout" HorizontalAlignment="Left" Margin="-10,423,-2,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="logoutBtn_Click" FontWeight="Bold" Foreground="White"/>
-            <Button Name ="loginBttn" Content="Login" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+            <Button x:Name ="loginBttn" Content="Login" HorizontalAlignment="Left" Margin="-12,383,0,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
                     BorderThickness="0" Click="Button_Click" FontWeight="Bold" Foreground="White" Visibility="Hidden"/>
-            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/croped.png"/>
-            <Label Name ="welcomeLabel" HorizontalAlignment="Center" Margin="5,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="15" Height="59" Width="161" Foreground="White" HorizontalContentAlignment="Center" FontStyle="Italic"/>
+            <Image HorizontalAlignment="Left" Height="125" Margin="26,36,0,0" VerticalAlignment="Top" Width="125" Source="Pictures/note.png"/>
+            <Label x:Name ="welcomeLabel" HorizontalAlignment="Center" Margin="5,217,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="15" Height="59" Width="161" Foreground="White" HorizontalContentAlignment="Center" FontStyle="Italic"/>
+            <Button x:Name ="chatBtn" Content="Chat" HorizontalAlignment="Left" Margin="-10,383,-2,0" VerticalAlignment="Top" Width="188" Height="40" FontFamily="Century Gothic" FontSize="20" Background="Transparent"
+                BorderThickness="0" Click="chatBtn_Click" FontWeight="Bold" Foreground="White" />
         </Grid>
 
         <!--List of files grid-->
-        <Grid Name="filesListGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="620" Visibility="Hidden">
+        <Grid x:Name="filesListGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="760" Visibility="Hidden" Grid.ColumnSpan="2" Margin="181,0,0,0">
             <Grid.Resources>
                 <local:CheckTheFileConverter x:Key="CheckTheFile"/>
             </Grid.Resources>
-            <Label Content="List of shared files:" HorizontalAlignment="Left" Margin="43,40,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <DataGrid Name="listOfFiles" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="439" Margin="43,80,0,0" VerticalAlignment="Top" Width="711" 
+            <Label Content="List of shared files:" HorizontalAlignment="Left" Margin="28,40,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <DataGrid x:Name="listOfFiles" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="439" Margin="28,80,0,0" VerticalAlignment="Top" Width="600" 
                       Background="Transparent" BorderThickness="0" ColumnHeaderHeight="40" BorderBrush="White" CanUserResizeColumns="False" MouseDoubleClick="Row_MouseDoubleClick"
-                      RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False">
+                      RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False" HeadersVisibility="Column">
                 <DataGrid.Columns >
                     <DataGridTextColumn IsReadOnly="true" Binding="{Binding}" Header="File name" />
                     <DataGridTextColumn IsReadOnly="true" Binding="{Binding CreationTime}" Header="Creation Time" />
                     <DataGridTextColumn IsReadOnly="true" Binding="{Binding LastWriteTime}" Header="Last Write Time"/>
                 </DataGrid.Columns>
                 <DataGrid.RowStyle>
-
-                    <Style TargetType="DataGridRow">
+                    <Style TargetType="{x:Type DataGridRow}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Name, Converter={StaticResource CheckTheFile}}" Value="true">
                                 <Setter Property="Foreground" Value="Red"/>
@@ -76,22 +251,40 @@
 
             </DataGrid>
         </Grid>
-        <!--New file grid-->
-        <Grid Name="newFileGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="hidden">
-            <Label Content="Title" HorizontalAlignment="Left" Margin="44,39,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
-            <TextBox Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="105,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="581" FontSize="12"/>
-            <TextBox Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="44,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716" FontSize="12"/>
-            <Button Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="635,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
+        <!--New file Grid-->
+        <Grid x:Name="newFileGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="760" Visibility="Hidden" Grid.ColumnSpan="2" Margin="181,0,0,0">
+            <Label Content="Title" HorizontalAlignment="Left" Margin="34,39,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
+            <TextBox x:Name="TitleBox" HorizontalAlignment="Left" Height="34" Margin="85,39,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="581" FontSize="12"/>
+            <TextBox x:Name="contentBox" HorizontalAlignment="Left" Height="398" Margin="34,92,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="716" FontSize="12"/>
+            <Button x:Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="625,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
                     FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="saveBtn_Click" />
-            <Button Name="backBtn" Content="Back" HorizontalAlignment="Left" Margin="44,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
+            <Button x:Name="backBtn" Content="Back" HorizontalAlignment="Left" Margin="34,523,0,0" VerticalAlignment="Top" Width="125" Height="38"
                     FontWeight="Bold" Foreground="White" FontFamily="Century Gothic" FontSize="20" Background="ForestGreen" BorderThickness="0" Click="backBtn_Click" />
-            <CheckBox Name="editCheckBox" Content="Editable" HorizontalAlignment="Left" Margin="699,48,0,0" VerticalAlignment="Top" Height="25" Checked="editCheckBox_Checked" Unchecked="editCheckBox_Unchecked"/>
+            <!--<CheckBox x:Name="editCheckBox" Content="Editable" HorizontalAlignment="Left" Margin="699,48,0,0" VerticalAlignment="Top" Height="25" Checked="editCheckBox_Checked" Unchecked="editCheckBox_Unchecked"/>-->
+
+            <ToggleSwitch:HorizontalToggleSwitch x:Name="toggleSwitch" HorizontalAlignment="Left" Margin="680,19,0,0" VerticalAlignment="Top" Height="24" Width="62" Style="{DynamicResource HorizontalToggleSwitchStyle1}" Checked="toggleSwitch_Checked" Unchecked="toggleSwitch_Unchecked" />
 
         </Grid>
         <!--welome login grid-->
-        <Grid Name="welcomeGrid" Grid.Column="1" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="800" Visibility="Hidden">
+        <Grid x:Name="welcomeGrid" HorizontalAlignment="Left" Height="606" VerticalAlignment="Top" Width="760" Visibility="Hidden" Grid.ColumnSpan="2" Margin="181,0,0,0">
             <TextBlock HorizontalAlignment="Left" Margin="233,261,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="82" Width="403"><Run FontSize="20" FontFamily="Century Gothic" Text="Welcome to TEXT EDITOR!"/><LineBreak/><Run FontSize="20" FontFamily="Century Gothic" Text="Have fun using our app :P"/></TextBlock>
 
         </Grid>
+
+        <!--chat grid-->
+        <Grid x:Name="ChatGrid" Margin="743,233,10,10" Grid.Column="1" Visibility="Hidden">
+            <Button Name="sendBtn" Content="Send" HorizontalAlignment="Left" Margin="197,316,0,0" VerticalAlignment="Top" Width="135" Height="35" Background="SlateBlue" BorderThickness="0" FontSize="20" FontFamily="Century Gothic"
+                FontWeight="Bold" Foreground="White" Click="sendBtn_Click"/>
+            <TextBox Name="messageBox" HorizontalAlignment="Left" Height="67" Margin="10,238,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="322"/>
+
+            <Button x:Name="closeChatBtn" Content="Close" HorizontalAlignment="Left" Margin="10,316,0,0" VerticalAlignment="Top" Width="135" Height="35" Background="Gray" BorderThickness="0" FontSize="20" FontFamily="Century Gothic"
+            FontWeight="Bold" Foreground="White" Click="closeChatBtn_Click">
+            </Button>
+            <!--Messages grid show-->
+            <Grid Name="MsgGrid" HorizontalAlignment="Left" Height="210" Margin="10,10,0,0" VerticalAlignment="Top" Width="322">
+                <Rectangle Fill="Gainsboro" HorizontalAlignment="Left" Height="210" Margin="0,0,0,0" VerticalAlignment="Top" Width="322" RadiusX="10" RadiusY="10"/>
+            </Grid>
+        </Grid>
+
     </Grid>
 </Window>

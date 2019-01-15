@@ -43,7 +43,7 @@ namespace NativeApp.Models
             try
             {
                 using (var client = new WebClient())
-                using (client.OpenRead("http://192.168.43.218:5000"))
+                using (client.OpenRead("http://127.0.0.1:5000/"))
                 {
                     return true;
                 }

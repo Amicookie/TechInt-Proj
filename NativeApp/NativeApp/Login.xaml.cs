@@ -28,7 +28,7 @@ namespace NativeApp
 	public partial class Login : Window
 	{
 		private User user;
-		public Socket socket = IO.Socket("http://192.168.43.218:5000/ ");
+		public Socket socket;
 
 
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
@@ -119,6 +119,8 @@ namespace NativeApp
 					loginBttn.Visibility = Visibility.Hidden;
 					logoutBtn.Visibility = Visibility.Visible;
 
+					socket = IO.Socket("http://127.0.0.1:5000/");
+
 				}
 				else
 				{
@@ -192,7 +194,7 @@ namespace NativeApp
 			TitleBox.Clear();
 			contentBox.Clear();
 
-			editCheckBox.IsChecked = true;
+			toggleSwitch.IsChecked = true;
 			TitleBox.IsReadOnly = false;
 			contentBox.IsReadOnly = false;
 			saveBtn.IsEnabled = true;
@@ -207,6 +209,9 @@ namespace NativeApp
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Hidden;
 			welcomeGrid.Visibility = Visibility.Hidden;
+			ChatGrid.Visibility = Visibility.Hidden;
+
+			socket.Disconnect();
 		}
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -220,33 +225,27 @@ namespace NativeApp
 			TitleBox.Text = title.Substring(0, title.Length - 4);
 			contentBox.Text = text;
 
-			if(editCheckBox.IsChecked == true)
+			if(toggleSwitch.IsChecked == true)
 			{
 				TitleBox.IsReadOnly = false;
 				contentBox.IsReadOnly = false;
 				saveBtn.IsEnabled = true;
 			}
-			else if(editCheckBox.IsChecked == false)
+			else if(toggleSwitch.IsChecked == false)
 			{
 				TitleBox.IsReadOnly = true;
 				contentBox.IsReadOnly = true;
 				saveBtn.IsEnabled = false;
 			}
-
-
 		}
 
 
 		private void backBtn_Click(object sender, RoutedEventArgs e)
 		{
-
-
-
 			Documents documents = new Documents();
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
-
 			}
 			else
 			{
@@ -269,7 +268,6 @@ namespace NativeApp
 				newFileGrid.Visibility = Visibility.Hidden;
 				welcomeGrid.Visibility = Visibility.Hidden;
 				LoginGrid.Visibility = Visibility.Hidden;
-
 			}
 		}
 
@@ -295,7 +293,6 @@ namespace NativeApp
 					{
 						document.PostDocument(document);
 						MessageBox.Show("File has been saved");
-
 					}
 					else
 					{
@@ -414,7 +411,7 @@ namespace NativeApp
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 		}
 
-		private void editCheckBox_Checked(object sender, RoutedEventArgs e)
+		private void toggleSwitch_Checked(object sender, RoutedEventArgs e)
 		{
 			TitleBox.IsReadOnly = false;
 			contentBox.IsReadOnly = false;
@@ -422,11 +419,14 @@ namespace NativeApp
 
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
-				newSocket.socketIoEmit(TitleBox.Text, 1, socket);
+				if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+				{
+					newSocket.socketIoEmit(TitleBox.Text, 1, socket);
+				}
 			}
 		}
 
-		private void editCheckBox_Unchecked(object sender, RoutedEventArgs e)
+		private void toggleSwitch_Unchecked(object sender, RoutedEventArgs e)
 		{
 			TitleBox.IsReadOnly = true;
 			contentBox.IsReadOnly = true;
@@ -434,13 +434,35 @@ namespace NativeApp
 
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
-				newSocket.socketIoEmit(TitleBox.Text, 0, socket);
+				if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+				{
+					newSocket.socketIoEmit(TitleBox.Text, 0, socket);
+				}
 			}
 		}
 
+		private void chatBtn_Click(object sender, RoutedEventArgs e)
+		{
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				ChatGrid.Visibility = Visibility.Visible;
+			} else
+			{
+				MessageBox.Show("You don't have connection to use chat!");
+			}
+			
+		}
 
+		private void closeChatBtn_Click(object sender, RoutedEventArgs e)
+		{
 
+			ChatGrid.Visibility = Visibility.Hidden;
+		}
 
+		private void sendBtn_Click(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 }
 
