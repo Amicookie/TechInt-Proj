@@ -29,13 +29,6 @@ hashing = Hashing(app)
 ti_db = SqliteDatabase(app.config['DATABASE'])
 
 
-@socketio.on('fileSaved')
-def handle_file_saved(file_saved):
-    print('File Saved!', file_saved)
-    file_saved_dict = literal_eval(file_saved)
-    socketio.emit('fileSaved', {'username': file_saved_dict.get('username'), 'file_name': file_saved_dict.get('file_name')})
-
-
 @socketio.on('chat')
 def handle_chat(message):
     print('Chat', message)
@@ -43,89 +36,44 @@ def handle_chat(message):
     socketio.emit('chat', {'username': message_dict.get('username'), 'message': message_dict.get('message')})
 
 
+@socketio.on('fileSaved')
+def handle_file_saved(file_saved):
+    print('File Saved!', file_saved)
+    file_saved_dict = literal_eval(file_saved)
+    socketio.emit('fileSaved', {'username': file_saved_dict.get('username'), 'file_name': file_saved_dict.get('file_name')})
+
+
 @socketio.on('fileLocked')
-def handle_file_locked(file_locked):
-    print('File Locked!', file_locked)
-    socketio.emit('fileLocked', file_locked)
+def handle_file_locked(file_locked_data):
+    print('File Locked!', file_locked_data)
+    file_locked_data_dict = literal_eval(file_locked_data)
+    socketio.emit('fileLocked', {'username': file_locked_data_dict.get('username'), 'file_name': file_locked_data_dict.get('file_name')})
 
 
 @socketio.on('fileUnlocked')
-def handle_file_unlocked(message):
-    # socketio.emit('message', message)
-    print('Message: ' + message)
-    send(message)
+def handle_file_unlocked(file_unlocked_data):
+    print('File Unlocked!', file_unlocked_data)
+    file_unlocked_data_dict = literal_eval(file_unlocked_data)
+    socketio.emit('fileUnlocked', {'username': file_unlocked_data_dict.get('username'),
+                                 'file_name': file_unlocked_data_dict.get('file_name')})
 
 
-@socketio.on('my_event', namespace='/test')
-def test_message(message):
-    session['receive_count'] = session.get('receive_count', 0)+1
-    emit('my_response', {'data': message['data'], 'count': session['receive_count']})
-
-
-@socketio.on('my_broadcast_event', namespace='/test')
-def test_broadcast_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
-         broadcast=True)
-
-
-@socketio.on('join', namespace='/test')
-def join(message):
-    join_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
-
-
-@socketio.on('leave', namespace='/test')
-def leave(message):
-    leave_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
-
-
-@socketio.on('close_room', namespace='/test')
-def close(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response', {'data': 'Room ' + message['room'] + ' is closing.',
-                         'count': session['receive_count']},
-         room=message['room'])
-    close_room(message['room'])
-
-
-@socketio.on('my_room_event', namespace='/test')
-def send_room_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
-         room=message['room'])
-
-
-@socketio.on('disconnect_request', namespace='/test')
-def disconnect_request():
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'Disconnected!', 'count': session['receive_count']})
-    disconnect()
-
-
-@socketio.on('my_ping', namespace='/test')
-def ping_pong():
-    emit('my_pong')
+@socketio.on('fileUpdated')
+def handle_file_unlocked(file_updated_data):
+    print('File Updated!', file_updated_data)
+    file_updated_data_dict = literal_eval(file_updated_data)
+    socketio.emit('fileUpdated', {'username': file_updated_data_dict.get('username'),
+                                   'file_name': file_updated_data_dict.get('file_name')})
 
 
 @socketio.on('connect')
 def test_connect():
     global thread
     print('Client connected')
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
+    # with thread_lock:
+    #     if thread is None:
+    #         thread = socketio.start_background_task(background_thread)
+    # emit('my_response', {'data': 'Connected', 'count': 0})
 
 
 @socketio.on('disconnect')

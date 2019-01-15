@@ -1,5 +1,5 @@
-<button class="open-button" (click)="openForm()">Chat</button>
-<div class="chat-popup" id="myForm">
+<button *ngIf="isUserLoggedIn" class="open-button" (click)="openForm()">Chat</button>
+<div *ngIf="isUserLoggedIn" class="chat-popup" id="myForm">
     <div class="form-container">
       <div id="chat-container" class="chat-container">
       </div>

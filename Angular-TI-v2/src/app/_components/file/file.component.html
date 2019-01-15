@@ -1,47 +1,26 @@
+<hr class="m-0">
+    
 <div *ngIf="_navigateToFile" class="container-fluid p-0">
     <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="vieweditFile">
         <div class="my-auto">
-            <h2 class="mb-5">VIEW FILE: "description"</h2>
+            <h2 class="mb-5">View File: {{file_name}}</h2>
             <div class="resume-content mr-auto">
                 <div class="form-container">
                     <!--<h1>Edit</h1>-->
-                    <h4>Edit <label class="switch"><input type="checkbox"><span class="slider"></span>
-                    </label></h4>
+                    <div *ngIf="!_file_locked"><h4>Edit <label class="switch"><input [checked]="editable" (change)="editable = !editable; editable_switch();" type="checkbox" id="editable_checkbox"><span class="slider"></span></label></h4></div>
                     File name: <br>
-                    <textarea placeholder="File Name" class="fileName" name="filename" required></textarea>
+                    <textarea  [readonly]="!editable" placeholder="File Name" class="fileName" name="filename" [(ngModel)]="file_name" required>{{file_name}}</textarea>
                     <br>
                     Content:<br>
-                    <textarea placeholder="File Content..." class="fileContent" name="filecontent" required></textarea>
-                    <button type="submit" class="btn">SAVE</button>
-                    <button type="button" class="btn back">BACK</button>
+                    <textarea  [readonly]="!editable"  placeholder="File Content..." class="fileContent" [(ngModel)]="file_content" name="filecontent" required>{{file_content}}</textarea>
+                    <button type="submit" (click)="editFile(current_file_id, file_name, file_content)" class="btn">SAVE</button>
+                    <button type="button" (click)="backToList()" class="btn back">BACK</button>
                 </div>
             </div>
         </div>
     </section>
 </div>
-
-<hr class="m-0">
-
-<section class="resume-section p-3 p-lg-5 d-flex flex-column" id="createFile">
-    <div class="my-auto">
-        <h2 class="mb-5">Create new file</h2>
-        <div class="resume-content mr-auto">
-            <div class="form-container">
-                <!--<h1>Edit</h1>-->
-                File name: <br>
-                <textarea placeholder="File Name" class="fileName" name="fileName" [(ngModel)]="file_new_name_input" required></textarea>
-                <br>
-                Content:<br>
-                <textarea placeholder="File Content..." class="fileContent" name="fileContent" [(ngModel)]="file_new_content_input" required></textarea>
-                <button class="btn" (click)="createFile(file_new_name_input, file_new_content_input)">SAVE</button>
-                <button type="button" class="btn back">BACK</button>
-            </div>
-        </div>
-    </div>
-</section>
-    
-<hr class="m-0">
-    
+<div *ngIf="!_navigateToFile" class="container-fluid p-0">
 <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="listFiles">
     <div class="my-auto">
         <h2 class="mb-5">List of files</h2>
@@ -71,5 +50,24 @@
         </div>
     </div>
 </section>
+</div>
 
 <hr class="m-0">
+
+<section class="resume-section p-3 p-lg-5 d-flex flex-column" id="createFile">
+    <div class="my-auto">
+        <h2 class="mb-5">Create new file</h2>
+        <div class="resume-content mr-auto">
+            <div class="form-container">
+                <!--<h1>Edit</h1>-->
+                File name: <br>
+                <textarea placeholder="File Name" class="fileName" name="fileName" [(ngModel)]="file_new_name_input" required></textarea>
+                <br>
+                Content:<br>
+                <textarea placeholder="File Content..." class="fileContent" name="fileContent" [(ngModel)]="file_new_content_input" required></textarea>
+                <button class="btn" (click)="createFile(file_new_name_input, file_new_content_input)">SAVE</button>
+                <button type="button" class="btn back">BACK</button>
+            </div>
+        </div>
+    </div>
+</section>

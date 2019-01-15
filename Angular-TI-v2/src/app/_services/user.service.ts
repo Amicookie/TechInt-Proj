@@ -5,6 +5,7 @@ import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { showToast } from '../toaster-helper';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class UserService {
   public usersCurrentlyLoggedIn = [];
 
 
-  public _url: string = "http://127.0.0.1:5000/users";
+  public _url: string = environment.ws_url+"users";
 
   constructor(private http: HttpClient) {
     this.currentUserSubject = new BehaviorSubject<IUser>(JSON.parse(localStorage.getItem('user_id')));
