@@ -17,6 +17,8 @@ namespace NativeApp.Models
 		public string lockedFile, unlockedFile, savedFile, modifiedFile;
 		public string receivedMsg, receivedFrom;
 
+		public static string lockf;
+
 		public string nameToChange = null;
 		public  int action = 3; //3 - do nothing
 
@@ -87,6 +89,7 @@ namespace NativeApp.Models
 					MessageBox.Show("Zablokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
 
 					lockedFile = nowyUser.file_name;
+					lockf = nowyUser.file_name;
 				}
 				
 			});

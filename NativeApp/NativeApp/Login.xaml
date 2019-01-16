@@ -292,7 +292,7 @@
                     <Label Content="Chat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="43" Width="95" FontFamily="Century Gothic" FontSize="30" FontWeight="Bold"/>
                 </Grid>
                 <TextBox Name="chatWindowBox" HorizontalAlignment="Left" Height="197" Margin="19,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Visible" 
-                         Grid.RowSpan="2" FontSize="15"/>
+                         Grid.RowSpan="2" FontSize="15" IsReadOnly="True"/>
             </Grid>
         </Border>
 

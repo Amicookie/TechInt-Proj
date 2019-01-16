@@ -29,7 +29,7 @@ namespace NativeApp
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 
-			if (value.Equals(returnFileLocekd()))
+			if (value.Equals(Sockets.lockf+".txt"))
 			{
 				Console.WriteLine("dziala warunek: {0}", setName);
 				return true;
