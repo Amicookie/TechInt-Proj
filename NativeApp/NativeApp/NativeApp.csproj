@@ -156,6 +156,7 @@
     <Compile Include="Models\Documents.cs" />
     <Compile Include="Models\Sockets.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Models\sUser.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Login.xaml">
       <SubType>Designer</SubType>

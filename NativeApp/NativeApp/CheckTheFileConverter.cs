@@ -11,15 +11,30 @@ namespace NativeApp
 {
 	class CheckTheFileConverter : IValueConverter
 	{
+		string getName, setName,name;
+
+		public void setFileLocked(string fileName)
+		{
+			getName = fileName+".txt";
+			//Console.WriteLine("Name: {0}", name);
+		}
+
+		public string returnFileLocekd()
+		{
+			//Console.WriteLine("wartosc: {0}", setName);
+			return getName;
+
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			Sockets newSocket = new Sockets();
-			string lockedFile = newSocket.fileNameLocked + ".txt";
 
-			if(value.Equals(lockedFile))
+			if (value.Equals(returnFileLocekd()))
 			{
+				Console.WriteLine("dziala warunek: {0}", setName);
 				return true;
-			} else
+			}
+			else
 			{
 				return false;
 			}
@@ -30,5 +45,6 @@ namespace NativeApp
 		{
 			throw new NotImplementedException();
 		}
+
 	}
 }

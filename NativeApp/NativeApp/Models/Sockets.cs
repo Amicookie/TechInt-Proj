@@ -6,31 +6,32 @@ using System.Threading.Tasks;
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json;
 using System.Windows.Controls;
-
+using System.Windows.Forms;
+using ToggleSwitch;
 
 namespace NativeApp.Models
 {
 	class Sockets
 	{
- 		public string fileNameLocked;
-		public string fileNameUnlocked;
-		public string fileNameSaved;
+
+		public string lockedFile, unlockedFile, savedFile;
 
 		public string nameToChange = null;
 		public  int action = 3; //3 - do nothing
 
-		public bool isConnected;
-
-
-		public void socketIoEmit(string name, int locked, Socket socket)
+		public void socketIoEmit(string name, int locked, String user, Socket socket)
 		{
 			nameToChange = name;
 			action = locked;
 
+			sUser nowy = new sUser {
+				username = user,
+				file_name = name
+			};
+
 			socket.On(Socket.EVENT_CONNECT, () =>
 			{
 				Console.WriteLine("Is Connected ");
-				isConnected = true;
 			}
 			);
 
@@ -38,14 +39,14 @@ namespace NativeApp.Models
 				{
 					if (action == 1) //dla 1 jest zablokowany
 					{
-						socket.Emit("fileLocked", nameToChange);
-						Console.WriteLine("Locked -> Name: {0}, action: {1}", nameToChange, action);
+						socket.Emit("fileLocked", JsonConvert.SerializeObject(nowy));
+						Console.WriteLine("Locked -> Name: {0}, action: {1}, user: {2}", nameToChange, action, user);
 
 					}
 					else if (action == 0) // 0 - jest odblokowany
 					{
-						socket.Emit("fileUnlocked", nameToChange);
-						Console.WriteLine("Unlocked -> Name: {0}, action: {1}", nameToChange, action);
+						socket.Emit("fileUnlocked", JsonConvert.SerializeObject(nowy));
+						Console.WriteLine("Unlocked -> Name: {0}, action: {1}, user: {2}", nameToChange, action, user);
 
 					}
 			}
@@ -56,50 +57,89 @@ namespace NativeApp.Models
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
 				Console.WriteLine("Rozlaczono");
-				isConnected = false;
 			}
 			);
 		}
 
 
 
-		public void socketIoManager(Socket socket)
+		public void socketIoManager(Socket socket, String user)
 		{
-
-			//socket.On(Socket.EVENT_CONNECT, () =>
-			//{
-			//	Console.WriteLine("Dziala Eevent");
-			//	isConnected = true;
-			//}
-			//);
+			sUser nowyUser = new sUser();
 
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
 				Console.WriteLine("Rozlaczono");
-				isConnected = false;
 			}
 			);
 
+
 			socket.On("fileLocked", (data) =>
 			{
-				fileNameLocked = data.ToString();
-				Console.WriteLine("SocketIO: zablokowano plik {0}", fileNameLocked);
+				var locked = JsonConvert.DeserializeObject<sUser>(data.ToString());
+				nowyUser.username = locked.username;
+				nowyUser.file_name = locked.file_name;
+
+				if (!user.Equals(nowyUser.username))
+				{
+					Console.WriteLine("SocketIO: zablokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
+					MessageBox.Show("Zablokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
+
+					lockedFile = nowyUser.file_name;
+				}
+				
 			});
 
 			socket.On("fileUnlocked", (data) =>
 			{
-				fileNameUnlocked = data.ToString();
-				Console.WriteLine("SocketIO: odblokowano plik {0}", fileNameUnlocked);
+				var unlocked = JsonConvert.DeserializeObject<sUser>(data.ToString());
+				nowyUser.username = unlocked.username;
+				nowyUser.file_name = unlocked.file_name;
+
+				if (!user.Equals(nowyUser.username))
+				{ 
+					Console.WriteLine("SocketIO: odblokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
+					MessageBox.Show("Odblokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
+
+					unlockedFile = nowyUser.file_name;
+				}
+				
 			});
 
 			socket.On("fileSaved", (data) =>
 			{
-				fileNameSaved = data.ToString();
-				Console.WriteLine("SocketIO: Zapisano plik {0}", fileNameSaved);
+				var saved = JsonConvert.DeserializeObject<sUser>(data.ToString());
+				nowyUser.username = saved.username;
+				nowyUser.file_name = saved.file_name;
+
+				if (!user.Equals(nowyUser.username))
+				{
+					Console.WriteLine("SocketIO: zablokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
+					MessageBox.Show("Zapisano nowy plik " + nowyUser.file_name + "\nOdśwież stroę.");
+
+					savedFile = nowyUser.file_name;
+				}
+				
 			});
+			
 		}
 
-		public void socketChat(Socket socket)
+		public string returnLockedFile()
+		{
+			return lockedFile;
+		}
+
+		public void returnUnlockedFile()
+		{
+			unlockedFile = null;
+		}
+
+		public void returnSavedFile()
+		{
+			savedFile = null;
+		}
+
+		public void socketChat(Socket socket, String user)
 		{
 
 		}

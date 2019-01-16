@@ -30,12 +30,13 @@ namespace NativeApp
 		private User user;
 		public Socket socket;
 
+		private String login, password;
 
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		AppStatus appStatus = new AppStatus();
 
 		Sockets newSocket = new Sockets();
-
+		sUser suser = new sUser();
 
 		public Login()
 		{
@@ -97,12 +98,13 @@ namespace NativeApp
 			appStatus.isOnline = AppStatus.CheckForInternetConnection();
 			filesListGrid.Visibility = Visibility.Hidden;
 
-			String login = loginBox.Text;
-			String password = passBox.Password.ToString();
+			login = loginBox.Text;
+			password = passBox.Password.ToString();
 			if (login.Count() > 0 && password.Count() > 0)
 			{
 				user = new User(login, password);
 				user.Get2();
+
 				if (user.user_exists == true && user.logged_in)
 				{
 					appStatus.isUserLogged = true;
@@ -120,6 +122,9 @@ namespace NativeApp
 					logoutBtn.Visibility = Visibility.Visible;
 
 					socket = IO.Socket("http://127.0.0.1:5000/");
+
+					newSocket.socketIoManager(socket, login);
+
 
 				}
 				else
@@ -156,7 +161,7 @@ namespace NativeApp
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
-				newSocket.socketIoManager(socket);
+
 			}
 			else
 			{
@@ -195,6 +200,7 @@ namespace NativeApp
 			contentBox.Clear();
 
 			toggleSwitch.IsChecked = true;
+			toggleSwitch.IsEnabled = true;
 			TitleBox.IsReadOnly = false;
 			contentBox.IsReadOnly = false;
 			saveBtn.IsEnabled = true;
@@ -224,6 +230,24 @@ namespace NativeApp
 
 			TitleBox.Text = title.Substring(0, title.Length - 4);
 			contentBox.Text = text;
+
+
+
+			if(TitleBox.Text.Equals(newSocket.lockedFile))
+			{
+				toggleSwitch.IsChecked = false;
+				toggleSwitch.IsEnabled = false;
+				//Console.WriteLine("Działa if loced file");
+			} else
+			{
+				toggleSwitch.IsEnabled = true;
+			}
+
+			if(TitleBox.Text.Equals(newSocket.unlockedFile))
+			{
+				toggleSwitch.IsEnabled = true;
+				//Console.WriteLine("Działa if unloced file");
+			}
 
 			if(toggleSwitch.IsChecked == true)
 			{
@@ -413,30 +437,36 @@ namespace NativeApp
 
 		private void toggleSwitch_Checked(object sender, RoutedEventArgs e)
 		{
-			TitleBox.IsReadOnly = false;
-			contentBox.IsReadOnly = false;
-			saveBtn.IsEnabled = true;
-
-			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			if (toggleSwitch.IsEnabled == true)
 			{
-				if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+				TitleBox.IsReadOnly = false;
+				contentBox.IsReadOnly = false;
+				saveBtn.IsEnabled = true;
+
+				if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 				{
-					newSocket.socketIoEmit(TitleBox.Text, 1, socket);
+					if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+					{
+						newSocket.socketIoEmit(TitleBox.Text, 1, login, socket);
+					}
 				}
 			}
 		}
 
 		private void toggleSwitch_Unchecked(object sender, RoutedEventArgs e)
 		{
-			TitleBox.IsReadOnly = true;
-			contentBox.IsReadOnly = true;
-			saveBtn.IsEnabled = false;
-
-			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			if (toggleSwitch.IsEnabled == true)
 			{
-				if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+				TitleBox.IsReadOnly = true;
+				contentBox.IsReadOnly = true;
+				saveBtn.IsEnabled = false;
+
+				if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 				{
-					newSocket.socketIoEmit(TitleBox.Text, 0, socket);
+					if (!string.IsNullOrWhiteSpace(TitleBox.Text))
+					{
+						newSocket.socketIoEmit(TitleBox.Text, 0, login, socket);
+					}
 				}
 			}
 		}
@@ -457,6 +487,7 @@ namespace NativeApp
 		{
 
 			ChatGrid.Visibility = Visibility.Hidden;
+			
 		}
 
 		private void sendBtn_Click(object sender, RoutedEventArgs e)
