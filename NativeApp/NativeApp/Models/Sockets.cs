@@ -14,7 +14,8 @@ namespace NativeApp.Models
 	class Sockets
 	{
 
-		public string lockedFile, unlockedFile, savedFile;
+		public string lockedFile, unlockedFile, savedFile, modifiedFile;
+		public string receivedMsg, receivedFrom;
 
 		public string nameToChange = null;
 		public  int action = 3; //3 - do nothing
@@ -114,14 +115,28 @@ namespace NativeApp.Models
 
 				if (!user.Equals(nowyUser.username))
 				{
-					Console.WriteLine("SocketIO: zablokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
 					MessageBox.Show("Zapisano nowy plik " + nowyUser.file_name + "\nOdśwież stroę.");
 
 					savedFile = nowyUser.file_name;
 				}
 				
 			});
-			
+
+			socket.On("fileUpdated", (data) =>
+			{
+				var saved = JsonConvert.DeserializeObject<sUser>(data.ToString());
+				nowyUser.username = saved.username;
+				nowyUser.file_name = saved.file_name;
+
+				if (!user.Equals(nowyUser.username))
+				{
+					MessageBox.Show("Zmodyfikowano plik " + nowyUser.file_name + "\nOdśwież stroę.");
+
+					modifiedFile = nowyUser.file_name;
+				}
+
+			});
+
 		}
 
 		public string returnLockedFile()
@@ -139,9 +154,37 @@ namespace NativeApp.Models
 			savedFile = null;
 		}
 
-		public void socketChat(Socket socket, String user)
+		// CHAT SOCKETY
+		public void chatGetMsg(Socket socket, String user)
 		{
+			sChat chat = new sChat();
 
+			socket.On("chat", (data) =>
+			{
+				var sent = JsonConvert.DeserializeObject<sChat>(data.ToString());
+				chat.username = sent.username;
+				chat.message = sent.message;
+
+				if (!user.Equals(chat.username))
+				{
+					Console.WriteLine("{0}: {1}", chat.username, chat.message);
+					receivedMsg = chat.message;
+					receivedFrom = chat.username;
+				}
+			});
+
+		}
+
+		public void sendMsg(Socket socket, String _user, string _msg)
+		{
+			sChat nowyChat = new sChat
+			{
+				username = _user,
+				message = _msg
+			};
+
+			socket.Emit("chat", JsonConvert.SerializeObject(nowyChat));
+			Console.WriteLine("Wyslano {0} : {1}", nowyChat.username, nowyChat.message);
 		}
 
 	}

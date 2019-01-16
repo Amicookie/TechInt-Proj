@@ -124,8 +124,7 @@ namespace NativeApp
 					socket = IO.Socket("http://127.0.0.1:5000/");
 
 					newSocket.socketIoManager(socket, login);
-
-
+					newSocket.chatGetMsg(socket, login);
 				}
 				else
 				{
@@ -237,7 +236,6 @@ namespace NativeApp
 			{
 				toggleSwitch.IsChecked = false;
 				toggleSwitch.IsEnabled = false;
-				//Console.WriteLine("Działa if loced file");
 			} else
 			{
 				toggleSwitch.IsEnabled = true;
@@ -246,7 +244,6 @@ namespace NativeApp
 			if(TitleBox.Text.Equals(newSocket.unlockedFile))
 			{
 				toggleSwitch.IsEnabled = true;
-				//Console.WriteLine("Działa if unloced file");
 			}
 
 			if(toggleSwitch.IsChecked == true)
@@ -476,6 +473,11 @@ namespace NativeApp
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				ChatGrid.Visibility = Visibility.Visible;
+				chatBorder.Visibility = Visibility.Visible;
+				if (newSocket.receivedFrom != null)
+				{
+					chatWindowBox.AppendText(newSocket.receivedFrom + ": " + newSocket.receivedMsg + "\n");
+				}
 			} else
 			{
 				MessageBox.Show("You don't have connection to use chat!");
@@ -487,12 +489,25 @@ namespace NativeApp
 		{
 
 			ChatGrid.Visibility = Visibility.Hidden;
+			chatBorder.Visibility = Visibility.Hidden;
 			
 		}
 
 		private void sendBtn_Click(object sender, RoutedEventArgs e)
 		{
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			{
+				string sentMsg = messageBox.Text;
+				newSocket.sendMsg(socket, login, sentMsg);
 
+				chatWindowBox.AppendText(login + ": " + sentMsg + "\n");
+			}
+			else
+			{
+				MessageBox.Show("You don't have connection to use chat!");
+			}
+
+			messageBox.Clear();
 		}
 	}
 }
