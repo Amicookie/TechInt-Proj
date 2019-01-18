@@ -14,7 +14,7 @@ namespace NativeApp.ViewModels
 
 		internal void AddMessage(string message)
 		{
-			Messages.Add(Sockets.receivedFrom + ": " + Sockets.receivedMsg);
+			//Messages.Add(Sockets.receivedFrom + ": " + Sockets.receivedMsg);
 		}
 
     }

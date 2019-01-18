@@ -15,7 +15,7 @@ namespace NativeApp.Models
 	{
 
 		public string lockedFile, unlockedFile, savedFile, modifiedFile;
-		public static string receivedMsg, receivedFrom;
+		public  string receivedMsg, receivedFrom;
 
 		public static string lockf;
 		private System.Windows.Controls.DataGrid chatGrid2;
