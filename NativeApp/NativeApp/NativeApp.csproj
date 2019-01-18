@@ -151,6 +151,7 @@
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\adresIP.cs" />
     <Compile Include="Models\AppStatus.cs" />
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\Documents.cs" />
