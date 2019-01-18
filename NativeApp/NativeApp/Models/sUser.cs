@@ -8,8 +8,9 @@ namespace NativeApp
 {
     class sUser
     {
-		//public int id;
+		//public int user_id { get; set; }
 		public string username { get; set; }
 		public string file_name { get; set; }
+		//public
     }
 }

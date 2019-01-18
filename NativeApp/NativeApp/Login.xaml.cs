@@ -121,8 +121,9 @@ namespace NativeApp
 					loginBttn.Visibility = Visibility.Hidden;
 					logoutBtn.Visibility = Visibility.Visible;
 
-					socket = IO.Socket("http://127.0.0.1:5000/");
+					socket = IO.Socket(adresIP.adres);
 
+					newSocket.isSocketConnected(socket);
 					newSocket.socketIoManager(socket, login);
 					newSocket.chatGetMsg(socket, login);
 				}
@@ -186,7 +187,10 @@ namespace NativeApp
 
 			}
 
-
+			toggleSwitch.IsChecked = false;
+			saveBtn.IsEnabled = false;
+			TitleBox.IsReadOnly = true;
+			contentBox.IsReadOnly = true;
 		}
 
 		private void newFileBtn_Click(object sender, RoutedEventArgs e)
@@ -215,12 +219,24 @@ namespace NativeApp
 			newFileGrid.Visibility = Visibility.Hidden;
 			welcomeGrid.Visibility = Visibility.Hidden;
 			ChatGrid.Visibility = Visibility.Hidden;
+			chatBorder.Visibility = Visibility.Hidden;
 
 			socket.Disconnect();
+
+			toggleSwitch.IsChecked = false;
+			saveBtn.IsEnabled = false;
+			TitleBox.IsReadOnly = true;
+			contentBox.IsReadOnly = true;
+
 		}
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			//toggleSwitch.IsChecked = false;
+			//saveBtn.IsEnabled = false;
+			//TitleBox.IsReadOnly = true;
+			//contentBox.IsReadOnly = true;
+
 			String title = listOfFiles.SelectedItems[0].ToString();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
 
@@ -229,8 +245,6 @@ namespace NativeApp
 
 			TitleBox.Text = title.Substring(0, title.Length - 4);
 			contentBox.Text = text;
-
-
 
 			if(TitleBox.Text.Equals(newSocket.lockedFile))
 			{
@@ -267,6 +281,15 @@ namespace NativeApp
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
+				if(toggleSwitch.IsChecked)
+				{
+					toggleSwitch.IsChecked = false;
+					saveBtn.IsEnabled = false;
+					TitleBox.IsReadOnly = true;
+					contentBox.IsReadOnly = true;
+					//newSocket.socketIoEmit(TitleBox.Text, 0, login, socket);
+				}
+				
 			}
 			else
 			{
@@ -430,6 +453,11 @@ namespace NativeApp
 
 			listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
+			TitleBox.IsReadOnly = true;
+			contentBox.IsReadOnly = true;
+			toggleSwitch.IsChecked = false;
+			saveBtn.IsEnabled = false;
 		}
 
 		private void toggleSwitch_Checked(object sender, RoutedEventArgs e)
@@ -444,6 +472,7 @@ namespace NativeApp
 				{
 					if (!string.IsNullOrWhiteSpace(TitleBox.Text))
 					{
+						Console.WriteLine("dziala");
 						newSocket.socketIoEmit(TitleBox.Text, 1, login, socket);
 					}
 				}

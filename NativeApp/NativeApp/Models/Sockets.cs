@@ -22,6 +22,15 @@ namespace NativeApp.Models
 		public string nameToChange = null;
 		public  int action = 3; //3 - do nothing
 
+		public void isSocketConnected(Socket socket)
+		{
+			socket.On(Socket.EVENT_CONNECT, () =>
+			{
+				Console.WriteLine("Is Connected ");
+			}
+);
+		}
+
 		public void socketIoEmit(string name, int locked, String user, Socket socket)
 		{
 			nameToChange = name;
@@ -32,17 +41,13 @@ namespace NativeApp.Models
 				file_name = name
 			};
 
-			socket.On(Socket.EVENT_CONNECT, () =>
-			{
-				Console.WriteLine("Is Connected ");
-			}
-			);
 
 			if (nameToChange != null)
 				{
 					if (action == 1) //dla 1 jest zablokowany
 					{
 						socket.Emit("fileLocked", JsonConvert.SerializeObject(nowy));
+						//Console.WriteLine(nowy);
 						Console.WriteLine("Locked -> Name: {0}, action: {1}, user: {2}", nameToChange, action, user);
 
 					}
@@ -106,6 +111,10 @@ namespace NativeApp.Models
 					MessageBox.Show("Odblokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
 
 					unlockedFile = nowyUser.file_name;
+					if(nowyUser.file_name.Equals(lockf))
+					{
+						lockf = null;
+					}
 				}
 				
 			});
