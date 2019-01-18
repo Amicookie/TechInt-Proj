@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace NativeApp.Models
             using (var client = new HttpClient())
             {
                 User p = new User(user_login,user_password);
-                client.BaseAddress = new Uri("http://192.168.0.108:5000/");
+                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
                 var response = client.PostAsJsonAsync("users", p).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -47,6 +48,28 @@ namespace NativeApp.Models
                 return false;
             }
         }
+
+        public async void GetUsersList()
+        {
+            var r = await UserList();
+        }
+
+        async Task<List<User>> UserList()
+        {
+            List<User> model = new List<User>();
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                using (var r = await client.GetAsync(new Uri("http://127.0.0.1:5000/users")))
+                {
+                    var file = await r.Content.ReadAsStringAsync();
+                    model = await r.Content.ReadAsAsync<List<User>>();
+                }
+                return model;
+            }
+        }
+
 
 
     }

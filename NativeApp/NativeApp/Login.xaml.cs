@@ -104,6 +104,7 @@ namespace NativeApp
 			{
 				user = new User(login, password);
 				user.Get2();
+				//user.GetUsersList();
 
 				if (user.user_exists == true && user.logged_in)
 				{
