@@ -144,7 +144,7 @@ namespace NativeApp.Models
 		        var pathFile = Path.Combine(path,pathh + ".txt");
 
                 var content = File.ReadAllText(pathFile);
-                Document document = new Document(pathh, content, DateTime.Now, DateTime.Now, 1,1);
+                Document document = new Document(pathh, content, DateTime.Now, DateTime.Now, 1, 1); // ====================================> POPRAWIĆ ID <========================
 		        documentsState.Add(document, stateOfDocument.exsistOnlyLocal);
             }
         }

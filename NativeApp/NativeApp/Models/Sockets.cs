@@ -31,32 +31,39 @@ namespace NativeApp.Models
 );
 		}
 
-		public void socketIoEmit(string name, int locked, String user, Socket socket)
+		public void socketIoEmit(string name, int locked, String user, Socket socket, int userId, int fileId)
 		{
 			nameToChange = name;
 			action = locked;
 
 			sUser nowy = new sUser {
+				user_id = userId,
 				username = user,
-				file_name = name
+				file_name = name,
+				file_id = fileId
 			};
 
 
 			if (nameToChange != null)
+			{
+				if (action == 1) //dla 1 jest zablokowany
 				{
-					if (action == 1) //dla 1 jest zablokowany
-					{
-						socket.Emit("fileLocked", JsonConvert.SerializeObject(nowy));
-						//Console.WriteLine(nowy);
-						Console.WriteLine("Locked -> Name: {0}, action: {1}, user: {2}", nameToChange, action, user);
+					socket.Emit("fileLocked", JsonConvert.SerializeObject(nowy));
+					//Console.WriteLine(nowy);
+					Console.WriteLine("Locked -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
 
-					}
-					else if (action == 0) // 0 - jest odblokowany
-					{
-						socket.Emit("fileUnlocked", JsonConvert.SerializeObject(nowy));
-						Console.WriteLine("Unlocked -> Name: {0}, action: {1}, user: {2}", nameToChange, action, user);
+				}
+				else if (action == 0) // 0 - jest odblokowany
+				{
+					socket.Emit("fileUnlocked", JsonConvert.SerializeObject(nowy));
+					Console.WriteLine("Unlocked -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
 
-					}
+				}
+				//else if(action == 2)
+				//{
+				//	socket.Emit("fileSaved", JsonConvert.SerializeObject(nowy));
+				//	Console.WriteLine("Saved -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
+				//}
 			}
 
 			nameToChange = null;

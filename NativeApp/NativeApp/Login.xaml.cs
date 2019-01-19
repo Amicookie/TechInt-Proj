@@ -31,6 +31,7 @@ namespace NativeApp
 		public Socket socket;
 
 		private String login, password;
+		int idPickedDoc, loggedUser;
 
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		AppStatus appStatus = new AppStatus();
@@ -122,6 +123,9 @@ namespace NativeApp
 					loginBttn.Visibility = Visibility.Hidden;
 					logoutBtn.Visibility = Visibility.Visible;
 
+					loggedUser = user.user_id;
+					//Console.WriteLine("ID usera: {0},{1}", loggedUser, user.user_login);
+
 					socket = IO.Socket(adresIP.adres);
 
 					newSocket.isSocketConnected(socket);
@@ -136,6 +140,7 @@ namespace NativeApp
 
 				loginBox.Clear();
 				passBox.Clear();
+
 			}
 		}
 
@@ -153,6 +158,7 @@ namespace NativeApp
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
 			loginMenuGrid.Visibility = Visibility.Visible;
+			chatBtn.Visibility = Visibility.Hidden;
 
 		}
 
@@ -233,13 +239,18 @@ namespace NativeApp
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			//toggleSwitch.IsChecked = false;
-			//saveBtn.IsEnabled = false;
-			//TitleBox.IsReadOnly = true;
-			//contentBox.IsReadOnly = true;
 
 			String title = listOfFiles.SelectedItems[0].ToString();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+
+			foreach (Document doc in Documents.currentDocuments)
+			{
+				if (doc.file_name.Equals(title.Substring(0, title.Length - 4)))
+				{
+					idPickedDoc = doc.file_id;
+					//Console.WriteLine("Id wybranego dokumnetu: {0}", idPickedDoc);
+				}
+			}
 
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
@@ -333,10 +344,11 @@ namespace NativeApp
 			{
 				if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
 				{
-					Document document = new Document(filenameNoExtension, content, DateTime.Now, DateTime.Now, 1, 0);
+					Document document = new Document(filenameNoExtension, content, DateTime.Now, DateTime.Now, 1, user.user_id);
 					if (document.checkIfNoDuplicated())
 					{
 						document.PostDocument(document);
+						//newSocket.socketIoEmit(TitleBox.Text, 2, login, socket, user.user_id);
 						MessageBox.Show("File has been saved");
 					}
 					else
@@ -386,7 +398,8 @@ namespace NativeApp
 						.FirstOrDefault();
 					exsistingDoc.file_content = content;
 					//temporary hardcode ;c
-					exsistingDoc.user_id = 1;
+					exsistingDoc.user_id = user.user_id;
+					//exsistingDoc.file_id = ;
 					var localWriteTime =
 						File.GetLastWriteTime(Path.Combine(Documents.path, exsistingDoc.file_name + ".txt"));
 					if (localWriteTime < exsistingDoc.file_update_date)
@@ -463,6 +476,7 @@ namespace NativeApp
 
 		private void toggleSwitch_Checked(object sender, RoutedEventArgs e)
 		{
+
 			if (toggleSwitch.IsEnabled == true)
 			{
 				TitleBox.IsReadOnly = false;
@@ -473,8 +487,8 @@ namespace NativeApp
 				{
 					if (!string.IsNullOrWhiteSpace(TitleBox.Text))
 					{
-						Console.WriteLine("dziala");
-						newSocket.socketIoEmit(TitleBox.Text, 1, login, socket);
+						//Console.WriteLine("ID usera:{0}, id pliku: {1}", loggedUser, idPickedDoc);
+						newSocket.socketIoEmit(TitleBox.Text, 1, login, socket, loggedUser, idPickedDoc);
 					}
 				}
 			}
@@ -492,7 +506,7 @@ namespace NativeApp
 				{
 					if (!string.IsNullOrWhiteSpace(TitleBox.Text))
 					{
-						newSocket.socketIoEmit(TitleBox.Text, 0, login, socket);
+						newSocket.socketIoEmit(TitleBox.Text, 0, login, socket, loggedUser, idPickedDoc);
 					}
 				}
 			}

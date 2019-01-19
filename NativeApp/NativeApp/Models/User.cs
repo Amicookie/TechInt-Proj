@@ -11,7 +11,7 @@ namespace NativeApp.Models
 {
     public class User
     {
-        public int? user_id { get; set; }
+        public int user_id { get; set; }
         public string user_login { get; set; }
         public string user_password { get; set; }
         public bool user_exists { get; set; }
@@ -33,13 +33,14 @@ namespace NativeApp.Models
             using (var client = new HttpClient())
             {
                 User p = new User(user_login,user_password);
-                client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+                client.BaseAddress = new Uri(adresIP.adres);
                 var response = client.PostAsJsonAsync("users", p).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonContent = await response.Content.ReadAsAsync<User>();
                     this.user_exists = jsonContent.user_exists;
                     this.logged_in = jsonContent.logged_in;
+					this.user_id = jsonContent.user_id;
                     Console.Write("Success");
                     return true;
                 }
@@ -61,7 +62,7 @@ namespace NativeApp.Models
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                using (var r = await client.GetAsync(new Uri("http://127.0.0.1:5000/users")))
+                using (var r = await client.GetAsync(new Uri(adresIP.adres+"/users")))
                 {
                     var file = await r.Content.ReadAsStringAsync();
                     model = await r.Content.ReadAsAsync<List<User>>();
