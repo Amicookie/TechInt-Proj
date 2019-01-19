@@ -98,10 +98,14 @@ namespace NativeApp.Models
 				if (!user.Equals(nowyUser.username))
 				{
 					Console.WriteLine("SocketIO: zablokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
-					MessageBox.Show("Zablokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
+					MessageBox.Show("File " + nowyUser.file_name + " has been locked by " + nowyUser.username);
 
 					lockedFile = nowyUser.file_name;
 					lockf = nowyUser.file_name;
+
+					if(lockedFile.Equals(unlockedFile)) {
+						returnUnlockedFile();
+					}
 				}
 				
 			});
@@ -115,12 +119,17 @@ namespace NativeApp.Models
 				if (!user.Equals(nowyUser.username))
 				{ 
 					Console.WriteLine("SocketIO: odblokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
-					MessageBox.Show("Odblokowano plik " + nowyUser.file_name + " przez " + nowyUser.username);
+					MessageBox.Show("File " + nowyUser.file_name + " has been unlocked " + nowyUser.username);
 
 					unlockedFile = nowyUser.file_name;
 					if(nowyUser.file_name.Equals(lockf))
 					{
 						lockf = null;
+					}
+
+					if(unlockedFile.Equals(lockedFile))
+					{
+						returnLockedFile();
 					}
 				}
 				
@@ -134,7 +143,7 @@ namespace NativeApp.Models
 
 				if (!user.Equals(nowyUser.username))
 				{
-					MessageBox.Show("Zapisano nowy plik " + nowyUser.file_name + "\nOdśwież stroę.");
+					MessageBox.Show("File " + nowyUser.file_name + " hase been saved.\nPlease, refresh.");
 
 					savedFile = nowyUser.file_name;
 				}
@@ -149,7 +158,7 @@ namespace NativeApp.Models
 
 				if (!user.Equals(nowyUser.username))
 				{
-					MessageBox.Show("Zmodyfikowano plik " + nowyUser.file_name + "\nOdśwież stroę.");
+					MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
 
 					modifiedFile = nowyUser.file_name;
 				}
@@ -158,9 +167,9 @@ namespace NativeApp.Models
 
 		}
 
-		public string returnLockedFile()
+		public void returnLockedFile()
 		{
-			return lockedFile;
+			lockedFile = null;
 		}
 
 		public void returnUnlockedFile()

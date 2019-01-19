@@ -239,7 +239,6 @@ namespace NativeApp
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-
 			String title = listOfFiles.SelectedItems[0].ToString();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
 
@@ -257,11 +256,13 @@ namespace NativeApp
 
 			TitleBox.Text = title.Substring(0, title.Length - 4);
 			contentBox.Text = text;
+			Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
 
 			if(TitleBox.Text.Equals(newSocket.lockedFile))
 			{
 				toggleSwitch.IsChecked = false;
 				toggleSwitch.IsEnabled = false;
+				Console.WriteLine("zabl");
 			} else
 			{
 				toggleSwitch.IsEnabled = true;
@@ -270,9 +271,10 @@ namespace NativeApp
 			if(TitleBox.Text.Equals(newSocket.unlockedFile))
 			{
 				toggleSwitch.IsEnabled = true;
+				Console.WriteLine("odbl");
 			}
 
-			if(toggleSwitch.IsChecked == true)
+			if(toggleSwitch.IsChecked == true && newSocket.lockedFile != TitleBox.Text)
 			{
 				TitleBox.IsReadOnly = false;
 				contentBox.IsReadOnly = false;
@@ -283,6 +285,7 @@ namespace NativeApp
 				TitleBox.IsReadOnly = true;
 				contentBox.IsReadOnly = true;
 				saveBtn.IsEnabled = false;
+
 			}
 		}
 
