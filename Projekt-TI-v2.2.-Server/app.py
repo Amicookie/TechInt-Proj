@@ -23,6 +23,12 @@ thread = Thread()
 thread_stop_event = Event()
 thread_lock = Lock()
 
+# Helping variables for setting good response on SOCKETS
+list_of_locked_files = []
+count_list_of_locked_files = 0
+created_file_id = -1
+updated_file_id = -1
+
 CORS(app)
 hashing = Hashing(app)
 
@@ -40,30 +46,115 @@ def handle_chat(message):
 def handle_file_saved(file_saved):
     print('File Saved!', file_saved)
     file_saved_dict = literal_eval(file_saved)
-    socketio.emit('fileSaved', {'username': file_saved_dict.get('username'), 'file_name': file_saved_dict.get('file_name')})
+
+    global created_file_id
+    file_saved_dict['file_id'] = created_file_id
+    print('File Saved Details', file_saved_dict)
+    socketio.emit('fileSaved', {'username': file_saved_dict.get('username'),
+                                'file_name': file_saved_dict.get('file_name'),
+                                'file_id': file_saved_dict.get('file_id')})
+    created_file_id = -1
+    print('Resetted created_file_id' + str(created_file_id))
+
+
+# @socketio.on('fileLocked')
+# def handle_file_locked(file_locked_data):
+#     print('File Locked!', file_locked_data)
+#     file_locked_data_dict = literal_eval(file_locked_data)
+#     global count_list_of_locked_files
+#     count_list_of_locked_files += 1
+#     #file_locked_data_dict['count'] = count_list_of_locked_files
+#
+#     list_of_locked_files.append(file_locked_data_dict)
+#     print(list_of_locked_files)
+#     socketio.emit('fileLocked', {'list_of_files': list_of_locked_files, 'count': count_list_of_locked_files})
 
 
 @socketio.on('fileLocked')
 def handle_file_locked(file_locked_data):
     print('File Locked!', file_locked_data)
     file_locked_data_dict = literal_eval(file_locked_data)
-    socketio.emit('fileLocked', {'user_id': file_locked_data_dict.get('user_id'), 'username': file_locked_data_dict.get('username'), 'file_name': file_locked_data_dict.get('file_name'), 'file_id': file_locked_data_dict.get('file_id')})
+    global count_list_of_locked_files
+    count_list_of_locked_files += 1
+    file_locked_data_dict['count'] = count_list_of_locked_files
+
+    list_of_locked_files.append(file_locked_data_dict)
+    print(list_of_locked_files)
+    socketio.emit('fileLocked', {'user_id': file_locked_data_dict.get('user_id'),
+                                 'username': file_locked_data_dict.get('username'),
+                                 'file_name': file_locked_data_dict.get('file_name'),
+                                 'file_id': file_locked_data_dict.get('file_id'),
+                                 'list_of_files': list_of_locked_files,
+                                 'count': count_list_of_locked_files})
+
+
+# @socketio.on('fileUnlocked')
+# def handle_file_unlocked(file_unlocked_data):
+#     print('File Unlocked!', file_unlocked_data)
+#     file_unlocked_data_dict = literal_eval(file_unlocked_data)
+#
+#     global count_list_of_locked_files
+#
+#     index_of_unlocked_file = -1
+#
+#     for locked_file in list_of_locked_files:
+#         index_of_unlocked_file += 1
+#         if locked_file.get('file_id') == file_unlocked_data_dict.get('file_id'):
+#             list_of_locked_files.remove(locked_file)
+#             count_list_of_locked_files -= 1
+#     # list_of_locked_files.remove(file_unlocked_data_dict)
+#
+#     print(list_of_locked_files)
+#     socketio.emit('fileUnlocked', {'username': file_unlocked_data_dict.get('username'),
+#                                    'file_name': file_unlocked_data_dict.get('file_name'),
+#                                    'file_id': file_unlocked_data_dict.get('file_id'),
+#                                    'user_id': file_unlocked_data_dict.get('user_id'),
+#                                    'index_of_unlocked_file': index_of_unlocked_file})
 
 
 @socketio.on('fileUnlocked')
 def handle_file_unlocked(file_unlocked_data):
     print('File Unlocked!', file_unlocked_data)
     file_unlocked_data_dict = literal_eval(file_unlocked_data)
+    global count_list_of_locked_files
+    index_of_unlocked_file = -1
+
+    for locked_file in list_of_locked_files:
+        index_of_unlocked_file += 1
+        if locked_file.get('file_id') == file_unlocked_data_dict.get('file_id'):
+            list_of_locked_files.remove(locked_file)
+            count_list_of_locked_files -= 1
+            break
+    # list_of_locked_files.remove(file_unlocked_data_dict)
+
+    print(list_of_locked_files)
     socketio.emit('fileUnlocked', {'username': file_unlocked_data_dict.get('username'),
-                                 'file_name': file_unlocked_data_dict.get('file_name')})
+                                   'file_name': file_unlocked_data_dict.get('file_name'),
+                                   'file_id': file_unlocked_data_dict.get('file_id'),
+                                   'user_id': file_unlocked_data_dict.get('user_id'),
+                                   'index_of_unlocked_file': index_of_unlocked_file})
 
 
 @socketio.on('fileUpdated')
 def handle_file_unlocked(file_updated_data):
     print('File Updated!', file_updated_data)
     file_updated_data_dict = literal_eval(file_updated_data)
+    global updated_file_id
+    file_updated_data_dict['file_id'] = updated_file_id
+    print('File Updated Details', file_updated_data_dict)
     socketio.emit('fileUpdated', {'username': file_updated_data_dict.get('username'),
-                                   'file_name': file_updated_data_dict.get('file_name')})
+                                  'file_name': file_updated_data_dict.get('file_name'),
+                                  'file_id': file_updated_data_dict.get('file_id')})
+    updated_file_id = -1
+
+
+@socketio.on('fileDeletion')
+def handle_file_deletion(file_deletion_data):
+    print('File Deletion: ', file_deletion_data)
+    file_deletion_data_dict = literal_eval(file_deletion_data)
+    socketio.emit('fileDeletion', {'username': file_deletion_data_dict.get('username'),
+                                   'file_name': file_deletion_data_dict.get('file_name'),
+                                   'file_id': file_deletion_data_dict.get('file_id')})
 
 
 @socketio.on('connect')
@@ -107,12 +198,16 @@ class FileList(Resource):
         from database.db_methods import create_file
         from database.db_generator import get_all_files
         create_file(request.json['file_name'], request.json['file_content'], request.json['user_id'])
+        global created_file_id
+        created_file_id = get_all_files()[-1].get('file_id')
+        print('Created file id:' + str(created_file_id))
         return jsonify(get_all_files()[-1])
 
 
 class OneFile(Resource):
     def get(self, file_id):
         from database.db_methods import get_file
+        print(str((get_file(file_id))))
         return jsonify(get_file(file_id))
 
     def delete(self, file_id):
@@ -124,6 +219,9 @@ class OneFile(Resource):
         put_file(file_id, request.json['file_name'], request.json['file_content'],
                  request.json['user_id'])
         print(jsonify(get_file(request.json['file_id'])))
+        global updated_file_id
+        updated_file_id = request.json['file_id']
+        print('Updated file id:' + str(updated_file_id))
         return jsonify(get_file(request.json['file_id']))
 
 
@@ -151,8 +249,8 @@ class Users(Resource):
             if check_user and check_user.user_login == login_form and check_user.user_password == hashed_input:
                 session['login'] = login_form
                 session['user_id'] = check_user.user_id
-                print({"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id})
-                return {"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id}
+                print({"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id, "list_of_locked_files": list_of_locked_files})
+                return {"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id, "list_of_locked_files": list_of_locked_files}
             else:
                 flash('Password is not correct. Please try again.', 'error')
                 print({"user_exists": 1, "logged_in": 0})

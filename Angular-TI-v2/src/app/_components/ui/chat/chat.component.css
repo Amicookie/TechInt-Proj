@@ -88,6 +88,7 @@
 /* set default height of chat */
 .form-container .chat-container {
   /*max-height: 50%;*/
+  height:200px;
   overflow:scroll;
   overflow-x:hidden;
   max-height:200px;/*

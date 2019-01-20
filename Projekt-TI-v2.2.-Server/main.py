@@ -10,5 +10,5 @@ if __name__ == '__main__':
         ti_db.create_tables([User, File])
         insert_data()
         get_all_files()
-    # socketio.run(app, host="192.168.43.218", port=5000, debug=True)
+    #socketio.run(app, host="192.168.0.108", port=5000, debug=True)
     socketio.run(app, port=5000, debug=True)

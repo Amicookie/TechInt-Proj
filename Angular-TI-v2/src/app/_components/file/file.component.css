@@ -46,6 +46,12 @@
   outline: none;
 }
 
+.form-container textarea.fileName:focus {
+  background: #f1f1f1;
+  outline: none;
+}
+
+
 /* Set a style for the submit/login button */
 .form-container .btn {
   background-color: #66ccff;
@@ -56,6 +62,12 @@
   width: 100%;
   margin-bottom:10px;
   opacity: 0.8;
+}
+
+.form-container .btn:disabled,
+.btn[disabled]{
+  background-color: #cccccc;
+  color: #666666;
 }
 
 /* Add a red background color to the cancel button */

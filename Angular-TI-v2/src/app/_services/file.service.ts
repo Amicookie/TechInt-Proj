@@ -16,7 +16,7 @@ export class FileService {
 
   public _url: string = environment.ws_url+"files";
 
-  public data$: BehaviorSubject<any> = new BehaviorSubject({});
+  //public data$: BehaviorSubject<any> = new BehaviorSubject({});
 
   constructor(private http: HttpClient, 
     private websocketservice: WebsocketService) { }

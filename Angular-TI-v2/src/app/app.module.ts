@@ -16,6 +16,8 @@ import { ChatService } from './_services/chat.service';
 
 import { FormsModule } from '@angular/forms';
 import { DataSharingService } from './_services/data-sharing.service';
+import { HeaderComponent } from './_components/ui/header/header.component';
+import { LayoutComponent } from './_components/ui/layout/layout.component';
 
 @NgModule({
   declarations: [

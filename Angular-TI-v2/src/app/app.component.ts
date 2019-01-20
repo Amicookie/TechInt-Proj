@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from './_services/chat.service';
+import * as $ from 'jquery';
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,9 @@ export class AppComponent implements OnInit {
   ngOnInit(){
     this.chat.messages.subscribe(message => {
       console.log(message);
-    })
+    });
+
+    
   }
 
   sendMessage() {
