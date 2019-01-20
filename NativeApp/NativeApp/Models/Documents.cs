@@ -79,8 +79,11 @@ namespace NativeApp.Models
 					str.Flush();
 				}
 
-				File.SetCreationTime(path, i.Key.file_creation_date);
-				File.SetLastWriteTime(path, i.Key.file_update_date);
+			    var creationDate = i.Key.file_creation_date.AddHours(-1);
+			    var updateDate = i.Key.file_update_date.AddHours(-1);
+
+                File.SetCreationTime(path, creationDate);
+				File.SetLastWriteTime(path, updateDate);
 			}
 		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.exsistOnlyLocal))
 		    {
@@ -95,11 +98,15 @@ namespace NativeApp.Models
 		            str.WriteLine(i.Key.file_content);
 		            str.Flush();
 		        }
-                File.SetCreationTime(pathh, i.Key.file_creation_date);
-		        File.SetLastWriteTime(pathh, i.Key.file_update_date);
+		        var creationDate = i.Key.file_creation_date.AddHours(-1);
+		        var updateDate = i.Key.file_update_date.AddHours(-1);
+		        File.SetCreationTime(pathh, creationDate);
+		        File.SetLastWriteTime(pathh, updateDate);
             }
 		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedLocal))
 		    {
+		        i.Key.user_id = 1;
+		        i.Key.file_content = File.ReadAllText(Path.Combine(path, i.Key.file_name + ".txt"));
 		        i.Key.CallUpdateDoc();
 		    }
         }
@@ -151,7 +158,7 @@ namespace NativeApp.Models
 
 		public static stateOfDocument CompareLastAccess(DateTime dateTime, string name)
 		{
-		    var pathu = Path.Combine(path, name);
+		    var pathu = Path.Combine(path, name + ".txt");
 			DateTime localFileDateTime = File.GetLastWriteTime(pathu);
 			if (localFileDateTime > dateTime)
 			{

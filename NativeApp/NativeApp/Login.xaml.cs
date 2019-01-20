@@ -63,10 +63,12 @@ namespace NativeApp
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
+
 			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
 			appStatus.isOnline = AppStatus.CheckForInternetConnection();
 
-			mainGrid.Visibility = Visibility.Hidden;
+
+            mainGrid.Visibility = Visibility.Hidden;
 			filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Hidden;
 
@@ -118,8 +120,9 @@ namespace NativeApp
 					LoginGrid.Visibility = Visibility.Hidden;
 					welcomeGrid.Visibility = Visibility.Visible;
 					welcomeLabel.Content = $"Logged in as \n{user.user_login}";
+				    chatBtn.Visibility = Visibility.Visible;
 
-					Documents documents = new Documents();
+                    Documents documents = new Documents();
 					documents.Get2(true);
 					listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
@@ -163,11 +166,41 @@ namespace NativeApp
 			loginMenuGrid.Visibility = Visibility.Visible;
 			chatBtn.Visibility = Visibility.Hidden;
 
-		}
+		    if (appStatus.isUserLogged == true)
+		    {
+		        loginBttn.Visibility = Visibility.Hidden;
+		        logoutBtn.Visibility = Visibility.Visible;
+		        chatBtn.Visibility = Visibility.Visible;
+		    }
+		    else
+		    {
+
+		        loginBttn.Visibility = Visibility.Visible;
+		        logoutBtn.Visibility = Visibility.Hidden;
+		        chatBtn.Visibility = Visibility.Hidden;
+
+		    }
+
+        }
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Documents documents = new Documents();
+
+		    if (appStatus.isUserLogged == true)
+		    {
+		        loginBttn.Visibility = Visibility.Hidden;
+		        logoutBtn.Visibility = Visibility.Visible;
+		        chatBtn.Visibility = Visibility.Visible;
+		    }
+		    else
+		    {
+
+		        loginBttn.Visibility = Visibility.Visible;
+		        logoutBtn.Visibility = Visibility.Hidden;
+		        chatBtn.Visibility = Visibility.Hidden;
+
+		    }
+            Documents documents = new Documents();
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
@@ -242,23 +275,32 @@ namespace NativeApp
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			String title = listOfFiles.SelectedItems[0].ToString();
+		    try
+		    {
+                String title = listOfFiles.SelectedItems[0].ToString();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
 
-			foreach (Document doc in Documents.currentDocuments)
-			{
-				if (doc.file_name.Equals(title.Substring(0, title.Length - 4)))
-				{
-					idPickedDoc = doc.file_id;
-					//Console.WriteLine("Id wybranego dokumnetu: {0}", idPickedDoc);
-				}
-			}
+		    
+		        foreach (Document doc in Documents.currentDocuments)
+		        {
+		            if (doc.file_name.Equals(title.Substring(0, title.Length - 4)))
+		            {
+		                idPickedDoc = doc.file_id;
+		                //Console.WriteLine("Id wybranego dokumnetu: {0}", idPickedDoc);
+		            }
+		        }
+		        TitleBox.Text = title.Substring(0, title.Length - 4);
+		        contentBox.Text = text;
+            }
+		    catch (Exception ee)
+		    {
+                Console.WriteLine(ee);
+		    }
 
-			filesListGrid.Visibility = Visibility.Hidden;
+		    filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
 
-			TitleBox.Text = title.Substring(0, title.Length - 4);
-			contentBox.Text = text;
+			
 			Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
 
 			if(TitleBox.Text.Equals(newSocket.lockedFile))
@@ -295,7 +337,21 @@ namespace NativeApp
 
 		private void backBtn_Click(object sender, RoutedEventArgs e)
 		{
-			Documents documents = new Documents();
+		    if (appStatus.isUserLogged == true)
+		    {
+		        loginBttn.Visibility = Visibility.Hidden;
+		        logoutBtn.Visibility = Visibility.Visible;
+		        chatBtn.Visibility = Visibility.Visible;
+		    }
+		    else
+		    {
+
+		        loginBttn.Visibility = Visibility.Visible;
+		        logoutBtn.Visibility = Visibility.Hidden;
+		        chatBtn.Visibility = Visibility.Hidden;
+
+		    }
+            Documents documents = new Documents();
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
@@ -335,12 +391,33 @@ namespace NativeApp
 
 		private void saveBtn_Click(object sender, RoutedEventArgs e)
 		{
+
+
 			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
 			appStatus.isOnline = AppStatus.CheckForInternetConnection();
-			Documents documents = new Documents();
-			documents.Get2(true);
 
-			String title = TitleBox.Text;
+		    if (appStatus.isUserLogged == true)
+		    {
+		        loginBttn.Visibility = Visibility.Hidden;
+		        logoutBtn.Visibility = Visibility.Visible;
+		        chatBtn.Visibility = Visibility.Visible;
+		    }
+		    else
+		    {
+
+		        loginBttn.Visibility = Visibility.Visible;
+		        logoutBtn.Visibility = Visibility.Hidden;
+		        chatBtn.Visibility = Visibility.Hidden;
+
+		    }
+
+            if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
+		    {
+                Documents documents = new Documents();
+                documents.Get2(true);
+            }
+
+		    String title = TitleBox.Text;
 			String content = contentBox.Text;
 			string filenameNoExtension = title;
 			string filename = String.Format("{0}.txt", title);
@@ -384,7 +461,21 @@ namespace NativeApp
 						MessageBox.Show("You`ve lost connection! Document will be saved locally");
 						//Button_Click(sender, e);
 					}
-				}
+				    if (appStatus.isUserLogged == true)
+				    {
+				        loginBttn.Visibility = Visibility.Hidden;
+				        logoutBtn.Visibility = Visibility.Visible;
+				        chatBtn.Visibility = Visibility.Visible;
+				    }
+				    else
+				    {
+
+				        loginBttn.Visibility = Visibility.Visible;
+				        logoutBtn.Visibility = Visibility.Hidden;
+				        chatBtn.Visibility = Visibility.Hidden;
+
+				    }
+                }
 				else
 				{
 					using (StreamWriter str = File.CreateText(allPath))
@@ -447,7 +538,21 @@ namespace NativeApp
 						Button_Click(sender, e);
 
 					}
-				}
+				    if (appStatus.isUserLogged == true)
+				    {
+				        loginBttn.Visibility = Visibility.Hidden;
+				        logoutBtn.Visibility = Visibility.Visible;
+				        chatBtn.Visibility = Visibility.Visible;
+				    }
+				    else
+				    {
+
+				        loginBttn.Visibility = Visibility.Visible;
+				        logoutBtn.Visibility = Visibility.Hidden;
+				        chatBtn.Visibility = Visibility.Hidden;
+
+				    }
+                }
 				else
 				{
 					using (var str = new StreamWriter(allPath))
@@ -460,18 +565,21 @@ namespace NativeApp
 				}
 			}
 
-			try
-			{
-				documents = new Documents();
-				documents.Get2(true);
+            try
+            {
+                if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
+                {
+                    Documents documents = new Documents();
+                    documents.Get2(true);
+                }
 
-			}
-			catch (Exception es)
-			{
-				Console.WriteLine(es);
-			}
+            }
+            catch (Exception es)
+            {
+                Console.WriteLine(es);
+            }
 
-			listOfFiles.ItemsSource = null;
+            listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
 			TitleBox.IsReadOnly = true;
