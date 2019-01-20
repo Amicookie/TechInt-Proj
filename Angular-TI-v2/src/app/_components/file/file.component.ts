@@ -13,7 +13,7 @@ import { WebsocketService } from 'src/app/_services/websocket.service';
 })
 export class FileComponent implements OnInit, OnDestroy {
 
-  public files = [];
+  public files: any;
   public errorMsg;
   file_name = "";
   file_content = "";
@@ -23,7 +23,7 @@ export class FileComponent implements OnInit, OnDestroy {
   editable = false;
   _file_locked: boolean;
   _locked_file_id: number;
-  //_disabled = this.webSocketService._disabled;
+  _locked_user_id: number;
 
   BreakException = {};
   interval: any;
@@ -37,6 +37,48 @@ export class FileComponent implements OnInit, OnDestroy {
     this.webSocketService._locked_file_id.subscribe(
       value => {
         this._locked_file_id = value;
+      }
+    )
+    this.webSocketService._locked_user_id.subscribe(
+      value => {
+        this._locked_user_id = value;
+      }
+    )
+
+    this.webSocketService._file_changed.subscribe(
+      value => {
+        if (value.file_id !== -1) {
+          // this.files.forEach(file => {
+          //   console.log(file);
+          //   if(file.file_id == value.file_id) {
+          //     console.log('weszlo do ifa filechanged w petli po plikach');
+          //     this._filesService.getFile(value.file_id).subscribe(data => {
+          //       file = data;
+          //       console.log(file);
+          //       this.webSocketService._file_changed.next({file_id:-1});
+          //     });
+          //   }
+          // })
+          this._filesService.getFiles().subscribe(data=>{
+            this.files = data;
+          });
+          this.webSocketService._file_changed.next({file_id:-1});
+        }
+      }
+    )
+    this.webSocketService._file_added.subscribe(
+      value => {
+        if (value.file_id !== -1) {
+
+          console.log('weszlo do ifa');
+          console.log('value.file_id' + value.file_id);
+          //console.log('value' + value);
+          this._filesService.getFiles().subscribe(data=>{
+            this.files = data;
+          });
+          this.webSocketService._file_added.next({file_id: -1});
+          console.log('wartosc file_added po .next(-1)'+value);
+        }
       }
     )
   }
@@ -54,7 +96,7 @@ export class FileComponent implements OnInit, OnDestroy {
     if (this.editable == true){
      this.webSocketService.emitEventOnFileLocked(localStorage.getItem('user_id'), localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
     } else {
-      this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name);
+      this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
      }
   }
 
@@ -76,7 +118,12 @@ export class FileComponent implements OnInit, OnDestroy {
   }
 
   backToList(){
-    if(this.editable) this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name);
+
+    //+ operator changes string into number <3
+    if(this.editable && +localStorage.getItem('user_id')==this._locked_user_id){
+       this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
+       this.editable = !this.editable
+    }
     this.current_file_id = 0;
     this.file_name = "";
     this.file_content = "";
@@ -84,7 +131,8 @@ export class FileComponent implements OnInit, OnDestroy {
   }
 
   createFile(file_name, file_content){
-    this._filesService.createFile(file_name, file_content, localStorage.getItem('user_id'))
+    this._filesService.createFile(file_name, file_content, localStorage.getItem('user_id'));
+    //wyczyść zawartość textarea jeśli utworzono xd
   }
 
   editFile(file_id, file_name, file_content){

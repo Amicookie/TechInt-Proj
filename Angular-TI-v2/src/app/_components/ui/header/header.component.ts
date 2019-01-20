@@ -19,6 +19,9 @@ export class HeaderComponent implements OnInit {
     this.dataSharingService.isUserLoggedIn.subscribe(
       value => {
         this.isUserLoggedIn = value;
+        if (value == true) {
+          this.user_name = localStorage.getItem('currentUser');
+        }
       }
     );
   }

@@ -1,29 +1,24 @@
-<app-layout>
-    <div *ngIf="isUserLoggedIn" class="container-fluid p-0">
-        <app-file></app-file>
-        
+<div *ngIf="isUserLoggedIn">
+    <app-file></app-file>
+    
+</div>
+<div *ngIf="!isUserLoggedIn">
+    <app-user></app-user>
+    <hr class="m-0">
+</div>
+<hr class="m-0">
+<section class="resume-section p-3 p-lg-5 d-flex flex-column" id="credits">
+    <div class="my-auto">
+        <h2 class="mb-5">Credits</h2>
+        <div class="resume-item d-flex flex-column flex-md-row">
+            <div class="subheading mb-3">Izabela Borek</div>
+        </div>
+        <div class="resume-item d-flex flex-column flex-md-row">
+            <div class="subheading mb-3">Katarzyna Chmielewska</div>
+        </div>
+        <div class="resume-item d-flex flex-column flex-md-row">
+            <div class="subheading mb-3">Karolina Zaborowska</div>
+        </div>
     </div>
-    <div *ngIf="!isUserLoggedIn" class="container-fluid p-0">
+</section>
 
-        <app-user></app-user>
-        <hr class="m-0">
-
-    </div>
-    <div class="container-fluid p-0">
-        <hr class="m-0">
-        <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="credits">
-            <div class="my-auto">
-                <h2 class="mb-5">Credits</h2>
-                <div class="resume-item d-flex flex-column flex-md-row">
-                    <div class="subheading mb-3">Izabela Borek</div>
-                </div>
-                <div class="resume-item d-flex flex-column flex-md-row">
-                    <div class="subheading mb-3">Katarzyna Chmielewska</div>
-                </div>
-                <div class="resume-item d-flex flex-column flex-md-row">
-                    <div class="subheading mb-3">Karolina Zaborowska</div>
-                </div>
-            </div>
-        </section>
-    </div>
-</app-layout>
