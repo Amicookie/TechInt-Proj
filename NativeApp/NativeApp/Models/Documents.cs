@@ -103,9 +103,10 @@ namespace NativeApp.Models
 		        File.SetCreationTime(pathh, creationDate);
 		        File.SetLastWriteTime(pathh, updateDate);
             }
-		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedLocal))
+		    
+            foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedLocal))
 		    {
-		        i.Key.user_id = 1;
+                i.Key.user_id = AppStatus.userID;
 		        i.Key.file_content = File.ReadAllText(Path.Combine(path, i.Key.file_name + ".txt"));
 		        i.Key.CallUpdateDoc();
 		    }
@@ -151,7 +152,7 @@ namespace NativeApp.Models
 		        var pathFile = Path.Combine(path,pathh + ".txt");
 
                 var content = File.ReadAllText(pathFile);
-                Document document = new Document(pathh, content, DateTime.Now, DateTime.Now, 1, 1); // ====================================> POPRAWIĆ ID <========================
+                Document document = new Document(pathh, content, DateTime.Now, DateTime.Now, AppStatus.userID, AppStatus.userID); // ====================================> POPRAWIĆ ID <========================
 		        documentsState.Add(document, stateOfDocument.exsistOnlyLocal);
             }
         }

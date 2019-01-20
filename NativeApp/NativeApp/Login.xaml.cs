@@ -115,6 +115,7 @@ namespace NativeApp
 				if (user.user_exists == true && user.logged_in)
 				{
 					appStatus.isUserLogged = true;
+				    AppStatus.userID = user.user_id;
 					MenuGrid.Visibility = Visibility.Hidden;
 					loginMenuGrid.Visibility = Visibility.Visible;
 					LoginGrid.Visibility = Visibility.Hidden;

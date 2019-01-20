@@ -15,6 +15,7 @@ namespace NativeApp.Models
         public bool isServerOnline { get; set; }
         public bool isUserLogged { get; set; }
 
+        public static int userID;
 
         public AppStatus()
         {
