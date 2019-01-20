@@ -8,19 +8,20 @@ using Newtonsoft.Json;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using ToggleSwitch;
+using NativeApp.ViewModels;
 
 namespace NativeApp.Models
 {
 	class Sockets
 	{
 
-		public string lockedFile, unlockedFile, savedFile, modifiedFile;
+		public string lockedFile, unlockedFile, savedFile, modifiedFile, modifiedBy;
 		public string receivedMsg, receivedFrom;
 
 		public static string lockf;
 
 		public string nameToChange = null;
-		public  int action = 3; //3 - do nothing
+		public  int action = 4; //3 - do nothing
 
 		public void isSocketConnected(Socket socket)
 		{
@@ -43,10 +44,16 @@ namespace NativeApp.Models
 				file_id = fileId
 			};
 
+			sUser drugi = new sUser
+			{
+				username = user,
+				file_name = name
+			};
+
 
 			if (nameToChange != null)
 			{
-				if (action == 1) //dla 1 jest zablokowany
+				if (action == 1) // 1 - jest zablokowany
 				{
 					socket.Emit("fileLocked", JsonConvert.SerializeObject(nowy));
 					//Console.WriteLine(nowy);
@@ -59,15 +66,20 @@ namespace NativeApp.Models
 					Console.WriteLine("Unlocked -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
 
 				}
-				//else if(action == 2)
-				//{
-				//	socket.Emit("fileSaved", JsonConvert.SerializeObject(nowy));
-				//	Console.WriteLine("Saved -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
-				//}
+				else if (action == 2) // 2 - jest nowy zapisany
+				{
+					socket.Emit("fileSaved", JsonConvert.SerializeObject(drugi));
+					Console.WriteLine("Saved -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
+				}
+				else if(action == 3) // 3- jest zmodyfikowany
+				{
+					socket.Emit("fileSaved", JsonConvert.SerializeObject(drugi));
+					Console.WriteLine("Saved -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
+				}
 			}
 
 			nameToChange = null;
-			action = 3;
+			action = 4;
 
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
@@ -161,6 +173,7 @@ namespace NativeApp.Models
 					MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
 
 					modifiedFile = nowyUser.file_name;
+					modifiedBy = nowyUser.username;
 				}
 
 			});
@@ -198,6 +211,8 @@ namespace NativeApp.Models
 					Console.WriteLine("{0}: {1}", chat.username, chat.message);
 					receivedMsg = chat.message;
 					receivedFrom = chat.username;
+
+					Login.main.Status = receivedFrom + ": " + receivedMsg + "\n";
 				}
 			});
 

@@ -292,7 +292,10 @@
                     <Label Content="Chat" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="43" Width="95" FontFamily="Century Gothic" FontSize="30" FontWeight="Bold"/>
                 </Grid>
                 <TextBox Name="chatWindowBox" HorizontalAlignment="Left" Height="197" Margin="19,73,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="313" Background="Transparent" BorderThickness="0" VerticalScrollBarVisibility="Visible" 
-                         Grid.RowSpan="2" FontSize="15" IsReadOnly="True"/>
+                         Grid.RowSpan="2" FontSize="15" IsReadOnly="True" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                <!--<DataGrid x:Name="chatDatagrid" HorizontalAlignment="Left" Height="196" Margin="10,66,0,0" Grid.RowSpan="2" VerticalAlignment="Top" Width="322" HeadersVisibility="None" BorderThickness="0"
+                          IsReadOnly="true" CanUserReorderColumns="False" CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False" Background="White" FontFamily="Century Gothic"
+                          FontSize="15" AddingNewItem="chatDatagrid_AddingNewItem" ItemsSource="{Binding Messages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>-->
             </Grid>
         </Border>
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NativeApp.Models
 {
-	class sChat
+	public class sChat
 	{
 		public string username { get; set; }
 		public string message { get; set; }

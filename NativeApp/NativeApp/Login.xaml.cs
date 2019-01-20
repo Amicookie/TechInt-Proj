@@ -30,6 +30,8 @@ namespace NativeApp
 		private User user;
 		public Socket socket;
 
+		internal static Login main; // new thread
+
 		private String login, password;
 		int idPickedDoc, loggedUser;
 
@@ -42,6 +44,7 @@ namespace NativeApp
 		public Login()
 		{
 			InitializeComponent();
+			main = this; // new thread
 
 			if (Directory.Exists(path))
 			{
@@ -351,7 +354,7 @@ namespace NativeApp
 					if (document.checkIfNoDuplicated())
 					{
 						document.PostDocument(document);
-						//newSocket.socketIoEmit(TitleBox.Text, 2, login, socket, user.user_id);
+						newSocket.socketIoEmit(TitleBox.Text, 2, login, socket, user.user_id, 0);
 						MessageBox.Show("File has been saved");
 					}
 					else
@@ -402,7 +405,6 @@ namespace NativeApp
 					exsistingDoc.file_content = content;
 					//temporary hardcode ;c
 					exsistingDoc.user_id = user.user_id;
-					//exsistingDoc.file_id = ;
 					var localWriteTime =
 						File.GetLastWriteTime(Path.Combine(Documents.path, exsistingDoc.file_name + ".txt"));
 					if (localWriteTime < exsistingDoc.file_update_date)
@@ -417,6 +419,7 @@ namespace NativeApp
 					}
 					else
 					{
+						newSocket.socketIoEmit(TitleBox.Text, 3, login, socket, user.user_id, idPickedDoc);
 						exsistingDoc.CallUpdateDoc();
 						MessageBox.Show("File has been updated!");
 					}
@@ -521,15 +524,13 @@ namespace NativeApp
 			{
 				ChatGrid.Visibility = Visibility.Visible;
 				chatBorder.Visibility = Visibility.Visible;
-				if (newSocket.receivedFrom != null)
-				{
-					chatWindowBox.AppendText(newSocket.receivedFrom + ": " + newSocket.receivedMsg + "\n");
-				}
-			} else
-			{
-				MessageBox.Show("You don't have connection to use chat!");
 			}
 			
+		}
+
+		private void chatDatagrid_AddingNewItem(object sender, AddingNewItemEventArgs e)
+		{
+
 		}
 
 		private void closeChatBtn_Click(object sender, RoutedEventArgs e)
@@ -555,6 +556,14 @@ namespace NativeApp
 			}
 
 			messageBox.Clear();
+		}
+
+
+		// nowy wątek dla czatu
+		internal string Status
+		{
+			get { return chatWindowBox.Text.ToString(); }
+			set { Dispatcher.Invoke(new Action(() => { chatWindowBox.AppendText(value); })); }
 		}
 	}
 }
