@@ -48,17 +48,17 @@ export class FileComponent implements OnInit, OnDestroy {
     this.webSocketService._file_changed.subscribe(
       value => {
         if (value.file_id !== -1) {
-          // this.files.forEach(file => {
-          //   console.log(file);
-          //   if(file.file_id == value.file_id) {
-          //     console.log('weszlo do ifa filechanged w petli po plikach');
-          //     this._filesService.getFile(value.file_id).subscribe(data => {
-          //       file = data;
-          //       console.log(file);
-          //       this.webSocketService._file_changed.next({file_id:-1});
-          //     });
-          //   }
-          // })
+          this.files.forEach(file => {
+            console.log(file);
+            if(file.file_id == value.file_id) {
+              console.log('weszlo do ifa filechanged w petli po plikach');
+              this._filesService.getFile(value.file_id).subscribe(data => {
+                file = data;
+                console.log(file);
+                //this.webSocketService._file_changed.next({file_id:-1});
+              });
+            }
+          })
           this._filesService.getFiles().subscribe(data=>{
             this.files = data;
           });
