@@ -73,8 +73,8 @@ namespace NativeApp.Models
 				}
 				else if(action == 3) // 3- jest zmodyfikowany
 				{
-					socket.Emit("fileSaved", JsonConvert.SerializeObject(drugi));
-					Console.WriteLine("Saved -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
+					socket.Emit("fileUpdated", JsonConvert.SerializeObject(drugi));
+					Console.WriteLine("Updated -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
 				}
 			}
 
@@ -93,6 +93,7 @@ namespace NativeApp.Models
 		public void socketIoManager(Socket socket, String user)
 		{
 			sUser nowyUser = new sUser();
+			sUser drugi = new sUser();
 
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
@@ -114,6 +115,8 @@ namespace NativeApp.Models
 
 					lockedFile = nowyUser.file_name;
 					lockf = nowyUser.file_name;
+
+					Login.main.Toggle = false;
 
 					if(lockedFile.Equals(unlockedFile)) {
 						returnUnlockedFile();
@@ -139,7 +142,9 @@ namespace NativeApp.Models
 						lockf = null;
 					}
 
-					if(unlockedFile.Equals(lockedFile))
+					Login.main.Toggle = true;
+
+					if (unlockedFile.Equals(lockedFile))
 					{
 						returnLockedFile();
 					}

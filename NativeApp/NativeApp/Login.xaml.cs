@@ -247,7 +247,7 @@ namespace NativeApp
 			contentBox.Clear();
 
 			toggleSwitch.IsChecked = true;
-			toggleSwitch.IsEnabled = true;
+			toggleSwitch.IsEnabled = false;
 			TitleBox.IsReadOnly = false;
 			contentBox.IsReadOnly = false;
 			saveBtn.IsEnabled = true;
@@ -279,7 +279,7 @@ namespace NativeApp
 		    try
 		    {
                 String title = listOfFiles.SelectedItems[0].ToString();
-			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
+				string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
 
 		    
 		        foreach (Document doc in Documents.currentDocuments)
@@ -304,20 +304,24 @@ namespace NativeApp
 			
 			Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
 
-			if(TitleBox.Text.Equals(newSocket.lockedFile))
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
-				toggleSwitch.IsChecked = false;
-				toggleSwitch.IsEnabled = false;
-				Console.WriteLine("zabl");
-			} else
-			{
-				toggleSwitch.IsEnabled = true;
-			}
+				if (TitleBox.Text.Equals(newSocket.lockedFile))
+				{
+					toggleSwitch.IsChecked = false;
+					toggleSwitch.IsEnabled = false;
+					//Console.WriteLine("zabl");
+				}
+				else
+				{
+					toggleSwitch.IsEnabled = true;
+				}
 
-			if(TitleBox.Text.Equals(newSocket.unlockedFile))
-			{
-				toggleSwitch.IsEnabled = true;
-				Console.WriteLine("odbl");
+				if (TitleBox.Text.Equals(newSocket.unlockedFile))
+				{
+					toggleSwitch.IsEnabled = true;
+					//Console.WriteLine("odbl");
+				}
 			}
 
 			if(toggleSwitch.IsChecked == true && newSocket.lockedFile != TitleBox.Text)
@@ -673,6 +677,12 @@ namespace NativeApp
 		{
 			get { return chatWindowBox.Text.ToString(); }
 			set { Dispatcher.Invoke(new Action(() => { chatWindowBox.AppendText(value); })); }
+		}
+
+		internal bool Toggle
+		{
+			get { return toggleSwitch.IsEnabled = true; }
+			set { Dispatcher.Invoke(new Action(() => { toggleSwitch.IsEnabled = value; })); }
 		}
 	}
 }
