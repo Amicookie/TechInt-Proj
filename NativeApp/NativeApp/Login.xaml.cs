@@ -345,6 +345,10 @@ namespace NativeApp
 					toggleSwitch.IsEnabled = true;
 					//Console.WriteLine("odbl");
 				}
+			} else
+			{
+				toggleSwitch.IsChecked = true;
+				toggleSwitch.IsEnabled = false;
 			}
 
 			if(toggleSwitch.IsChecked == true && newSocket.lockedFile != TitleBox.Text)
