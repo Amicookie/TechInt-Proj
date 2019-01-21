@@ -96,7 +96,7 @@ export class FileComponent implements OnInit, OnDestroy {
     if (this.editable == true){
      this.webSocketService.emitEventOnFileLocked(localStorage.getItem('user_id'), localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
     } else {
-      this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
+      this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id, localStorage.getItem('user_id'));
      }
   }
 
@@ -121,7 +121,7 @@ export class FileComponent implements OnInit, OnDestroy {
 
     //+ operator changes string into number <3
     if(this.editable && +localStorage.getItem('user_id')==this._locked_user_id){
-       this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id);
+       this.webSocketService.emitEventOnFileUnlocked(localStorage.getItem('currentUser'), this.file_name, this.current_file_id, localStorage.getItem('user_id'));
        this.editable = !this.editable
     }
     this.current_file_id = 0;

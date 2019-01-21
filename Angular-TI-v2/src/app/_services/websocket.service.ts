@@ -141,8 +141,8 @@ export class WebsocketService {
   }
 
   
-  emitEventOnFileUnlocked(username, file_name, file_id){
-    this.socket.emit('fileUnlocked', JSON.stringify({username, file_name, file_id}));
+  emitEventOnFileUnlocked(username, file_name, file_id, user_id){
+    this.socket.emit('fileUnlocked', JSON.stringify({username, file_name, file_id, user_id}));
   }
 
   emitEventOnFileUpdated(file_name, username){
