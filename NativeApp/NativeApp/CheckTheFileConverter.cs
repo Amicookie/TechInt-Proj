@@ -14,6 +14,27 @@ namespace NativeApp
 
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			try
+			{
+				foreach (sUser s in Login.lockedFilesList)
+				{
+					if (value.Equals(s.file_name + ".txt") && !s.file_name.Equals(Sockets.unlockf))
+					{
+						return true;
+					}
+					else if (value.Equals(Sockets.lockf + ".txt"))
+					{
+						return true;
+					} else
+					{
+						return false;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
 
 			if (value.Equals(Sockets.lockf+".txt"))
 			{

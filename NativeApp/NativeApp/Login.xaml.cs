@@ -34,6 +34,7 @@ namespace NativeApp
 
 		private String login, password;
 		int idPickedDoc, loggedUser;
+		public static List<sUser> lockedFilesList;
 
 		String path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Files";
 		AppStatus appStatus = new AppStatus();
@@ -131,7 +132,8 @@ namespace NativeApp
 					logoutBtn.Visibility = Visibility.Visible;
 
 					loggedUser = user.user_id;
-					//Console.WriteLine("ID usera: {0},{1}", loggedUser, user.user_login);
+					lockedFilesList = user.list_of_locked_files;
+					Console.WriteLine("Locked file: {0}", lockedFilesList);
 
 					socket = IO.Socket(adresIP.adres);
 
@@ -202,6 +204,7 @@ namespace NativeApp
 
 		    }
             Documents documents = new Documents();
+
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
 				documents.Get2(true);
@@ -301,18 +304,38 @@ namespace NativeApp
 		    filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
 
-			
-			Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
+			//Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
 
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
+				try
+				{
+					foreach (sUser s in lockedFilesList)
+					{
+						if(s.file_name.Equals(TitleBox.Text) && s.file_id.Equals(idPickedDoc) && !s.file_name.Equals(newSocket.unlockedFile))
+						{
+							toggleSwitch.IsChecked = false;
+							toggleSwitch.IsEnabled = false;
+							//Console.WriteLine("Blocking file");
+						} else if (!s.file_name.Equals(TitleBox.Text))
+						{
+							toggleSwitch.IsChecked = false;
+							toggleSwitch.IsEnabled = true;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+
 				if (TitleBox.Text.Equals(newSocket.lockedFile))
 				{
 					toggleSwitch.IsChecked = false;
 					toggleSwitch.IsEnabled = false;
 					//Console.WriteLine("zabl");
 				}
-				else
+				else if(lockedFilesList == null)
 				{
 					toggleSwitch.IsEnabled = true;
 				}

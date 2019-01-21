@@ -16,6 +16,7 @@ namespace NativeApp.Models
         public string user_password { get; set; }
         public bool user_exists { get; set; }
         public bool logged_in { get; set; }
+		public List<sUser> list_of_locked_files { get; set; }
 
         public User(string login, string password)
         {
@@ -33,6 +34,7 @@ namespace NativeApp.Models
             using (var client = new HttpClient())
             {
                 User p = new User(user_login,user_password);
+
                 client.BaseAddress = new Uri(adresIP.adres);
                 var response = client.PostAsJsonAsync("users", p).Result;
                 if (response.IsSuccessStatusCode)
@@ -41,7 +43,9 @@ namespace NativeApp.Models
                     this.user_exists = jsonContent.user_exists;
                     this.logged_in = jsonContent.logged_in;
 					this.user_id = jsonContent.user_id;
-                    Console.Write("Success");
+					this.list_of_locked_files = jsonContent.list_of_locked_files;
+
+					Console.Write("Success");
                     return true;
                 }
                 else

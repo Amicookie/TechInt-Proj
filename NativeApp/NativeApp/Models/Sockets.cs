@@ -18,10 +18,10 @@ namespace NativeApp.Models
 		public string lockedFile, unlockedFile, savedFile, modifiedFile, modifiedBy;
 		public string receivedMsg, receivedFrom;
 
-		public static string lockf;
+		public static string lockf, unlockf;
 
 		public string nameToChange = null;
-		public  int action = 4; //3 - do nothing
+		public  int action = 4; //4 - do nothing
 
 		public void isSocketConnected(Socket socket)
 		{
@@ -93,7 +93,6 @@ namespace NativeApp.Models
 		public void socketIoManager(Socket socket, String user)
 		{
 			sUser nowyUser = new sUser();
-			sUser drugi = new sUser();
 
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
@@ -137,7 +136,9 @@ namespace NativeApp.Models
 					MessageBox.Show("File " + nowyUser.file_name + " has been unlocked " + nowyUser.username);
 
 					unlockedFile = nowyUser.file_name;
-					if(nowyUser.file_name.Equals(lockf))
+					unlockf = nowyUser.file_name;
+
+					if (nowyUser.file_name.Equals(lockf))
 					{
 						lockf = null;
 					}
