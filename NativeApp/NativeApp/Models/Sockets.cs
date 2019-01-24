@@ -9,6 +9,8 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using ToggleSwitch;
 using NativeApp.ViewModels;
+using System.Drawing;
+using System.Reflection;
 
 namespace NativeApp.Models
 {
@@ -22,6 +24,15 @@ namespace NativeApp.Models
 
 		public string nameToChange = null;
 		public  int action = 4; //4 - do nothing
+
+		private NotifyIcon _notifyIcon;
+
+		public void showIcon()
+		{
+			_notifyIcon = new NotifyIcon();
+			_notifyIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+			_notifyIcon.BalloonTipClosed += (s, e) => _notifyIcon.Visible = false;
+		}
 
 		public void isSocketConnected(Socket socket)
 		{
@@ -93,6 +104,7 @@ namespace NativeApp.Models
 		public void socketIoManager(Socket socket, String user)
 		{
 			sUser nowyUser = new sUser();
+			showIcon();
 
 			socket.On(Socket.EVENT_DISCONNECT, () =>
 			{
@@ -110,14 +122,18 @@ namespace NativeApp.Models
 				if (!user.Equals(nowyUser.username))
 				{
 					Console.WriteLine("SocketIO: zablokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
-					MessageBox.Show("File " + nowyUser.file_name + " has been locked by " + nowyUser.username);
+					//MessageBox.Show("File " + nowyUser.file_name + " has been locked by " + nowyUser.username);
 
 					lockedFile = nowyUser.file_name;
 					lockf = nowyUser.file_name;
 
+					
 					Login.main.Toggle = false;
 
-					if(lockedFile.Equals(unlockedFile)) {
+					_notifyIcon.Visible = true;
+					_notifyIcon.ShowBalloonTip(3000, "File has been locked", nowyUser.file_name + ", locked by " + nowyUser.username, ToolTipIcon.Info);
+
+					if (lockedFile.Equals(unlockedFile)) {
 						returnUnlockedFile();
 					}
 				}
@@ -133,10 +149,13 @@ namespace NativeApp.Models
 				if (!user.Equals(nowyUser.username))
 				{ 
 					Console.WriteLine("SocketIO: odblokowano plik {0}, {1}", nowyUser.username, nowyUser.file_name);
-					MessageBox.Show("File " + nowyUser.file_name + " has been unlocked " + nowyUser.username);
+					//MessageBox.Show("File " + nowyUser.file_name + " has been unlocked " + nowyUser.username);
 
 					unlockedFile = nowyUser.file_name;
 					unlockf = nowyUser.file_name;
+
+					_notifyIcon.Visible = true;
+					_notifyIcon.ShowBalloonTip(3000, "File has been unlocked", nowyUser.file_name + ", unlocked by " + nowyUser.username, ToolTipIcon.Info);
 
 					if (nowyUser.file_name.Equals(lockf))
 					{
@@ -161,9 +180,15 @@ namespace NativeApp.Models
 
 				if (!user.Equals(nowyUser.username))
 				{
-					MessageBox.Show("File " + nowyUser.file_name + " hase been saved.\nPlease, refresh.");
+					//MessageBox.Show("File " + nowyUser.file_name + " hase been saved.\nPlease, refresh.");
 
 					savedFile = nowyUser.file_name;
+
+					Login.main.CleanFiles = true;
+					Login.main.UploadFiles = true;
+
+					_notifyIcon.Visible = true;
+					_notifyIcon.ShowBalloonTip(3000, "New file has been saved", nowyUser.file_name, ToolTipIcon.Info);
 				}
 				
 			});
@@ -176,10 +201,14 @@ namespace NativeApp.Models
 
 				if (!user.Equals(nowyUser.username))
 				{
-					MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
+					//MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
 
 					modifiedFile = nowyUser.file_name;
 					modifiedBy = nowyUser.username;
+
+					_notifyIcon.Visible = true;
+					_notifyIcon.ShowBalloonTip(3000, "A file has been modified", nowyUser.file_name + ", modified by " + nowyUser.username, ToolTipIcon.Info);
+
 				}
 
 			});

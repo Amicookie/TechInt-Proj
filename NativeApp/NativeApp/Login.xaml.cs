@@ -11,6 +11,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -42,6 +44,9 @@ namespace NativeApp
 		Sockets newSocket = new Sockets();
 		sUser suser = new sUser();
 
+		ButtonAutomationPeer peer;
+		IInvokeProvider invokeProv;
+
 		public Login()
 		{
 			InitializeComponent();
@@ -50,6 +55,7 @@ namespace NativeApp
 			if (Directory.Exists(path))
 			{
 				listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+
 			}
 			else
 			{
@@ -188,8 +194,7 @@ namespace NativeApp
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
-
-		    if (appStatus.isUserLogged == true)
+			if (appStatus.isUserLogged == true)
 		    {
 		        loginBttn.Visibility = Visibility.Hidden;
 		        logoutBtn.Visibility = Visibility.Visible;
@@ -197,7 +202,6 @@ namespace NativeApp
 		    }
 		    else
 		    {
-
 		        loginBttn.Visibility = Visibility.Visible;
 		        logoutBtn.Visibility = Visibility.Hidden;
 		        chatBtn.Visibility = Visibility.Hidden;
@@ -304,7 +308,6 @@ namespace NativeApp
 		    filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
 
-			//Console.WriteLine("Zablokowany: {0}", newSocket.lockedFile);
 
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
@@ -316,7 +319,8 @@ namespace NativeApp
 						{
 							toggleSwitch.IsChecked = false;
 							toggleSwitch.IsEnabled = false;
-							//Console.WriteLine("Blocking file");
+							Console.WriteLine("Warunek 1");
+							
 						} else if (!s.file_name.Equals(TitleBox.Text))
 						{
 							toggleSwitch.IsChecked = false;
@@ -329,26 +333,26 @@ namespace NativeApp
 					Console.WriteLine(ex);
 				}
 
-				if (TitleBox.Text.Equals(newSocket.lockedFile))
+				if (TitleBox.Text.Equals(newSocket.lockedFile) && !TitleBox.Text.Equals(newSocket.unlockedFile))
 				{
 					toggleSwitch.IsChecked = false;
 					toggleSwitch.IsEnabled = false;
-					//Console.WriteLine("zabl");
+					Console.WriteLine("Warunek 2");
 				}
 				else if(lockedFilesList == null)
 				{
 					toggleSwitch.IsEnabled = true;
 				}
 
-				if (TitleBox.Text.Equals(newSocket.unlockedFile))
+				if (TitleBox.Text.Equals(newSocket.unlockedFile) && !TitleBox.Text.Equals(newSocket.lockedFile))
 				{
 					toggleSwitch.IsEnabled = true;
-					//Console.WriteLine("odbl");
 				}
 			} else
 			{
 				toggleSwitch.IsChecked = true;
 				toggleSwitch.IsEnabled = false;
+				Console.WriteLine("Warunek 3");
 			}
 
 			if(toggleSwitch.IsChecked == true && newSocket.lockedFile != TitleBox.Text)
@@ -362,6 +366,7 @@ namespace NativeApp
 				TitleBox.IsReadOnly = true;
 				contentBox.IsReadOnly = true;
 				saveBtn.IsEnabled = false;
+				Console.WriteLine("Warunek 4");
 
 			}
 		}
@@ -709,8 +714,51 @@ namespace NativeApp
 		internal bool Toggle
 		{
 			get { return toggleSwitch.IsEnabled = true; }
-			set { Dispatcher.Invoke(new Action(() => { toggleSwitch.IsEnabled = value; })); }
+			set { Dispatcher.Invoke(new Action(() => {
+				if (TitleBox.Text.Equals(newSocket.lockedFile))
+				{
+					toggleSwitch.IsEnabled = value;
+				}
+			})); }
 		}
+
+		internal bool CleanFiles
+		{
+			get { return false; }
+			set {
+				Dispatcher.Invoke(new Action(() => {
+					listOfFiles.ItemsSource = null;
+					downloadTable();
+					//Console.WriteLine("wyczyszczono");
+				}));
+			}
+		}
+
+		internal bool UploadFiles
+		{
+			get { return false; }
+			set
+			{
+				Dispatcher.Invoke(new Action(() => {
+					cleanTable();
+					//Console.WriteLine("uzupelniono");
+				}));
+			}
+		}
+
+		public void downloadTable()
+		{
+			Documents doc = new Documents();
+			doc.Get2(true);
+			System.Threading.Thread.Sleep(2000);
+		}
+		public void cleanTable()
+		{
+			listOfFiles.ItemsSource = null;
+			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
+			
+		}
+
 	}
 }
 

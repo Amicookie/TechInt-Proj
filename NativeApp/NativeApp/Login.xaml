@@ -233,7 +233,8 @@
             <Label Content="List of shared files:" HorizontalAlignment="Left" Margin="28,40,0,0" VerticalAlignment="Top" FontFamily="Century Gothic" FontSize="20"/>
             <DataGrid x:Name="listOfFiles" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="439" Margin="28,80,0,0" VerticalAlignment="Top" Width="600" 
                       Background="Transparent" BorderThickness="0" ColumnHeaderHeight="40" BorderBrush="White" CanUserResizeColumns="False" MouseDoubleClick="Row_MouseDoubleClick"
-                      RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False" HeadersVisibility="Column">
+                      RowHeight="20" FontFamily="Century Gothic" FontSize="15" ColumnWidth="200" CanUserReorderColumns="False" CanUserResizeRows="False" HeadersVisibility="Column" 
+                      >
                 <DataGrid.Columns >
                     <DataGridTextColumn IsReadOnly="true" Binding="{Binding}" Header="File name" />
                     <DataGridTextColumn IsReadOnly="true" Binding="{Binding CreationTime}" Header="Creation Time" />
