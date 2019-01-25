@@ -30,6 +30,8 @@ namespace NativeApp.Models
             try
             {
                 var r = await DownloadPage2(documentUrl, ifCreate);
+			
+				
 		    }
 		    catch (Exception e)
 		    {
@@ -49,6 +51,7 @@ namespace NativeApp.Models
 					var file = await r.Content.ReadAsStringAsync();
 					model = await r.Content.ReadAsAsync<List<Document>>();
 				}
+				
 				currentDocuments = model;
 				if (ifCreate)
 				{

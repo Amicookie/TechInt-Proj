@@ -8,6 +8,7 @@ namespace NativeApp.Models
 {
 	class adresIP
 	{
+		//"http://127.0.0.1:5000/"
 		public static string adres = "http://127.0.0.1:5000/";
 	}
 }

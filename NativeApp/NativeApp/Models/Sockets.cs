@@ -140,6 +140,28 @@ namespace NativeApp.Models
 				
 			});
 
+			socket.On("fileUpdated", (data) =>
+			{
+				var saved = JsonConvert.DeserializeObject<sUser>(data.ToString());
+				nowyUser.username = saved.username;
+				nowyUser.file_name = saved.file_name;
+
+				if (!user.Equals(nowyUser.username))
+				{
+					//MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
+
+					modifiedFile = nowyUser.file_name;
+					modifiedBy = nowyUser.username;
+
+					Login.main.refreshWindow = "";
+
+					_notifyIcon.Visible = true;
+					_notifyIcon.ShowBalloonTip(3000, "A file has been modified", nowyUser.file_name + ", modified by " + nowyUser.username, ToolTipIcon.Info);
+
+				}
+
+			});
+
 			socket.On("fileUnlocked", (data) =>
 			{
 				var unlocked = JsonConvert.DeserializeObject<sUser>(data.ToString());
@@ -193,25 +215,7 @@ namespace NativeApp.Models
 				
 			});
 
-			socket.On("fileUpdated", (data) =>
-			{
-				var saved = JsonConvert.DeserializeObject<sUser>(data.ToString());
-				nowyUser.username = saved.username;
-				nowyUser.file_name = saved.file_name;
 
-				if (!user.Equals(nowyUser.username))
-				{
-					//MessageBox.Show("File " + nowyUser.file_name + " has been modified.\nPlease, refresh.");
-
-					modifiedFile = nowyUser.file_name;
-					modifiedBy = nowyUser.username;
-
-					_notifyIcon.Visible = true;
-					_notifyIcon.ShowBalloonTip(3000, "A file has been modified", nowyUser.file_name + ", modified by " + nowyUser.username, ToolTipIcon.Info);
-
-				}
-
-			});
 
 		}
 
