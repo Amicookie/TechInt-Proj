@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FileService } from '../../_services/file.service';
 import { showToast } from '../../toaster-helper';
 import { WebsocketService } from 'src/app/_services/websocket.service';
+import { async, delay } from 'q';
 
 
 
@@ -28,6 +29,10 @@ export class FileComponent implements OnInit, OnDestroy {
   BreakException = {};
   interval: any;
   
+  // async function delay(ms: number) {
+  //   return new Promise(resolve=>setTimeout(resolve,ms));
+  // }
+
   constructor(private _filesService: FileService, private webSocketService: WebsocketService) { 
     this.webSocketService._file_locked.subscribe(
       value => {
@@ -47,21 +52,27 @@ export class FileComponent implements OnInit, OnDestroy {
 
     this.webSocketService._file_changed.subscribe(
       value => {
-        if (value.file_id !== -1) {
+         if (value.file_id !== -1) {
           this.files.forEach(file => {
             console.log(file);
             if(file.file_id == value.file_id) {
               console.log('weszlo do ifa filechanged w petli po plikach');
-              this._filesService.getFile(value.file_id).subscribe(data => {
-                file = data;
-                console.log(file);
-                //this.webSocketService._file_changed.next({file_id:-1});
-              });
+              (async() => {
+                await delay(2000);
+                this._filesService.getFile(value.file_id).subscribe(data => {
+                  file = data;
+                  console.log(file);
+                  this.file_name = file.file_name;
+                  this.file_content = file.file_content;
+                  //this.webSocketService._file_changed.next({file_id:-1});
+                });
+                this._filesService.getFiles().subscribe(data=>{
+                  this.files = data;
+                });
+              })();
             }
           })
-          this._filesService.getFiles().subscribe(data=>{
-            this.files = data;
-          });
+         
           this.webSocketService._file_changed.next({file_id:-1});
         }
       }
