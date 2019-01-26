@@ -38,7 +38,8 @@ namespace NativeApp.Models
 		{
 			socket.On(Socket.EVENT_CONNECT, () =>
 			{
-				Console.WriteLine("Is Connected ");
+				socket.Emit("connect", "desktop");
+				Console.WriteLine("Socket connect");
 			}
 );
 		}
