@@ -9,6 +9,8 @@ def insert_data():
         {'user_login': 'user2',
          'user_password': '79e331f0a7209c2746d4965331bf90baa36d47f959965359c3f9f86e7b6b38f5'},
         {'user_login': 'andrzej',
+         'user_password': '79e331f0a7209c2746d4965331bf90baa36d47f959965359c3f9f86e7b6b38f5'},
+        {'user_login': 'grazynka',
          'user_password': '79e331f0a7209c2746d4965331bf90baa36d47f959965359c3f9f86e7b6b38f5'}
     ]
 

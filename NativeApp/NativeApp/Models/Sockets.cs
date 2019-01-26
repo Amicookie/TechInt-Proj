@@ -36,15 +36,15 @@ namespace NativeApp.Models
 
 		public void isSocketConnected(Socket socket, int _user)
 		{
-			//sUserType uType = new sUserType
-			//{
-			//	connectionType = "desktop",
-			//	user_id = _user
-			//};
+            sUserType uType = new sUserType
+            {
+                connectionType = "desktop",
+                user_id = _user
+            };
 
-			//socket.Emit("connectionType", JsonConvert.SerializeObject(uType));
-			//Console.WriteLine("Socket connect");
-		}
+            socket.Emit("connectionType", JsonConvert.SerializeObject(uType));
+            Console.WriteLine("Socket connect");
+        }
 
 		public void socketIoEmit(string name, int locked, String user, Socket socket, int userId, int fileId)
 		{

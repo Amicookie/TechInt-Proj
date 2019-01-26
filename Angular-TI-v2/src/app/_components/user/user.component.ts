@@ -3,6 +3,7 @@ import { UserService } from 'src/app/_services/user.service';
 import { DataSharingService } from 'src/app/_services/data-sharing.service';
 import { first } from 'rxjs/operators';
 import { showToast } from 'src/app/toaster-helper';
+import { WebsocketService } from 'src/app/_services/websocket.service';
 
 @Component({
   selector: 'app-user',
@@ -18,7 +19,7 @@ export class UserComponent implements OnInit {
   
   isUserLoggedIn: boolean;
 
-  constructor(private _usersService: UserService, private dataSharingService: DataSharingService) { 
+  constructor(private _usersService: UserService, private dataSharingService: DataSharingService, private _webSocketService: WebsocketService) { 
     this.dataSharingService.isUserLoggedIn.subscribe(
       value => {
         this.isUserLoggedIn = value;
@@ -45,6 +46,7 @@ export class UserComponent implements OnInit {
               this._usersService.currentUserSubject = element;
             }
           });
+          this._webSocketService.emitSocketClientTypeConnected(localStorage.getItem('user_id'));
           this.dataSharingService.isUserLoggedIn.next(true);
         }
       }

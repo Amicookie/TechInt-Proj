@@ -58,6 +58,7 @@ export class WebsocketService {
 
   connect(): Subject<MessageEvent>{
     this.socket = io.connect(environment.ws_url);
+    this.socket.emit('connectionType', JSON.stringify({"connectionType": "webapp"}));
 
     let observable = new Observable(observer => {
 
@@ -151,6 +152,10 @@ export class WebsocketService {
 
   emitEventFileDeletion(file_id, file_name, username){
     this.socket.emit('fileDeletion', JSON.stringify({file_id, file_name, username}));
+  }
+
+  emitSocketClientTypeConnected(user_id) {
+    this.socket.emit('socketConnectionTypeHelper', JSON.stringify({user_id}));
   }
 
 }

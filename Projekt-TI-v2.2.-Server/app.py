@@ -29,10 +29,15 @@ count_list_of_locked_files = 0
 created_file_id = -1
 updated_file_id = -1
 
+# Global variables defining connection type and other stuff :D
+client_type = []
+
 CORS(app)
 hashing = Hashing(app)
 
 ti_db = SqliteDatabase(app.config['DATABASE'])
+
+# SOCKET.IO HANDLERS
 
 
 @socketio.on('chat')
@@ -57,19 +62,6 @@ def handle_file_saved(file_saved):
     print('Resetted created_file_id' + str(created_file_id))
 
 
-# @socketio.on('fileLocked')
-# def handle_file_locked(file_locked_data):
-#     print('File Locked!', file_locked_data)
-#     file_locked_data_dict = literal_eval(file_locked_data)
-#     global count_list_of_locked_files
-#     count_list_of_locked_files += 1
-#     #file_locked_data_dict['count'] = count_list_of_locked_files
-#
-#     list_of_locked_files.append(file_locked_data_dict)
-#     print(list_of_locked_files)
-#     socketio.emit('fileLocked', {'list_of_files': list_of_locked_files, 'count': count_list_of_locked_files})
-
-
 @socketio.on('fileLocked')
 def handle_file_locked(file_locked_data):
     print('File Locked!', file_locked_data)
@@ -86,30 +78,6 @@ def handle_file_locked(file_locked_data):
                                  'file_id': file_locked_data_dict.get('file_id'),
                                  'list_of_files': list_of_locked_files,
                                  'count': count_list_of_locked_files})
-
-
-# @socketio.on('fileUnlocked')
-# def handle_file_unlocked(file_unlocked_data):
-#     print('File Unlocked!', file_unlocked_data)
-#     file_unlocked_data_dict = literal_eval(file_unlocked_data)
-#
-#     global count_list_of_locked_files
-#
-#     index_of_unlocked_file = -1
-#
-#     for locked_file in list_of_locked_files:
-#         index_of_unlocked_file += 1
-#         if locked_file.get('file_id') == file_unlocked_data_dict.get('file_id'):
-#             list_of_locked_files.remove(locked_file)
-#             count_list_of_locked_files -= 1
-#     # list_of_locked_files.remove(file_unlocked_data_dict)
-#
-#     print(list_of_locked_files)
-#     socketio.emit('fileUnlocked', {'username': file_unlocked_data_dict.get('username'),
-#                                    'file_name': file_unlocked_data_dict.get('file_name'),
-#                                    'file_id': file_unlocked_data_dict.get('file_id'),
-#                                    'user_id': file_unlocked_data_dict.get('user_id'),
-#                                    'index_of_unlocked_file': index_of_unlocked_file})
 
 
 @socketio.on('fileUnlocked')
@@ -136,7 +104,7 @@ def handle_file_unlocked(file_unlocked_data):
 
 
 @socketio.on('fileUpdated')
-def handle_file_unlocked(file_updated_data):
+def handle_file_updated(file_updated_data):
     print('File Updated!', file_updated_data)
     file_updated_data_dict = literal_eval(file_updated_data)
     global updated_file_id
@@ -160,7 +128,42 @@ def handle_file_deletion(file_deletion_data):
 @socketio.on('connect')
 def test_connect():
     global thread
-    print('Client connected')
+    print('Client connected', request.sid)
+
+
+@socketio.on('socketConnectionTypeHelper')
+def helper(user_id):
+    print('Client sid: ', request.sid, 'User_id: ', user_id)
+    global client_type
+    user_id_dict = literal_eval(user_id)
+    for cli in client_type:
+        if cli['client_sid'] == request.sid and cli['user_id'] == -1:
+            cli['user_id'] = user_id_dict.get('user_id')
+            break
+    print("Global client_type TYPE HELPER: ", client_type)
+
+
+@socketio.on('connectionType')
+def connection_type(conn_type):
+    print('Client type and ID: ', conn_type, ', Client sid: ', request.sid)
+    conn_type_dict = literal_eval(conn_type)
+
+    global client_type
+    # for cli in client_type:
+    #     if cli.sid == request.sid:
+    #         cli.client_type = connection_type
+    #         break
+    #     else
+    #
+
+    # if conn_type_dict.get('user_id') == NULL
+
+    # conn_type_dict.get('user_id', -1) --- set '-1' if user_id is null
+
+    client_type.append({"client_sid": request.sid, "client_type": conn_type_dict.get('connectionType'),
+                        "user_id": conn_type_dict.get('user_id', -1)})
+    print("Global client_type connected: ", client_type)
+
     # with thread_lock:
     #     if thread is None:
     #         thread = socketio.start_background_task(background_thread)
@@ -170,6 +173,18 @@ def test_connect():
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected', request.sid)
+    global client_type
+    for cli in client_type:
+        if cli['client_sid'] == request.sid:
+            for file in list_of_locked_files:
+                if file.get('user_id') == cli['user_id']:
+                    socketio.emit('fileUnlocked', file)
+            client_type.remove(cli)
+            break
+    print("Global client_type disconnected:", client_type)
+
+
+# REST HANDLERS
 
 
 @app.before_request
@@ -195,21 +210,30 @@ class FileList(Resource):
         return jsonify(get_all_files())
 
     def post(self):
-        from database.db_methods import create_file
+        from database.db_methods import create_file, get_user
         from database.db_generator import get_all_files
         create_file(request.json['file_name'], request.json['file_content'], request.json['user_id'])
+        print('create_file user id by request: ', request.json['user_id'])
         global created_file_id
         created_file_id = get_all_files()[-1].get('file_id')
-        #if request.json['is_online_file'] == True:
-            #{
-             #   #print('Updatowany plik stworzony online')
-         #   }
-       # elif request.json['is_online_file'] == False:
-           # {
-               # print('Updatowany plik stworzony offline')
-           # }
-        #print('Created file id:' + str(created_file_id))
-       # return jsonify(get_all_files()[-1])
+        created_file = get_all_files()[-1]
+        print('Created file contents: ', created_file)
+        print('Created file try to get one of the contents', created_file.get('file_creator_id'))
+        print('Is_Online_File value:', request.json['is_online_file'])
+
+        print('Created file id:' + str(created_file_id))
+        if not request.json['is_online_file']:
+            print('File created OFFLINE')
+            created_file_username = get_user(created_file.get('file_creator_id')).get('user_login')
+            print('created file username: ', created_file_username)
+            socketio.emit('fileSaved', {'username': created_file_username,
+                                        'file_name': created_file.get('file_name'),
+                                        'file_id': created_file.get('file_id')})
+            created_file_id = -1
+            print('Resetted created_file_id [offline]: ' + str(created_file_id))
+        else:
+            print('File created ONLINE')
+        return jsonify(get_all_files()[-1])
 
 
 class OneFile(Resource):
@@ -223,13 +247,32 @@ class OneFile(Resource):
         return delete_file(file_id)
 
     def put(self, file_id):
-        from database.db_methods import put_file, get_file
+        from database.db_methods import put_file, get_file, get_user
         put_file(file_id, request.json['file_name'], request.json['file_content'],
                  request.json['user_id'])
         print(jsonify(get_file(request.json['file_id'])))
         global updated_file_id
         updated_file_id = request.json['file_id']
+        updated_file = get_file(request.json['file_id'])
+
+        print("Request.json['file_id']: ", request.json['file_id'])
+        print("file_id:", file_id)
+
         print('Updated file id:' + str(updated_file_id))
+
+        if not request.json['is_online_file']:
+            print('File edited OFFLINE')
+
+            updated_file_username = get_user(updated_file.get('file_last_editor_id')).get('user_login')
+            print('Edited file username: ', updated_file_username)
+            socketio.emit('fileUpdated', {'username': updated_file_username,
+                                          'file_name': updated_file.get('file_name'),
+                                          'file_id': updated_file.get('file_id')})
+            updated_file_id = -1
+            print('Resetted updated_file_id [offline]: ' + str(updated_file_id))
+        else:
+            print('File edited ONLINE')
+
         return jsonify(get_file(request.json['file_id']))
 
 
@@ -242,10 +285,10 @@ class Users(Resource):
     def post(self):
 
         from database.db_methods import does_user_exist, log_in_user
-        if request.json['connection_type'] == "desktop":
-            {
-                print('Native user is logged in')
-            }
+        #if request.json['connection_type'] == "desktop":
+            #{
+                #print('Native user is logged in')
+            #}
         login_form = request.json['user_login']
         print(request.json['user_login'])
         exists = does_user_exist(login_form)
@@ -261,8 +304,11 @@ class Users(Resource):
             if check_user and check_user.user_login == login_form and check_user.user_password == hashed_input:
                 session['login'] = login_form
                 session['user_id'] = check_user.user_id
-                print({"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id, "list_of_locked_files": list_of_locked_files})
-                return {"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id, "list_of_locked_files": list_of_locked_files}
+
+                print({"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id,
+                       "list_of_locked_files": list_of_locked_files})
+                return {"user_exists": 1, "logged_in": 1, "user_id": check_user.user_id,
+                        "list_of_locked_files": list_of_locked_files}
             else:
                 flash('Password is not correct. Please try again.', 'error')
                 print({"user_exists": 1, "logged_in": 0})
