@@ -219,22 +219,25 @@ class FileList(Resource):
         created_file = get_all_files()[-1]
         print('Created file contents: ', created_file)
         print('Created file try to get one of the contents', created_file.get('file_creator_id'))
-        print('Is_Online_File value:', request.json['is_online_file'])
+        # print('Is_Online_File value:', request.json['is_online_file'])
 
         print('Created file id:' + str(created_file_id))
-        if not request.json['is_online_file']:
-            print('File created OFFLINE')
-            created_file_username = get_user(created_file.get('file_creator_id')).get('user_login')
-            print('created file username: ', created_file_username)
-            socketio.emit('fileSaved', {'username': created_file_username,
-                                        'file_name': created_file.get('file_name'),
-                                        'file_id': created_file.get('file_id')})
-            created_file_id = -1
-            print('Resetted created_file_id [offline]: ' + str(created_file_id))
-        elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
-            print('File created ONLINE by Webapp')
+
+        if 'is_online_file' in request.json:
+            if not request.json['is_online_file']:
+                print('File created OFFLINE')
+                created_file_username = get_user(created_file.get('file_creator_id')).get('user_login')
+                print('created file username: ', created_file_username)
+                socketio.emit('fileSaved', {'username': created_file_username,
+                                            'file_name': created_file.get('file_name'),
+                                            'file_id': created_file.get('file_id')})
+                created_file_id = -1
+                print('Resetted created_file_id [offline]: ' + str(created_file_id))
+            # elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
+            else:
+                print('File created ONLINE')
         else:
-            print('File created ONLINE')
+            print('File created ONLINE by Webapp')
         return jsonify(get_all_files()[-1])
 
 
@@ -262,20 +265,22 @@ class OneFile(Resource):
 
         print('Updated file id:' + str(updated_file_id))
 
-        if not request.json['is_online_file']:
-            print('File edited OFFLINE')
+        if 'is_online_file' in request.json:
+            if not request.json['is_online_file']:
+                print('File edited OFFLINE')
 
-            updated_file_username = get_user(updated_file.get('file_last_editor_id')).get('user_login')
-            print('Edited file username: ', updated_file_username)
-            socketio.emit('fileUpdated', {'username': updated_file_username,
-                                          'file_name': updated_file.get('file_name'),
-                                          'file_id': updated_file.get('file_id')})
-            updated_file_id = -1
-            print('Resetted updated_file_id [offline]: ' + str(updated_file_id))
-        elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
-            print('File edited ONLINE by Webapp')
+                updated_file_username = get_user(updated_file.get('file_last_editor_id')).get('user_login')
+                print('Edited file username: ', updated_file_username)
+                socketio.emit('fileUpdated', {'username': updated_file_username,
+                                              'file_name': updated_file.get('file_name'),
+                                              'file_id': updated_file.get('file_id')})
+                updated_file_id = -1
+                print('Resetted updated_file_id [offline]: ' + str(updated_file_id))
+            #elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
+            else:
+                print('File edited ONLINE')
         else:
-            print('File edited ONLINE')
+            print('File edited ONLINE by Webapp')
 
         return jsonify(get_file(request.json['file_id']))
 
