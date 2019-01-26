@@ -17,8 +17,9 @@ namespace NativeApp
         public int file_creator_id { get; set; }
         public int file_last_editor_id { get; set; }
         public int? user_id { get; set; }
+        public bool is_online_file { get; set; }
 
-        public Document(string file_name, string file_content, DateTime file_creation_date, DateTime file_update_date, int file_creator_id, int? user_id)
+        public Document(string file_name, string file_content, DateTime file_creation_date, DateTime file_update_date, int file_creator_id, int? user_id,bool is_online_file = true)
         {
             this.file_name = file_name;
             this.file_content = file_content;
@@ -27,6 +28,7 @@ namespace NativeApp
             this.file_creator_id = file_creator_id;
             this.file_last_editor_id = file_last_editor_id;
             this.user_id = user_id;
+            this.is_online_file = is_online_file;
         }
 
 
