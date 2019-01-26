@@ -139,7 +139,7 @@ namespace NativeApp
 
 					loggedUser = user.user_id;
 					lockedFilesList = user.list_of_locked_files;
-					Console.WriteLine("Locked file: {0}, {1}", lockedFilesList[0].file_id, lockedFilesList[0].file_name);
+					//Console.WriteLine("Locked file: {0}, {1}", lockedFilesList[0].file_id, lockedFilesList[0].file_name);
 
 					socket = IO.Socket(adresIP.adres);
 
@@ -193,17 +193,18 @@ namespace NativeApp
 		    }
 		    else
 		    {
-
 		        loginBttn.Visibility = Visibility.Visible;
 		        logoutBtn.Visibility = Visibility.Hidden;
 		        chatBtn.Visibility = Visibility.Hidden;
-
 		    }
 
         }
 
 		private void filesBtn_Click(object sender, RoutedEventArgs e)
 		{
+			//appStatus.isServerOnline = AppStatus.CheckForServerConnection();
+			//appStatus.isOnline = AppStatus.CheckForInternetConnection();
+
 			if (appStatus.isUserLogged == true)
 		    {
 		        loginBttn.Visibility = Visibility.Hidden;
@@ -246,6 +247,11 @@ namespace NativeApp
 				welcomeGrid.Visibility = Visibility.Hidden;
 				LoginGrid.Visibility = Visibility.Hidden;
 
+			}
+
+			if(appStatus.isServerOnline == false || appStatus.isOnline == false)
+			{
+				lockedFilesList = null;
 			}
 
 			toggleSwitch.IsChecked = false;
@@ -294,7 +300,10 @@ namespace NativeApp
 
 		private void Row_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-		    try
+			appStatus.isServerOnline = AppStatus.CheckForServerConnection();
+			appStatus.isOnline = AppStatus.CheckForInternetConnection();
+
+			try
 		    {
                 String title = listOfFiles.SelectedItems[0].ToString();
 				string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
@@ -330,12 +339,18 @@ namespace NativeApp
 						{
 							toggleSwitch.IsChecked = false;
 							toggleSwitch.IsEnabled = false;
+							TitleBox.IsReadOnly = true;
+							contentBox.IsReadOnly = true;
+							saveBtn.IsEnabled = false;
 							Console.WriteLine("Warunek 1");
 							
 						} else if (!s.file_name.Equals(TitleBox.Text))
 						{
 							toggleSwitch.IsChecked = false;
 							toggleSwitch.IsEnabled = true;
+							TitleBox.IsReadOnly = true;
+							contentBox.IsReadOnly = true;
+							saveBtn.IsEnabled = false;
 						}
 					}
 				}
@@ -359,7 +374,7 @@ namespace NativeApp
 				{
 					toggleSwitch.IsEnabled = true;
 				}
-			} else
+			} else //offline
 			{
 				String title = listOfFiles.SelectedItems[0].ToString();
 				string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, title));
@@ -389,6 +404,15 @@ namespace NativeApp
 					Console.WriteLine("Warunek 4");
 
 				}
+			}
+
+			if (appStatus.isServerOnline == false || appStatus.isOnline == false)
+			{
+				TitleBox.IsReadOnly = false;
+				contentBox.IsReadOnly = false;
+				toggleSwitch.IsChecked = true;
+				toggleSwitch.IsEnabled = false;
+				saveBtn.IsEnabled = true;
 			}
 		}
 
@@ -568,9 +592,9 @@ namespace NativeApp
 					}
 					else
 					{
-						newSocket.socketIoEmit(TitleBox.Text, 3, login, socket, user.user_id, idPickedDoc);
 					    exsistingDoc.is_online_file = true;
 						exsistingDoc.CallUpdateDoc();
+						newSocket.socketIoEmit(TitleBox.Text, 3, login, socket, user.user_id, idPickedDoc);
 						MessageBox.Show("File has been updated!");
 					}
 				}
@@ -762,12 +786,11 @@ namespace NativeApp
 				
 				if (TitleBox.Text.Equals(newSocket.modifiedFile))
 				{
-					var fileDateeforeUpdate = File.GetLastWriteTime(Path.Combine(path, newSocket.modifiedFile + ".txt"));
-					var dupa = fileDateeforeUpdate;
-					//downloadTable();
-					 Documents doc = new Documents();
-					 doc.Get2(true);
-
+					//var fileDateeforeUpdate = File.GetLastWriteTime(Path.Combine(path, newSocket.modifiedFile + ".txt"));
+					//var dupa = fileDateeforeUpdate;
+					downloadTable();
+					System.Threading.Thread.Sleep(5000);
+					contentBox.Text = "";
 					readFile();
 
 				}
@@ -801,15 +824,17 @@ namespace NativeApp
 
 		public  void readFile()
 		{
-			System.Threading.Thread.Sleep(4000);
+			contentBox.Clear();
 			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, newSocket.modifiedFile + ".txt"));
-			contentBox.Text = "";
+			contentBox.Text = text;
+			Console.WriteLine("Reading file");
 		}
 
 		public async void downloadTable()
 		{
 			Documents doc = new Documents();
 			doc.Get2(true);
+			Console.WriteLine("Downloading files");
 			System.Threading.Thread.Sleep(2000);
 		}
 		public void cleanTable()

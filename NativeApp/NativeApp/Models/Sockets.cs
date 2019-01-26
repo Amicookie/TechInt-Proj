@@ -34,14 +34,16 @@ namespace NativeApp.Models
 			_notifyIcon.BalloonTipClosed += (s, e) => _notifyIcon.Visible = false;
 		}
 
-		public void isSocketConnected(Socket socket)
+		public void isSocketConnected(Socket socket, int _user)
 		{
-			socket.On(Socket.EVENT_CONNECT, () =>
-			{
-				socket.Emit("connect", "desktop");
-				Console.WriteLine("Socket connect");
-			}
-);
+			//sUserType uType = new sUserType
+			//{
+			//	connectionType = "desktop",
+			//	user_id = _user
+			//};
+
+			//socket.Emit("connectionType", JsonConvert.SerializeObject(uType));
+			//Console.WriteLine("Socket connect");
 		}
 
 		public void socketIoEmit(string name, int locked, String user, Socket socket, int userId, int fileId)
@@ -85,7 +87,7 @@ namespace NativeApp.Models
 				}
 				else if(action == 3) // 3- jest zmodyfikowany
 				{
-					socket.Emit("fileUpdated", JsonConvert.SerializeObject(drugi));
+					socket.Emit("fileUpdated", JsonConvert.SerializeObject(nowy));
 					Console.WriteLine("Updated -> Name: {0}, ID_file: {1}, user: {2}, ID_user: {3}", nameToChange, fileId, user, userId);
 				}
 			}
