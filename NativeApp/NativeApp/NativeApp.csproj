@@ -173,6 +173,7 @@
     <Compile Include="Models\Documents.cs" />
     <Compile Include="Models\sChat.cs" />
     <Compile Include="Models\Sockets.cs" />
+    <Compile Include="Models\sUserType.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\sUser.cs" />
     <Compile Include="Properties\Annotations.cs" />

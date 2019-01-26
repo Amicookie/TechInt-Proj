@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -143,7 +144,7 @@ namespace NativeApp
 
 					socket = IO.Socket(adresIP.adres);
 
-					newSocket.isSocketConnected(socket);
+					newSocket.isSocketConnected(socket, user.user_id);
 					newSocket.socketIoManager(socket, login);
 					newSocket.chatGetMsg(socket, login);
 
@@ -786,14 +787,31 @@ namespace NativeApp
 				
 				if (TitleBox.Text.Equals(newSocket.modifiedFile))
 				{
-					//var fileDateeforeUpdate = File.GetLastWriteTime(Path.Combine(path, newSocket.modifiedFile + ".txt"));
-					//var dupa = fileDateeforeUpdate;
-					downloadTable();
-					System.Threading.Thread.Sleep(5000);
-					contentBox.Text = "";
-					readFile();
 
+					FileSystemWatcher fw = new FileSystemWatcher(@path);
+					fw.Changed += new FileSystemEventHandler(OnChanged);
+					fw.EnableRaisingEvents = true;
+
+					downloadTable();
 				}
+				}));
+			}
+		}
+
+		private void OnChanged(object sender, FileSystemEventArgs e)
+		{
+			Login.main.setContent = "";
+			
+		}
+
+		internal string setContent
+		{
+			get { return contentBox.Text.ToString(); }
+			set {
+				Dispatcher.Invoke(new Action(() => {
+					string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, newSocket.modifiedFile + ".txt"));
+					contentBox.Text = text;
+					Console.WriteLine("Reading file");
 				}));
 			}
 		}
@@ -822,20 +840,12 @@ namespace NativeApp
 			}
 		}
 
-		public  void readFile()
-		{
-			contentBox.Clear();
-			string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, newSocket.modifiedFile + ".txt"));
-			contentBox.Text = text;
-			Console.WriteLine("Reading file");
-		}
-
-		public async void downloadTable()
+		public void downloadTable()
 		{
 			Documents doc = new Documents();
 			doc.Get2(true);
+			Thread.Sleep(2000);
 			Console.WriteLine("Downloading files");
-			System.Threading.Thread.Sleep(2000);
 		}
 		public void cleanTable()
 		{
