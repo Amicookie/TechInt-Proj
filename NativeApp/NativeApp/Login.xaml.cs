@@ -115,7 +115,7 @@ namespace NativeApp
 			password = passBox.Password.ToString();
 			if (login.Count() > 0 && password.Count() > 0)
 			{
-				user = new User(login, password);
+				user = new User(login, password,true);
 				user.Get2();
 				//user.GetUsersList();
 
@@ -566,6 +566,7 @@ namespace NativeApp
 					else
 					{
 						newSocket.socketIoEmit(TitleBox.Text, 3, login, socket, user.user_id, idPickedDoc);
+					    exsistingDoc.is_online_file = true;
 						exsistingDoc.CallUpdateDoc();
 						MessageBox.Show("File has been updated!");
 					}

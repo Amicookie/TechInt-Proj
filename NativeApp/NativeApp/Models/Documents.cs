@@ -90,6 +90,7 @@ namespace NativeApp.Models
 			}
 		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.exsistOnlyLocal))
 		    {
+		        i.Key.is_online_file = false;
 		        i.Key.PostDocument(i.Key);
 		    }
 		    foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedGlobal))
@@ -109,6 +110,7 @@ namespace NativeApp.Models
 		    
             foreach (var i in documentsState.Where(a => a.Value == stateOfDocument.changedLocal))
 		    {
+		        i.Key.is_online_file = false;
                 i.Key.user_id = AppStatus.userID;
 		        i.Key.file_content = File.ReadAllText(Path.Combine(path, i.Key.file_name + ".txt"));
 		        i.Key.CallUpdateDoc();

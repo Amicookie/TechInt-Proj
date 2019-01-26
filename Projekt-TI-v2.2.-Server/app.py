@@ -200,8 +200,16 @@ class FileList(Resource):
         create_file(request.json['file_name'], request.json['file_content'], request.json['user_id'])
         global created_file_id
         created_file_id = get_all_files()[-1].get('file_id')
-        print('Created file id:' + str(created_file_id))
-        return jsonify(get_all_files()[-1])
+        #if request.json['is_online_file'] == True:
+            #{
+             #   #print('Updatowany plik stworzony online')
+         #   }
+       # elif request.json['is_online_file'] == False:
+           # {
+               # print('Updatowany plik stworzony offline')
+           # }
+        #print('Created file id:' + str(created_file_id))
+       # return jsonify(get_all_files()[-1])
 
 
 class OneFile(Resource):
@@ -232,8 +240,12 @@ class Users(Resource):
         return jsonify(get_all_users())
 
     def post(self):
-        from database.db_methods import does_user_exist, log_in_user
 
+        from database.db_methods import does_user_exist, log_in_user
+        #if request.json['native_user'] == True:
+            #{
+                #print('Native user is logged in')
+            #}
         login_form = request.json['user_login']
         print(request.json['user_login'])
         exists = does_user_exist(login_form)
