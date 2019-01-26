@@ -20,7 +20,7 @@ namespace NativeApp.Models
 		public string lockedFile, unlockedFile, savedFile, modifiedFile, modifiedBy;
 		public string receivedMsg, receivedFrom;
 
-		public static string lockf, unlockf;
+		public static string lockf, unlockf, userLogged;
 
 		public string nameToChange = null;
 		public  int action = 4; //4 - do nothing
@@ -103,6 +103,7 @@ namespace NativeApp.Models
 
 		public void socketIoManager(Socket socket, String user)
 		{
+			userLogged = user;
 			sUser nowyUser = new sUser();
 			showIcon();
 
