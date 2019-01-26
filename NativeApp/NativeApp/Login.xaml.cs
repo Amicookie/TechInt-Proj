@@ -115,7 +115,7 @@ namespace NativeApp
 			password = passBox.Password.ToString();
 			if (login.Count() > 0 && password.Count() > 0)
 			{
-				user = new User(login, password,true);
+				user = new User(login, password,"desktop");
 				user.Get2();
 				//user.GetUsersList();
 

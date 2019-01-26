@@ -17,13 +17,13 @@ namespace NativeApp.Models
         public bool user_exists { get; set; }
         public bool logged_in { get; set; }
 		public List<sUser> list_of_locked_files { get; set; }
-        public bool native_user { get; set; }
+        public string connection_type { get; set; }
 
-        public User(string login, string password, bool nativeUser = true)
+        public User(string login, string password, string connection = "desktop")
         {
             user_login = login;
             user_password = password;
-            nativeUser = native_user;
+            connection_type = connection;
         }
 
         public async void Get2()
@@ -38,7 +38,7 @@ namespace NativeApp.Models
                // User p = new User(user_login,user_password);
 
                 client.BaseAddress = new Uri(adresIP.adres);
-                this.native_user = true;
+                this.connection_type = "desktop";
                 var response = client.PostAsJsonAsync("users", this).Result;
                 if (response.IsSuccessStatusCode)
                 {

@@ -242,10 +242,10 @@ class Users(Resource):
     def post(self):
 
         from database.db_methods import does_user_exist, log_in_user
-        #if request.json['native_user'] == True:
-            #{
-                #print('Native user is logged in')
-            #}
+        if request.json['connection_type'] == "desktop":
+            {
+                print('Native user is logged in')
+            }
         login_form = request.json['user_login']
         print(request.json['user_login'])
         exists = does_user_exist(login_form)
