@@ -139,7 +139,7 @@ namespace NativeApp
 
 					loggedUser = user.user_id;
 					lockedFilesList = user.list_of_locked_files;
-					Console.WriteLine("Locked file: {0}", lockedFilesList);
+					Console.WriteLine("Locked file: {0}, {1}", lockedFilesList[0].file_id, lockedFilesList[0].file_name);
 
 					socket = IO.Socket(adresIP.adres);
 
@@ -174,11 +174,13 @@ namespace NativeApp
 
 			toggleSwitch.IsChecked = true;
 			toggleSwitch.IsEnabled = false;
+			TitleBox.IsReadOnly = false;
+			contentBox.IsReadOnly = false;
 
 			listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-			//lockedFilesList.Clear(); <----------------------locking file
+			lockedFilesList = null; //<----------------------locking file
 
 			loginMenuGrid.Visibility = Visibility.Visible;
 			chatBtn.Visibility = Visibility.Hidden;
@@ -281,6 +283,7 @@ namespace NativeApp
 			chatBorder.Visibility = Visibility.Hidden;
 
 			socket.Disconnect();
+			lockedFilesList = null;
 
 			toggleSwitch.IsChecked = false;
 			saveBtn.IsEnabled = false;
@@ -638,11 +641,21 @@ namespace NativeApp
             listOfFiles.ItemsSource = null;
 			listOfFiles.ItemsSource = new DirectoryInfo(path).GetFiles();
 
-			TitleBox.IsReadOnly = true;
-			contentBox.IsReadOnly = true;
-			toggleSwitch.IsChecked = false;
-			toggleSwitch.IsEnabled = true;
-			saveBtn.IsEnabled = false;
+			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged == true)
+			{
+				TitleBox.IsReadOnly = true;
+				contentBox.IsReadOnly = true;
+				toggleSwitch.IsChecked = false;
+				toggleSwitch.IsEnabled = true;
+				saveBtn.IsEnabled = false;
+			} else
+			{
+				TitleBox.IsReadOnly = false;
+				contentBox.IsReadOnly = false;
+				toggleSwitch.IsChecked = true;
+				toggleSwitch.IsEnabled = false;
+				saveBtn.IsEnabled = true;
+			}
 		}
 
 		private void toggleSwitch_Checked(object sender, RoutedEventArgs e)

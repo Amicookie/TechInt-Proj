@@ -18,7 +18,7 @@ namespace NativeApp
 			{
 				foreach (sUser s in Login.lockedFilesList)
 				{
-					if (value.Equals(s.file_name + ".txt") && !s.file_name.Equals(Sockets.unlockf))
+					if (value.Equals(s.file_name + ".txt") && !s.file_name.Equals(Sockets.unlockf) && !s.username.Equals(Sockets.userLogged))
 					{
 						return true;
 					}
@@ -36,7 +36,7 @@ namespace NativeApp
 				Console.WriteLine(e);
 			}
 
-			if (value.Equals(Sockets.lockf+".txt"))
+			if (value.Equals(Sockets.lockf+".txt") && !value.Equals(Sockets.unlockf))
 			{
 				//Console.WriteLine("dziala warunek: {0}", Sockets.lockf);
 				return true;
