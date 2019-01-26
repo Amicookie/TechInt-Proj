@@ -222,7 +222,7 @@ class FileList(Resource):
         print('Is_Online_File value:', request.json['is_online_file'])
 
         print('Created file id:' + str(created_file_id))
-        if not request.json['is_online_file']:
+        if not request.json['is_online_file'] or ():
             print('File created OFFLINE')
             created_file_username = get_user(created_file.get('file_creator_id')).get('user_login')
             print('created file username: ', created_file_username)
@@ -231,6 +231,8 @@ class FileList(Resource):
                                         'file_id': created_file.get('file_id')})
             created_file_id = -1
             print('Resetted created_file_id [offline]: ' + str(created_file_id))
+        elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
+            print('File created ONLINE by Webapp')
         else:
             print('File created ONLINE')
         return jsonify(get_all_files()[-1])
@@ -270,6 +272,8 @@ class OneFile(Resource):
                                           'file_id': updated_file.get('file_id')})
             updated_file_id = -1
             print('Resetted updated_file_id [offline]: ' + str(updated_file_id))
+        elif request.json['is_online_file'] is None or request.json['is_online_file'] != '':
+            print('File edited ONLINE by Webapp')
         else:
             print('File edited ONLINE')
 
