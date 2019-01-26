@@ -222,7 +222,7 @@ class FileList(Resource):
         print('Is_Online_File value:', request.json['is_online_file'])
 
         print('Created file id:' + str(created_file_id))
-        if not request.json['is_online_file'] or ():
+        if not request.json['is_online_file']:
             print('File created OFFLINE')
             created_file_username = get_user(created_file.get('file_creator_id')).get('user_login')
             print('created file username: ', created_file_username)
