@@ -329,6 +329,7 @@ namespace NativeApp
 		    filesListGrid.Visibility = Visibility.Hidden;
 			newFileGrid.Visibility = Visibility.Visible;
 
+			string lockedOnList = null;
 
 			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
 			{
@@ -344,6 +345,7 @@ namespace NativeApp
 							contentBox.IsReadOnly = true;
 							saveBtn.IsEnabled = false;
 							Console.WriteLine("Warunek 1");
+							lockedOnList = s.file_name;
 							
 						} else if (!s.file_name.Equals(TitleBox.Text))
 						{
@@ -352,6 +354,7 @@ namespace NativeApp
 							TitleBox.IsReadOnly = true;
 							contentBox.IsReadOnly = true;
 							saveBtn.IsEnabled = false;
+							Console.WriteLine("Warunek 2");
 						}
 					}
 				}
@@ -360,20 +363,29 @@ namespace NativeApp
 					Console.WriteLine(ex);
 				}
 
-				if (TitleBox.Text.Equals(newSocket.lockedFile) && !TitleBox.Text.Equals(newSocket.unlockedFile))
+				if (TitleBox.Text.Equals(newSocket.lockedFile)/* && !TitleBox.Text.Equals(newSocket.unlockedFile)*/)
 				{
 					toggleSwitch.IsChecked = false;
 					toggleSwitch.IsEnabled = false;
-					Console.WriteLine("Warunek 2");
+					Console.WriteLine("Warunek 3");
 				}
 				else if(lockedFilesList == null)
 				{
 					toggleSwitch.IsEnabled = true;
+					Console.WriteLine("Warunek 4");
+				} 
+
+				else if(!TitleBox.Text.Equals(newSocket.lockedFile) && !TitleBox.Text.Equals(lockedOnList))
+				{
+					toggleSwitch.IsChecked = false;
+					toggleSwitch.IsEnabled = true;
+					Console.WriteLine("Warunek 3a");
 				}
 
-				if (TitleBox.Text.Equals(newSocket.unlockedFile) && !TitleBox.Text.Equals(newSocket.lockedFile))
+				if (TitleBox.Text.Equals(newSocket.unlockedFile) /*&& !TitleBox.Text.Equals(newSocket.lockedFile)*/)
 				{
 					toggleSwitch.IsEnabled = true;
+					Console.WriteLine("Warunek 5");
 				}
 			} else //offline
 			{
@@ -386,28 +398,39 @@ namespace NativeApp
 				toggleSwitch.IsChecked = true;
 				toggleSwitch.IsEnabled = false;
 				saveBtn.IsEnabled = true;
-				Console.WriteLine("Warunek 3");
+				Console.WriteLine("Warunek 6");
 			}
 
-			if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
-			{
-				if (toggleSwitch.IsChecked == true && newSocket.lockedFile != TitleBox.Text)
-				{
-					TitleBox.IsReadOnly = false;
-					contentBox.IsReadOnly = false;
-					saveBtn.IsEnabled = true;
-				}
-				else if (toggleSwitch.IsChecked == false && newSocket.lockedFile != null)
-				{
-					TitleBox.IsReadOnly = true;
-					contentBox.IsReadOnly = true;
-					saveBtn.IsEnabled = false;
-					Console.WriteLine("Warunek 4");
+			//if (appStatus.isServerOnline == true && appStatus.isOnline == true && appStatus.isUserLogged)
+			//{
+			//	if (toggleSwitch.IsChecked == true && !newSocket.lockedFile.Equals(TitleBox.Text))
+			//	{
+			//		TitleBox.IsReadOnly = false;
+			//		contentBox.IsReadOnly = false;
+			//		saveBtn.IsEnabled = true;
+			//		toggleSwitch.IsEnabled = true;
+			//		Console.WriteLine("Warunek 7");
+			//	}
+			//	else if (toggleSwitch.IsChecked == false && newSocket.lockedFile != null && TitleBox.Text.Equals(newSocket.lockedFile))
+			//	{
+			//		TitleBox.IsReadOnly = true;
+			//		contentBox.IsReadOnly = true;
+			//		saveBtn.IsEnabled = false;
+			//		toggleSwitch.IsEnabled = false;
+			//		Console.WriteLine("Warunek 8");
+			//	}
 
-				}
-			}
+			//	if(!TitleBox.Text.Equals(newSocket.lockedFile) )
+			//	{
+			//		TitleBox.IsReadOnly = true;
+			//		contentBox.IsReadOnly = true;
+			//		saveBtn.IsEnabled = false;
+			//		toggleSwitch.IsEnabled = true;
+			//		Console.WriteLine("Warunek 9");
+			//	}
+			//}
 
-			if (appStatus.isServerOnline == false || appStatus.isOnline == false)
+			if (appStatus.isServerOnline == false || appStatus.isOnline == false) //offline
 			{
 				TitleBox.IsReadOnly = false;
 				contentBox.IsReadOnly = false;
@@ -762,7 +785,7 @@ namespace NativeApp
 		}
 
 
-		// nowy wątek dla czatu
+		// noww watki dla odswiezania
 		internal string Status
 		{
 			get { return chatWindowBox.Text.ToString(); }
@@ -776,6 +799,7 @@ namespace NativeApp
 				if (TitleBox.Text.Equals(newSocket.lockedFile))
 				{
 					toggleSwitch.IsEnabled = value;
+					Console.WriteLine("Blokuje socket");
 				}
 			})); }
 		}
@@ -787,7 +811,6 @@ namespace NativeApp
 				
 				if (TitleBox.Text.Equals(newSocket.modifiedFile))
 				{
-
 					FileSystemWatcher fw = new FileSystemWatcher(@path);
 					fw.Changed += new FileSystemEventHandler(OnChanged);
 					fw.EnableRaisingEvents = true;
@@ -809,9 +832,12 @@ namespace NativeApp
 			get { return contentBox.Text.ToString(); }
 			set {
 				Dispatcher.Invoke(new Action(() => {
-					string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, newSocket.modifiedFile + ".txt"));
-					contentBox.Text = text;
-					Console.WriteLine("Reading file");
+					if (TitleBox.Text.Equals(newSocket.modifiedFile))
+					{
+						string text = System.IO.File.ReadAllText(System.IO.Path.Combine(path, newSocket.modifiedFile + ".txt"));
+						contentBox.Text = text;
+						//Console.WriteLine("Reading file");
+					}
 				}));
 			}
 		}
@@ -845,7 +871,7 @@ namespace NativeApp
 			Documents doc = new Documents();
 			doc.Get2(true);
 			Thread.Sleep(2000);
-			Console.WriteLine("Downloading files");
+			//Console.WriteLine("Downloading files");
 		}
 		public void cleanTable()
 		{
