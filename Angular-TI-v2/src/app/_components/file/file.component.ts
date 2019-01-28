@@ -20,6 +20,9 @@ export class FileComponent implements OnInit, OnDestroy {
   file_content = "";
   current_file_id = 0;
 
+  file_new_name_input = "";
+  file_new_content_input = "";
+
   _navigateToFile = false;
   editable = false;
   _file_locked: boolean;
@@ -87,8 +90,14 @@ export class FileComponent implements OnInit, OnDestroy {
           this._filesService.getFiles().subscribe(data=>{
             this.files = data;
           });
+          
+          if(this.files[this.files.length-1].file_last_editor_id == localStorage.getItem('user_id')){
+             this.file_new_name_input = "";
+            this.file_new_content_input = "";
+          }
           this.webSocketService._file_added.next({file_id: -1});
           console.log('wartosc file_added po .next(-1)'+value);
+
         }
       }
     )
@@ -144,6 +153,7 @@ export class FileComponent implements OnInit, OnDestroy {
   createFile(file_name, file_content){
     this._filesService.createFile(file_name, file_content, localStorage.getItem('user_id'));
     //wyczyść zawartość textarea jeśli utworzono xd
+
   }
 
   editFile(file_id, file_name, file_content){
